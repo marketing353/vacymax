@@ -89,12 +89,12 @@ const App: React.FC = () => {
     if (view === 'how-it-works') {
         setView('landing');
         setTimeout(() => {
-             const element = document.getElementById('wizard-section');
+             const element = wizardRef.current || document.getElementById('wizard-section');
              element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
              if(step === 0) setStep(1);
         }, 100);
     } else {
-        const element = document.getElementById('wizard-section');
+        const element = wizardRef.current || document.getElementById('wizard-section');
         element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         if(step === 0) setStep(1);
     }
