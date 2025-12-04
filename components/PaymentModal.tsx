@@ -49,14 +49,14 @@ const isValidLuhn = (val: string) => {
     return (checksum % 10) === 0;
 }
 
-export const PaymentModal: React.FC<PaymentModalProps> = ({ 
-    isOpen, 
-    onClose, 
-    onSuccess, 
-    savedValue = 2400, 
-    userCountry = '', 
-    prefs, 
-    planStats 
+export const PaymentModal: React.FC<PaymentModalProps> = ({
+    isOpen,
+    onClose,
+    onSuccess,
+    savedValue = 2400,
+    userCountry = '',
+    prefs,
+    planStats
 }) => {
   const [loading, setLoading] = useState(false);
   const [cardNumber, setCardNumber] = useState('');
@@ -64,6 +64,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   const [cvc, setCvc] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [cardValid, setCardValid] = useState<boolean | null>(null);
 
   const price = getRegionalPrice(userCountry);
 
@@ -75,6 +76,26 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     }
     return () => { document.body.style.overflow = 'unset'; };
   }, [isOpen]);
+
+  // Debounced Luhn validation - only run after user stops typing
+  useEffect(() => {
+    const cleanCard = cardNumber.replace(/\s/g, '');
+    if (cleanCard.length === 0) {
+      setCardValid(null);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      if (cleanCard.length >= 13) {
+        const isValid = isValidLuhn(cleanCard);
+        setCardValid(isValid);
+      } else {
+        setCardValid(null);
+      }
+    }, 300); // Wait 300ms after user stops typing
+
+    return () => clearTimeout(timer);
+  }, [cardNumber]);
 
   // Formatters
   const formatCardNumber = (value: string) => {
@@ -261,9 +282,13 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 {/* Card Info */}
                 <div>
                     <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Card Information</label>
-                    <div className="bg-[#020617] border border-white/10 rounded-lg p-1 flex flex-col gap-1 focus-within:border-lime-accent transition-colors">
+                    <div className={`bg-[#020617] border rounded-lg p-1 flex flex-col gap-1 transition-colors ${
+                      cardValid === true ? 'border-lime-accent' :
+                      cardValid === false ? 'border-red-500' :
+                      'border-white/10 focus-within:border-lime-accent'
+                    }`}>
                         <div className="relative">
-                            <input 
+                            <input
                                 type="text"
                                 required
                                 value={cardNumber}
@@ -272,8 +297,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                                 placeholder="4242 4242 4242 4242"
                                 className="w-full bg-transparent p-3 text-white outline-none placeholder-slate-700 font-mono"
                             />
-                            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex gap-2 opacity-50">
-                                <svg className="w-6 h-6 text-slate-400" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4C2.89 4 2.01 4.89 2.01 6L2 18C2 19.11 2.89 20 4 20H20C21.11 20 22 19.11 22 18V6C22 4.89 21.11 4 20 4ZM20 18H4V12H20V18ZM20 8H4V6H20V8Z"/></svg>
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex gap-2">
+                                {cardValid === true && (
+                                  <svg className="w-5 h-5 text-lime-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7"/></svg>
+                                )}
+                                {cardValid === false && (
+                                  <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12"/></svg>
+                                )}
+                                <svg className="w-6 h-6 text-slate-400 opacity-50" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4C2.89 4 2.01 4.89 2.01 6L2 18C2 19.11 2.89 20 4 20H20C21.11 20 22 19.11 22 18V6C22 4.89 21.11 4 20 4ZM20 18H4V12H20V18ZM20 8H4V6H20V8Z"/></svg>
                             </div>
                         </div>
                         <div className="flex border-t border-white/10">
