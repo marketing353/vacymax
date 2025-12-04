@@ -42,17 +42,21 @@ export const TrustSection: React.FC = () => {
   return (
     <section className="w-full bg-[#05070F] border-y border-white/5 py-24 px-6" id="trust">
       <div className="max-w-6xl mx-auto space-y-16">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div className="space-y-3">
             <p className="text-xs font-bold uppercase tracking-[0.3em] text-slate-500">Trust Stack</p>
             <h2 className="text-3xl md:text-4xl font-display font-bold text-white">Works seamlessly with your existing workflow.</h2>
-            <p className="text-slate-400 max-w-2xl">Dark-mode first, dev-grade privacy. We stay read-only while syncing next to your calendar stack.</p>
+            <p className="text-slate-300 max-w-2xl leading-relaxed">Dark-mode first, dev-grade privacy. We stay read-only while syncing next to your calendar stack so you can test the optimizer without committing. Ship a long weekend in two clicks.</p>
           </div>
           <div className="flex flex-col items-start gap-3">
             <button className="px-6 py-3 rounded-full bg-lime-accent text-dark-900 font-bold text-sm md:text-base shadow-lg shadow-lime-accent/30 hover:shadow-lime-accent/50 transition-transform active:scale-95">
               Launch Optimizer
             </button>
             <p className="text-xs text-slate-400">No account required • Free for individuals</p>
+            <div className="flex items-center gap-2 text-[11px] text-lime-accent font-semibold">
+              <span className="w-2 h-2 rounded-full bg-lime-accent animate-pulse"></span>
+              Live preview without exposing calendar edits.
+            </div>
           </div>
         </div>
 
