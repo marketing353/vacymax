@@ -50,7 +50,10 @@ const STRATEGIES = [
 
 interface StepProps {
   prefs: UserPreferences;
-  updatePrefs: (key: keyof UserPreferences, value: any) => void;
+  updatePrefs: <K extends keyof UserPreferences>(
+    key: K,
+    value: UserPreferences[K]
+  ) => void;
   onNext: () => void;
   onBack?: () => void;
 }
