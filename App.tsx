@@ -106,20 +106,32 @@ const App: React.FC = () => {
   
   const wizardRef = useRef<HTMLDivElement>(null);
 
+  const scrollWizardIntoView = useCallback(() => {
+    const element = wizardRef.current;
+    if (!element) return;
+    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    element.focus({ preventScroll: true });
+  }, []);
+
+  // Ensure the wizard is always in view when users progress through steps
+  useEffect(() => {
+    if (step > 0) {
+        scrollWizardIntoView();
+    }
+  }, [scrollWizardIntoView, step]);
+
   const scrollToWizard = useCallback(() => {
     if (view === 'how-it-works') {
         setView('landing');
         requestAnimationFrame(() => {
-             const element = document.getElementById('wizard-section');
-             element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+             scrollWizardIntoView();
              if(step === 0) setStep(1);
         });
     } else {
-        const element = document.getElementById('wizard-section');
-        element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        scrollWizardIntoView();
         if(step === 0) setStep(1);
     }
-  }, [view, step]);
+  }, [scrollWizardIntoView, step, view]);
 
   const updatePrefs = useCallback((key: keyof UserPreferences, value: any) => {
     setPrefs((prev) => ({ ...prev, [key]: value }));
@@ -128,9 +140,9 @@ const App: React.FC = () => {
   const handleNext = useCallback(() => {
       setStep((prev) => prev + 1);
       if (window.innerWidth < 768) {
-          wizardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          scrollWizardIntoView();
       }
-  }, []);
+  }, [scrollWizardIntoView]);
 
   const handleBack = useCallback(() => setStep((prev) => prev - 1), []);
 
@@ -225,7 +237,12 @@ const App: React.FC = () => {
                 <BattleTestedMarquee />
 
                 {/* THE WIZARD (The Actual Product) */}
-                <div id="wizard-section" ref={wizardRef} className="w-full bg-[#020617] py-24 px-4 scroll-mt-24">
+                <div
+                    id="wizard-section"
+                    ref={wizardRef}
+                    tabIndex={-1}
+                    className="w-full bg-[#020617] py-24 px-4 scroll-mt-24"
+                >
                      <div className="max-w-4xl mx-auto">
                          <div className="text-center mb-12">
                              <h2 className="text-3xl font-display font-bold text-white mb-2">Okay, Let's Fix It.</h2>
