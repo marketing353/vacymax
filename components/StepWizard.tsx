@@ -179,6 +179,7 @@ export const Step1PTO: React.FC<StepProps> = ({ prefs, updatePrefs, onNext }) =>
   };
 
   const totalDays = userDays + (prefs.hasBuddy ? buddyDays : 0);
+  const canProceed = totalDays > 0;
   const value = totalDays * DAILY_VALUE_ESTIMATE;
   const potentialDays = Math.round(totalDays * EFFICIENCY_MULTIPLIER);
 
@@ -235,7 +236,7 @@ export const Step1PTO: React.FC<StepProps> = ({ prefs, updatePrefs, onNext }) =>
                 </div>
                 <div className="mt-2 text-[10px] text-slate-500 font-medium flex items-center gap-1.5 opacity-80">
                     <svg className="w-3 h-3 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span>Avg. 10-25 days. Enter 0 for holiday-only mode.</span>
+                    <span>Enter at least one PTO day to continue.</span>
                 </div>
              </div>
 
@@ -292,7 +293,7 @@ export const Step1PTO: React.FC<StepProps> = ({ prefs, updatePrefs, onNext }) =>
          </div>
       </div>
 
-      <NavButtons onNext={onNext} nextDisabled={false} nextLabel="Next Step" />
+      <NavButtons onNext={onNext} nextDisabled={!canProceed} nextLabel="Next Step" />
     </div>
   );
 };
