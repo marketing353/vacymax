@@ -141,37 +141,43 @@ export const SelectionCard: React.FC<SelectionCardProps> = ({
     );
 };
 
-export const DebouncedInput = ({ 
-    value, 
-    onChange, 
-    placeholder, 
+export const DebouncedInput = ({
+    value,
+    onChange,
+    placeholder,
     className,
-    isLime = true
-}: { 
-    value: string, 
-    onChange: (val: string) => void, 
-    placeholder: string, 
+    isLime = true,
+    debounceMs = 400
+}: {
+    value: string,
+    onChange: (val: string) => void,
+    placeholder: string,
     className?: string,
-    isLime?: boolean
+    isLime?: boolean,
+    debounceMs?: number
 }) => {
     const [localValue, setLocalValue] = useState(value);
-    
+
     useEffect(() => {
         setLocalValue(value);
     }, [value]);
 
-    const handleBlur = () => {
-        if (localValue !== value) {
-            onChange(localValue);
-        }
-    };
+    // True debounce implementation - triggers onChange after user stops typing
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (localValue !== value) {
+                onChange(localValue);
+            }
+        }, debounceMs);
+
+        return () => clearTimeout(timer);
+    }, [localValue, onChange, value, debounceMs]);
 
     return (
-        <input 
+        <input
             type="text"
             value={localValue}
             onChange={(e) => setLocalValue(e.target.value)}
-            onBlur={handleBlur}
             placeholder={placeholder}
             className={`w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 text-base font-bold text-white outline-none placeholder-slate-600 transition-all shadow-inner focus:bg-black/40 ${isLime ? 'focus:border-lime-accent' : 'focus:border-brand-violet'} ${className}`}
         />

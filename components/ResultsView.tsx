@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { OptimizationResult } from '../types';
 import { PaymentModal, getRegionalPrice } from './PaymentModal';
 import { formatDate, formatCurrency, generateGoogleCalendarLink, downloadICS } from '../services/utils';
@@ -20,51 +20,80 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ result, onReset, onUnl
   const hasBuddy = result.totalPtoUsedBuddy !== undefined;
   const [viewMode, setViewMode] = useState<'joint' | 'solo'>('joint');
 
-  const visibleBlocks = isLocked ? result.vacationBlocks.slice(0, 1) : result.vacationBlocks;
-  const hiddenBlocks = result.vacationBlocks.slice(1);
+  // Memoize expensive calculations to prevent recalculation on every render
+  const visibleBlocks = useMemo(() =>
+    isLocked ? result.vacationBlocks.slice(0, 1) : result.vacationBlocks,
+    [isLocked, result.vacationBlocks]
+  );
+
+  const hiddenBlocks = useMemo(() =>
+    result.vacationBlocks.slice(1),
+    [result.vacationBlocks]
+  );
+
   const hiddenCount = hiddenBlocks.length;
-  const hiddenValue = hiddenBlocks.reduce((acc, b) => acc + b.monetaryValue, 0);
-  
-  const bestHiddenBlock = hiddenBlocks.reduce((prev, current) => {
+
+  const hiddenValue = useMemo(() =>
+    hiddenBlocks.reduce((acc, b) => acc + b.monetaryValue, 0),
+    [hiddenBlocks]
+  );
+
+  const bestHiddenBlock = useMemo(() =>
+    hiddenBlocks.reduce((prev, current) => {
       return (prev.totalDaysOff > current.totalDaysOff) ? prev : current;
-  }, hiddenBlocks[0] || null);
+    }, hiddenBlocks[0] || null),
+    [hiddenBlocks]
+  );
 
-  const price = getRegionalPrice(userCountry);
+  const price = useMemo(() => getRegionalPrice(userCountry), [userCountry]);
 
-  // --- DYNAMIC STATS CALCULATION ---
-  let displayedPtoUsed = result.totalPtoUsed;
-  let displayedFreeDays = result.totalFreeDays;
-  let multiplier = 0;
-  let isInfiniteEfficiency = false;
+  // --- DYNAMIC STATS CALCULATION (MEMOIZED) ---
+  const stats = useMemo(() => {
+    let displayedPtoUsed = result.totalPtoUsed;
+    let displayedFreeDays = result.totalFreeDays;
+    let multiplier = 0;
+    let isInfiniteEfficiency = false;
 
-  if (viewMode === 'solo' || !hasBuddy) {
-      displayedPtoUsed = result.totalPtoUsed;
-      displayedFreeDays = result.totalFreeDays;
-      if (displayedPtoUsed === 0 && result.totalDaysOff > 0) {
-          isInfiniteEfficiency = true;
-      } else if (displayedPtoUsed > 0) {
-          multiplier = result.totalDaysOff / displayedPtoUsed;
+    if (viewMode === 'solo' || !hasBuddy) {
+        displayedPtoUsed = result.totalPtoUsed;
+        displayedFreeDays = result.totalFreeDays;
+        if (displayedPtoUsed === 0 && result.totalDaysOff > 0) {
+            isInfiniteEfficiency = true;
+        } else if (displayedPtoUsed > 0) {
+            multiplier = result.totalDaysOff / displayedPtoUsed;
+        }
+    } else {
+        const combinedPto = result.totalPtoUsed + (result.totalPtoUsedBuddy || 0);
+        const combinedGain = result.totalDaysOff * 2;
+        displayedPtoUsed = combinedPto;
+        displayedFreeDays = combinedGain - combinedPto;
+        if (combinedPto === 0 && combinedGain > 0) {
+            isInfiniteEfficiency = true;
+        } else if (combinedPto > 0) {
+            multiplier = combinedGain / combinedPto;
+        }
+    }
+
+    return {
+      displayedPtoUsed,
+      displayedFreeDays,
+      multiplier,
+      isInfiniteEfficiency,
+      planStats: {
+        totalDays: result.totalDaysOff,
+        efficiency: multiplier,
+        ptoUsed: result.totalPtoUsed
       }
-  } else {
-      const combinedPto = result.totalPtoUsed + (result.totalPtoUsedBuddy || 0);
-      const combinedGain = result.totalDaysOff * 2;
-      displayedPtoUsed = combinedPto;
-      displayedFreeDays = combinedGain - combinedPto;
-      if (combinedPto === 0 && combinedGain > 0) {
-          isInfiniteEfficiency = true;
-      } else if (combinedPto > 0) {
-          multiplier = combinedGain / combinedPto;
-      }
-  }
+    };
+  }, [viewMode, hasBuddy, result.totalPtoUsed, result.totalPtoUsedBuddy, result.totalDaysOff, result.totalFreeDays]);
 
-  const planStats = {
-      totalDays: result.totalDaysOff,
-      efficiency: multiplier,
-      ptoUsed: result.totalPtoUsed
-  };
+  const { displayedPtoUsed, displayedFreeDays, multiplier, isInfiniteEfficiency, planStats } = stats;
 
-  const handleUnlockClick = () => setShowPaymentModal(true);
-  const handlePaymentSuccess = () => { setShowPaymentModal(false); onUnlock(); };
+  const handleUnlockClick = useCallback(() => setShowPaymentModal(true), []);
+  const handlePaymentSuccess = useCallback(() => {
+    setShowPaymentModal(false);
+    onUnlock();
+  }, [onUnlock]);
 
   if (!result.vacationBlocks || result.vacationBlocks.length === 0) {
       return (

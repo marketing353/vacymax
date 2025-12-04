@@ -91,7 +91,7 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onBack, onLaunch }) => {
                                   <span className="text-brand-violet">HOLIDAY</span>
                               </div>
                               <div className="border-t border-white/10 pt-2 mt-2 text-lime-accent font-bold">
-                                  >> OPPORTUNITY FOUND! TAKE 23rd OFF.
+                                  {'>> OPPORTUNITY FOUND! TAKE 23rd OFF.'}
                               </div>
                           </div>
                       </div>

@@ -11,6 +11,7 @@ const FLAG_BUDDY_HOLIDAY = 1 << 2; // 0100
 // --- CACHING LAYER ---
 const holidaysMapCache = new Map<string, Map<string, string>>();
 const planCache = new Map<string, OptimizationResult>();
+const resolvedRegionCache = new Map<string, string | undefined>();
 
 // --- STRING POOL FOR ZERO-ALLOCATION LOOKUPS ---
 class StringPool {
@@ -69,26 +70,52 @@ const levenshtein = (a: string, b: string): number => {
 
 const resolveRegion = (countryData: CountryData, inputRegion: string): string | undefined => {
     if (!inputRegion || !countryData.regions) return undefined;
-    
+
+    // Check cache first to avoid repeated expensive Levenshtein calculations
+    const cacheKey = `${countryData.name}:${inputRegion}`;
+    if (resolvedRegionCache.has(cacheKey)) {
+        return resolvedRegionCache.get(cacheKey);
+    }
+
     const cleanInput = inputRegion.toLowerCase().replace(/[^a-z0-9]/g, '');
-    if (!cleanInput) return undefined;
+    if (!cleanInput) {
+        resolvedRegionCache.set(cacheKey, undefined);
+        return undefined;
+    }
 
     if (countryData.regionAliases) {
         const rawLower = inputRegion.toLowerCase().trim();
-        if (countryData.regionAliases[rawLower]) return countryData.regionAliases[rawLower];
-        if (countryData.regionAliases[cleanInput]) return countryData.regionAliases[cleanInput];
+        if (countryData.regionAliases[rawLower]) {
+            const result = countryData.regionAliases[rawLower];
+            resolvedRegionCache.set(cacheKey, result);
+            return result;
+        }
+        if (countryData.regionAliases[cleanInput]) {
+            const result = countryData.regionAliases[cleanInput];
+            resolvedRegionCache.set(cacheKey, result);
+            return result;
+        }
     }
 
     const regionKeys = Object.keys(countryData.regions);
 
     const exactMatch = regionKeys.find(k => k.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanInput);
-    if (exactMatch) return exactMatch;
+    if (exactMatch) {
+        resolvedRegionCache.set(cacheKey, exactMatch);
+        return exactMatch;
+    }
 
     const prefixMatch = regionKeys.find(k => k.toLowerCase().replace(/[^a-z0-9]/g, '').startsWith(cleanInput));
-    if (prefixMatch) return prefixMatch;
+    if (prefixMatch) {
+        resolvedRegionCache.set(cacheKey, prefixMatch);
+        return prefixMatch;
+    }
 
     const subMatch = regionKeys.find(k => k.toLowerCase().replace(/[^a-z0-9]/g, '').includes(cleanInput));
-    if (subMatch) return subMatch;
+    if (subMatch) {
+        resolvedRegionCache.set(cacheKey, subMatch);
+        return subMatch;
+    }
 
     let bestMatch: string | undefined;
     let minDistance = Infinity;
@@ -97,13 +124,14 @@ const resolveRegion = (countryData: CountryData, inputRegion: string): string | 
         const cleanKey = key.toLowerCase().replace(/[^a-z0-9]/g, '');
         const dist = levenshtein(cleanInput, cleanKey);
         const threshold = cleanInput.length > 4 ? 3 : 2;
-        
+
         if (dist <= threshold && dist < minDistance) {
             minDistance = dist;
             bestMatch = key;
         }
     }
 
+    resolvedRegionCache.set(cacheKey, bestMatch);
     return bestMatch;
 };
 
@@ -207,10 +235,13 @@ export const generateVacationPlan = async (prefs: UserPreferences): Promise<Opti
     const isLeap = (y: number) => (y % 4 === 0 && y % 100 !== 0) || (y % 400 === 0);
 
     // Optimized loop using manual date tracking to avoid Date creation overhead
+    // Pre-allocate string padding arrays for faster concatenation
+    const monthPad = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+    const dayPad = Array.from({length: 31}, (_, i) => (i+1).toString().padStart(2, '0'));
+
     for (let i = 0; i < totalDays; i++) {
-        const mStr = curM + 1 < 10 ? `0${curM + 1}` : `${curM + 1}`;
-        const dStr = curD < 10 ? `0${curD}` : `${curD}`;
-        const dString = `${curY}-${mStr}-${dStr}`;
+        // Optimized date string generation (avoid multiple string concatenations)
+        const dString = `${curY}-${monthPad[curM]}-${dayPad[curD-1]}`;
 
         const dayOfWeek = (startDayOfWeek + i) % 7;
         const isWknd = dayOfWeek === 0 || dayOfWeek === 6;
@@ -234,25 +265,31 @@ export const generateVacationPlan = async (prefs: UserPreferences): Promise<Opti
 
         calendarFlags[i] = flags;
 
-        // Prefix Updates
-        if (!isWknd && !hName) runningPtoCost++;
-        if (prefs.hasBuddy && !isWknd && !(buddyHolidays?.get(dString))) runningBuddyCost++;
-        
-        if ((flags & FLAG_HOLIDAY) || (flags & FLAG_BUDDY_HOLIDAY)) {
+        // Prefix Updates (optimized to minimize branches)
+        const hasHoliday = !!(flags & FLAG_HOLIDAY);
+        const hasBuddyHoliday = !!(flags & FLAG_BUDDY_HOLIDAY);
+
+        if (!isWknd && !hasHoliday) runningPtoCost++;
+        if (prefs.hasBuddy && !isWknd && !hasBuddyHoliday) runningBuddyCost++;
+
+        if (hasHoliday || hasBuddyHoliday) {
             runningHolidayCount++;
-            runningHolidayScore += 20; 
+            runningHolidayScore += 20;
         }
 
-        if ((flags & FLAG_HOLIDAY) && (flags & FLAG_BUDDY_HOLIDAY)) {
-            runningJointScore += 30; 
+        if (hasHoliday && hasBuddyHoliday) {
+            runningJointScore += 30;
         }
 
-        ptoPrefix[i + 1] = runningPtoCost;
-        buddyPtoPrefix[i + 1] = runningBuddyCost;
-        holidayScorePrefix[i + 1] = runningHolidayScore;
-        holidayCountPrefix[i + 1] = runningHolidayCount;
-        jointScorePrefix[i + 1] = runningJointScore;
+        // Batch prefix array writes (reduce memory bandwidth usage)
+        const nextIdx = i + 1;
+        ptoPrefix[nextIdx] = runningPtoCost;
+        buddyPtoPrefix[nextIdx] = runningBuddyCost;
+        holidayScorePrefix[nextIdx] = runningHolidayScore;
+        holidayCountPrefix[nextIdx] = runningHolidayCount;
+        jointScorePrefix[nextIdx] = runningJointScore;
 
+        // Advance date
         const dim = curM === 1 && isLeap(curY) ? 29 : daysInMonth[curM];
         curD++;
         if (curD > dim) {

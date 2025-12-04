@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useRef, useEffect, Suspense, lazy, useCallback, useMemo } from 'react';
 import { OptimizationStrategy, TimeframeType, UserPreferences, OptimizationResult } from './types';
 import { Step1PTO, Step2Timeframe, Step3Strategy, Step4Location } from './components/StepWizard';
 import { generateVacationPlan } from './services/vacationService';
@@ -105,7 +105,7 @@ const App: React.FC = () => {
   
   const wizardRef = useRef<HTMLDivElement>(null);
 
-  const scrollToWizard = () => {
+  const scrollToWizard = useCallback(() => {
     if (view === 'how-it-works') {
         setView('landing');
         requestAnimationFrame(() => {
@@ -118,22 +118,23 @@ const App: React.FC = () => {
         element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         if(step === 0) setStep(1);
     }
-  };
+  }, [view, step]);
 
-  const updatePrefs = (key: keyof UserPreferences, value: any) => {
+  const updatePrefs = useCallback((key: keyof UserPreferences, value: any) => {
     setPrefs((prev) => ({ ...prev, [key]: value }));
-  };
+  }, []);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
       setStep((prev) => prev + 1);
       if (window.innerWidth < 768) {
           wizardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-  };
-  const handleBack = () => setStep((prev) => prev - 1);
+  }, []);
 
-  const handleGenerate = async () => {
-    setStep(5); 
+  const handleBack = useCallback(() => setStep((prev) => prev - 1), []);
+
+  const handleGenerate = useCallback(async () => {
+    setStep(5);
     setError(null);
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
@@ -147,16 +148,16 @@ const App: React.FC = () => {
       setError("We couldn't generate a plan. Please check your inputs.");
       setStep(4);
     }
-  };
+  }, [prefs]);
 
-  const handlePaymentSuccess = () => {
+  const handlePaymentSuccess = useCallback(() => {
       setIsLocked(false);
       setShowSuccessMessage(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       setTimeout(() => setShowSuccessMessage(false), 8000);
-  };
+  }, []);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setStep(0);
     setPrefs(initialPrefs);
     setResult(null);
@@ -164,7 +165,7 @@ const App: React.FC = () => {
     setShowSuccessMessage(false);
     setView('landing');
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  }, []);
 
   return (
     <div className="min-h-[100dvh] flex flex-col text-slate-200 pb-12 overflow-x-hidden">
