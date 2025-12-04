@@ -2,9 +2,19 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const integrations = [
-  { name: 'Google Calendar', initials: 'G', color: '#4285F4' },
-  { name: 'Outlook', initials: 'O', color: '#0A64AD' },
-  { name: 'iCal', initials: '', color: '#A2AAAD' }
+  {
+    name: 'Google Calendar',
+    initials: 'G',
+    color: '#4285F4',
+    accent: 'linear-gradient(135deg, #4285F4 0%, #34A853 100%)',
+  },
+  {
+    name: 'Outlook',
+    initials: 'O',
+    color: '#0A64AD',
+    accent: 'linear-gradient(135deg, #0A64AD 0%, #50B5FF 100%)',
+  },
+  { name: 'iCal', initials: '', color: '#A2AAAD', accent: '#ffffff' },
 ];
 
 const wallOfLove = [
@@ -17,7 +27,7 @@ const wallOfLove = [
   {
     handle: '@nomadloop',
     role: 'Remote PM & Nomad',
-    quote: 'Essential for maximizing remote work travel. I plan cities by PTO ROI now.',
+    quote: 'Essential for maximizing remote work travel.',
     avatar: 'https://api.dicebear.com/7.x/thumbs/svg?seed=nomad',
   },
   {
@@ -48,27 +58,29 @@ export const TrustSection: React.FC = () => {
 
         {/* Integration Marquee */}
         <div className="bg-white/5 border border-white/10 rounded-3xl px-6 py-5 overflow-hidden">
-          <div className="flex items-center gap-4 mb-3 text-slate-400 text-sm font-medium">
+          <div className="flex items-center gap-4 mb-4 text-slate-400 text-sm font-medium">
             <span className="inline-flex w-8 h-8 items-center justify-center rounded-full bg-white/5">🔌</span>
-            <span>Integration-ready with the calendars you already trust</span>
+            <span>Works seamlessly with your existing workflow.</span>
           </div>
-          <div className="flex gap-6 flex-wrap md:flex-nowrap md:gap-10 items-center justify-center md:justify-between">
-            {integrations.map((item) => (
-              <motion.div
-                key={item.name}
-                whileHover={{ scale: 1.05, opacity: 1 }}
-                className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-slate-400 hover:text-white transition-colors duration-200"
-                style={{ opacity: 0.6 }}
-              >
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold bg-white/10"
-                  style={{ color: item.color }}
+          <div className="relative">
+            <div className="flex gap-4 animate-scroll will-change-transform" style={{ minWidth: '200%' }}>
+              {[...integrations, ...integrations].map((item, idx) => (
+                <motion.div
+                  key={`${item.name}-${idx}`}
+                  whileHover={{ scale: 1.05, opacity: 1 }}
+                  className="group flex items-center gap-3 px-5 py-4 rounded-2xl bg-white/5 border border-white/10 text-slate-400 transition-all duration-200"
+                  style={{ opacity: 0.5 }}
                 >
-                  {item.initials}
-                </div>
-                <span className="font-semibold">{item.name}</span>
-              </motion.div>
-            ))}
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold bg-white/10 grayscale group-hover:grayscale-0 transition-all"
+                    style={{ color: item.color, background: item.accent }}
+                  >
+                    {item.initials}
+                  </div>
+                  <span className="font-semibold group-hover:text-white transition-colors">{item.name}</span>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -86,22 +98,27 @@ export const TrustSection: React.FC = () => {
               <div className="space-y-3">
                 <h3 className="text-2xl font-display font-bold text-white">Read-Only Access Guaranteed</h3>
                 <p className="text-slate-300 text-sm md:text-base leading-relaxed">
-                  We calculate PTO windows locally against your calendar feed—no raw events leave your device. Scoped, revocable, and audited tokens keep your data sealed.
+                  We calculate locally—your schedule never leaves your device. Scoped, revocable tokens keep your calendar feed read-only.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="w-full md:w-[320px] bg-lime-accent text-dark-900 rounded-3xl p-6 shadow-[0_0_50px_rgba(190,242,100,0.35)] border border-lime-accent/60">
+          <div
+            className="w-full md:w-[320px] rounded-3xl p-6 border border-lime-accent/60 text-dark-900 shadow-[0_0_45px_rgba(190,242,100,0.28)]"
+            style={{ background: 'var(--brand-lime)' }}
+          >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-dark-900 text-lime-accent flex items-center justify-center text-lg">🔒</div>
+              <div className="w-10 h-10 rounded-2xl bg-dark-900 text-lime-accent flex items-center justify-center text-lg shadow-[0_0_30px_rgba(0,0,0,0.25)]">
+                🔒
+              </div>
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest">Local-first</p>
                 <p className="font-display text-xl font-bold">Secure by default</p>
               </div>
             </div>
             <p className="mt-4 text-sm font-semibold leading-relaxed">
-              No password vaulting, no background syncing. Connect when you optimize, disconnect when you're done.
+              Read-Only Access Guaranteed. We calculate locally—your schedule never leaves your device.
             </p>
           </div>
         </div>
