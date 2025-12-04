@@ -4,10 +4,32 @@ import { Step1PTO, Step2Timeframe, Step3Strategy, Step4Location } from './compon
 import { generateVacationPlan } from './services/vacationService';
 import { SEOHead } from './components/SEOHead';
 import { PainHero, BurnCalculator, SolutionGrid, BattleTestedMarquee } from './components/LandingVisuals';
+import { TrustSection } from './components/TrustSection';
+// Eagerly load the results view to remove chunk-fetch failures when users finish the wizard.
+import { ResultsView } from './components/ResultsView';
 
-// Lazy load heavy components
-const ResultsView = lazy(() => import('./components/ResultsView').then((module) => ({ default: module.ResultsView })));
-const HowItWorks = lazy(() => import('./components/HowItWorks').then((module) => ({ default: module.HowItWorks })));
+const lazyWithRetry = <T extends { default: React.ComponentType<any> }>(importer: () => Promise<T>) =>
+  lazy(async () => {
+    try {
+      return await importer();
+    } catch (error) {
+      const message = typeof error === 'object' && error !== null ? (error as Error).message : String(error);
+      const failedChunk = message.includes('Failed to fetch dynamically imported module');
+
+      if (failedChunk && typeof window !== 'undefined' && typeof sessionStorage !== 'undefined') {
+        const hasRefreshed = sessionStorage.getItem('vmx-chunk-reload');
+        if (!hasRefreshed) {
+          sessionStorage.setItem('vmx-chunk-reload', '1');
+          window.location.reload();
+        }
+      }
+
+      throw error;
+    }
+  });
+
+// Lazy load heavy components with retry guard for chunk load failures
+const HowItWorks = lazyWithRetry(() => import('./components/HowItWorks').then((module) => ({ default: module.HowItWorks })));
 
 const initialPrefs: UserPreferences = {
   ptoDays: 0,
@@ -93,11 +115,22 @@ const App: React.FC = () => {
     element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, []);
 
+  const isWizardTopInView = useCallback(() => {
+    const node = wizardRef.current;
+    if (!node) return false;
+
+    const rect = node.getBoundingClientRect();
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+    // Treat the wizard as visible when its top is within a comfortable viewport buffer.
+    return rect.top > -120 && rect.top < viewportHeight * 0.6;
+  }, []);
+
   useEffect(() => {
-    if (step > 0) {
+    if (step > 0 && !isWizardTopInView()) {
       wizardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, [step]);
+  }, [step, isWizardTopInView]);
 
   // Scroll only when starting the wizard from hero/How it Works
   const scrollToWizard = useCallback(() => {
@@ -122,9 +155,11 @@ const App: React.FC = () => {
     setStep((prev) => prev + 1);
     // Auto-scroll on mobile
     if (window.innerWidth < 768) {
-      window.scrollTo({ top: wizardRef.current?.offsetTop || 0, behavior: 'smooth' });
+      if (!isWizardTopInView()) {
+        window.scrollTo({ top: wizardRef.current?.offsetTop || 0, behavior: 'smooth' });
+      }
     }
-  }, []);
+  }, [isWizardTopInView]);
 
   const handleBack = useCallback(() => setStep((prev) => prev - 1), []);
 
@@ -203,6 +238,7 @@ const App: React.FC = () => {
           <BurnCalculator />
           <SolutionGrid />
           <BattleTestedMarquee />
+          <TrustSection />
 
           {/* THE WIZARD */}
           <div id="wizard-section" ref={wizardRef} className="w-full bg-[#020617] py-24 px-4 scroll-mt-24 relative z-[55]">
@@ -214,12 +250,15 @@ const App: React.FC = () => {
 
               {/* FIX: Removed 'overflow-hidden' and 'backdrop-blur' to fix mobile sticky buttons */}
               {/* FIX: Added z-[60] to ensure it sits ABOVE the bg-noise layer */}
-              <div className="relative z-[60] bg-[#0F1014] border border-white/10 rounded-[2rem] p-6 md:p-12 shadow-2xl min-h-[550px] flex flex-col">
-                {error && (
-                  <div className="bg-red-500/20 text-red-200 px-4 py-2 rounded-lg text-sm mb-4 border border-red-500/20 text-center">
-                    {error}
+              <div className="relative z-[60] bg-[#0F1014] border border-white/10 rounded-[2rem] p-6 md:p-12 shadow-2xl min-h-[600px] flex flex-col">
+                <div className="min-h-[52px] mb-4" aria-live="polite" aria-atomic="true">
+                  <div
+                    className={`bg-red-500/15 text-red-200 px-4 py-3 rounded-lg text-sm border border-red-500/20 text-center transition-all duration-300 ${error ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'}`}
+                    role={error ? 'alert' : undefined}
+                  >
+                    {error || ' '}
                   </div>
-                )}
+                </div>
 
                 {step === 0 && (
                   <div className="text-center space-y-8 animate-fade-up relative z-10 py-10 my-auto">
