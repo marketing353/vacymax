@@ -227,7 +227,6 @@ export const Step1PTO: React.FC<StepProps> = ({ prefs, updatePrefs, onNext }) =>
                         onChange={(e) => handlePtoChange(e.target.value)}
                         className="w-full bg-transparent text-6xl md:text-8xl font-display font-bold text-white focus:outline-none placeholder-slate-800 transition-all tracking-tighter pr-24"
                         placeholder="0"
-                        autoFocus
                     />
                     <span className="text-sm md:text-xl font-bold text-slate-600 absolute right-0 bottom-4 md:bottom-6 tracking-widest uppercase pointer-events-none">Days</span>
                 </div>
