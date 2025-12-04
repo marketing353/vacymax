@@ -23,7 +23,7 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
             </div>
 
             <div className="max-w-5xl mx-auto relative z-10 text-center md:text-left">
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
@@ -38,22 +38,35 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-600">When You Waste PTO.</span>
                     </h1>
                     
-                    <p className="text-xl text-slate-400 max-w-2xl leading-relaxed mb-10">
-                        Every year, you leave <strong className="text-white">40% of your potential leisure time</strong> on the table. 
-                        That is thousands of dollars you are voluntarily donating back to your boss.
-                        <br/><br/>
-                        <span className="text-white border-b border-red-500/50">Stop being the "nice guy" who burns out.</span>
+                    <p className="text-xl text-slate-300 max-w-3xl leading-relaxed mb-8 space-y-4">
+                        <span className="block">Stop losing paid time to chaos meetings and HR fine print. VacationMax turns <strong className="text-white">3 PTO days into 9-day breaks</strong> by stitching holidays, weekends, and your odd shifts together.</span>
+                        <span className="block">Built for high-intent visitors: launch the optimizer instantly, see the gain in cash terms, and export a real plan without creating an account.</span>
                     </p>
 
-                    <button 
-                        onClick={onCta}
-                        className="group relative px-8 py-4 bg-white text-black font-bold text-lg rounded-full overflow-hidden hover:scale-105 transition-transform"
-                    >
-                        <span className="relative z-10 flex items-center gap-2">
-                            Reclaim My Time
-                            <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                        </span>
-                    </button>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+                        <button
+                            onClick={onCta}
+                            className="group relative px-8 py-4 bg-white text-black font-bold text-lg rounded-full overflow-hidden hover:scale-105 transition-transform"
+                        >
+                            <span className="relative z-10 flex items-center gap-2">
+                                Launch My Optimizer
+                                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                            </span>
+                        </button>
+                        <div className="text-sm text-slate-400 space-y-1">
+                            <p className="font-semibold text-white/90">No account required • Privacy-first • Under 60 seconds</p>
+                            <p>Start free, export-ready, and read-only so you can decide fast without committing your calendar.</p>
+                        </div>
+                    </div>
+
+                    <div className="grid sm:grid-cols-3 gap-3 text-left">
+                        {["Read-only calendar sync", "Optimizes around holidays automatically", "Keeps your weekends intact"].map((item) => (
+                            <div key={item} className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-slate-200">
+                                <span className="w-8 h-8 rounded-full bg-red-500/15 flex items-center justify-center text-red-300 font-bold">✓</span>
+                                <span className="leading-snug">{item}</span>
+                            </div>
+                        ))}
+                    </div>
                 </motion.div>
             </div>
         </div>
@@ -75,14 +88,22 @@ export const BurnCalculator = () => {
         <div className="w-full bg-[#050505] border-y border-white/5 py-24 relative overflow-hidden">
             <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
                 
-                <div className="space-y-8">
+                <div className="space-y-6">
                     <h2 className="text-4xl font-display font-bold text-white">Do The Math. <br/>It Hurts.</h2>
-                    <p className="text-slate-400 text-lg">
-                        Most people think unused PTO just "rolls over" or "disappears." 
-                        <br/>No. <strong className="text-white">It is wage theft.</strong>
-                        <br/><br/>
-                        Use the calculator to see exactly how much money you are setting on fire by not optimizing your calendar.
+                    <p className="text-slate-300 text-lg leading-relaxed">
+                        Most people think unused PTO just "rolls over" or "disappears." No. <strong className="text-white">It is wage theft.</strong>
+                        This is the cash value of donating your days back to the company.
                     </p>
+                    <div className="grid sm:grid-cols-2 gap-3 text-sm text-slate-200">
+                        <div className="flex items-start gap-3 bg-white/5 border border-white/10 rounded-2xl p-4">
+                            <span className="w-8 h-8 rounded-full bg-lime-accent/15 text-lime-accent flex items-center justify-center font-bold">✓</span>
+                            <span className="leading-relaxed">See the loss per day, then auto-sequence the exact PTO days that erase it.</span>
+                        </div>
+                        <div className="flex items-start gap-3 bg-white/5 border border-white/10 rounded-2xl p-4">
+                            <span className="w-8 h-8 rounded-full bg-lime-accent/15 text-lime-accent flex items-center justify-center font-bold">✓</span>
+                            <span className="leading-relaxed">No account walls or credit card forms—jump straight into the optimizer when you are ready.</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="bg-[#0F1014] border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl relative">
@@ -148,6 +169,28 @@ export const BurnCalculator = () => {
                         </div>
                     </div>
                 </div>
+
+                <div className="lg:col-span-2 mt-8 bg-white/5 border border-white/10 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                    <div className="space-y-3 max-w-3xl">
+                        <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-slate-500">Conversion Ready</p>
+                        <h3 className="text-2xl md:text-3xl font-display font-bold text-white">See what you recover before you connect anything.</h3>
+                        <p className="text-slate-300 text-sm md:text-base leading-relaxed">Preview savings immediately, then switch to read-only calendar sync when you are convinced. No card. No sales call. Just reclaimed days.</p>
+                        <div className="flex flex-wrap gap-3 text-sm text-slate-200">
+                            {["Local-only calculations", "Weekend protection by default", "Google/Outlook/iCal ready", "Exports your exact dates"].map((item) => (
+                                <span key={item} className="px-3 py-2 rounded-full bg-white/5 border border-white/10">{item}</span>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="flex flex-col gap-2 w-full md:w-auto">
+                        <button
+                            onClick={() => document.getElementById('wizard-section')?.scrollIntoView({ behavior: 'smooth' })}
+                            className="px-6 py-4 rounded-2xl bg-lime-accent text-dark-900 font-bold text-base shadow-[0_0_30px_rgba(190,242,100,0.25)] hover:shadow-[0_0_40px_rgba(190,242,100,0.35)] transition-transform active:scale-95"
+                        >
+                            Start Free Optimization
+                        </button>
+                        <p className="text-xs text-slate-400 font-semibold">No account. Read-only preview until you are ready to sync.</p>
+                    </div>
+                </div>
             </div>
         </div>
     );
@@ -165,9 +208,9 @@ export const SolutionGrid = () => {
 
             <div className="max-w-7xl mx-auto relative z-20">
                 <div className="text-center mb-20">
-                    <h2 className="text-4xl md:text-6xl font-display font-bold text-white mb-6">Built for Real Life.<br/>Not just 9-to-5s.</h2>
+                    <h2 className="text-4xl md:text-6xl font-display font-bold text-white mb-6">Built for real schedules.<br/>Not just 9-to-5s.</h2>
                     <p className="text-teal-200/80 text-xl max-w-2xl mx-auto">
-                        Reddit hates generic vacation planners. So we built the specific features you actually asked for.
+                        Purpose-built for shift crews, parents, and unlimited PTO policies—every optimization below ships today, no vaporware. Quick wins, transparent math, and exportable plans.
                     </p>
                 </div>
 
@@ -217,6 +260,28 @@ export const SolutionGrid = () => {
                         </div>
                     </div>
 
+                </div>
+
+                <div className="mt-12 bg-teal-900/50 border border-teal-500/30 rounded-3xl p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                    <div className="space-y-2 max-w-3xl">
+                        <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-teal-200/70">Conversion-backed copy</p>
+                        <h3 className="text-2xl md:text-3xl font-display font-bold text-white">Zero-waste planning that proves itself before you pay.</h3>
+                        <p className="text-teal-100/80 text-sm md:text-base leading-relaxed">Run the optimizer immediately, then lock it to your calendar in read-only mode. Export the .ICS and Google links only after the math checks out.</p>
+                        <div className="flex flex-wrap gap-3 text-sm text-teal-50/90">
+                            {['No accounts or cards', 'Local-first calculations', 'Exports to .ICS & Google Calendar', 'Weekend + holiday protection baked in'].map((item) => (
+                                <span key={item} className="px-3 py-2 rounded-full bg-white/5 border border-white/10">{item}</span>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="flex flex-col gap-2 w-full md:w-auto">
+                        <button
+                            onClick={() => document.getElementById('wizard-section')?.scrollIntoView({ behavior: 'smooth' })}
+                            className="px-6 py-4 rounded-2xl bg-white text-dark-900 font-bold text-base shadow-[0_0_30px_rgba(255,255,255,0.25)] hover:shadow-[0_0_40px_rgba(255,255,255,0.35)] transition-transform active:scale-95"
+                        >
+                            Launch Optimizer Now
+                        </button>
+                        <p className="text-xs text-teal-100/80 font-semibold">See your longest break in under 60 seconds.</p>
+                    </div>
                 </div>
             </div>
         </div>
