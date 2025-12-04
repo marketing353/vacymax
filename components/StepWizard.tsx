@@ -192,11 +192,9 @@ export const Step1PTO: React.FC<StepProps> = ({ prefs, updatePrefs, onNext }) =>
 
   const { totalDays, valueEstimate, potentialDays } = totals;
 
-  const canProceed = totalDays > 0;
+  const canProceed = totalDays >= 0;
 
-  // Guard against navigation even if a disabled state is bypassed (e.g., stale UI state)
   const handleNextClick = () => {
-    if (!canProceed) return;
     onNext();
   };
 
@@ -253,7 +251,7 @@ export const Step1PTO: React.FC<StepProps> = ({ prefs, updatePrefs, onNext }) =>
                 </div>
                 <div className="mt-2 text-[10px] text-slate-500 font-medium flex items-center gap-1.5 opacity-80">
                     <svg className="w-3 h-3 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span>Enter at least one PTO day to continue.</span>
+                    <span>Leave at 0 to build around public holidays only, or add PTO days for longer breaks.</span>
                 </div>
              </div>
 
