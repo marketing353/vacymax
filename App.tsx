@@ -5,9 +5,15 @@ import { generateVacationPlan } from './services/vacationService';
 import { SEOHead } from './components/SEOHead';
 import { PainHero, BurnCalculator, SolutionGrid, BattleTestedMarquee } from './components/LandingVisuals';
 import { TrustSection } from './components/TrustSection';
-import { AboutPage, AlgorithmPage, PrivacyPage, TermsPage, RegionPage } from './components/ContentPages';
 // Eagerly load the results view to remove chunk-fetch failures when users finish the wizard.
 import { ResultsView } from './components/ResultsView';
+
+// Lazy load content pages
+const AboutPage = lazy(() => import('./components/ContentPages').then(module => ({ default: module.AboutPage })));
+const AlgorithmPage = lazy(() => import('./components/ContentPages').then(module => ({ default: module.AlgorithmPage })));
+const PrivacyPage = lazy(() => import('./components/ContentPages').then(module => ({ default: module.PrivacyPage })));
+const TermsPage = lazy(() => import('./components/ContentPages').then(module => ({ default: module.TermsPage })));
+const RegionPage = lazy(() => import('./components/ContentPages').then(module => ({ default: module.RegionPage })));
 
 const lazyWithRetry = <T extends { default: React.ComponentType<any> }>(importer: () => Promise<T>) =>
   lazy(async () => {
@@ -252,14 +258,16 @@ const App: React.FC = () => {
         </Suspense>
       )}
 
-      {view === 'about' && <AboutPage onBack={() => setView('landing')} />}
-      {view === 'algorithm' && <AlgorithmPage onBack={() => setView('landing')} />}
-      {view === 'privacy' && <PrivacyPage onBack={() => setView('landing')} />}
-      {view === 'terms' && <TermsPage onBack={() => setView('landing')} />}
-      {view === 'region-us' && <RegionPage region="United States" onBack={() => setView('landing')} />}
-      {view === 'region-uk' && <RegionPage region="United Kingdom" onBack={() => setView('landing')} />}
-      {view === 'region-ca' && <RegionPage region="Canada" onBack={() => setView('landing')} />}
-      {view === 'region-au' && <RegionPage region="Australia" onBack={() => setView('landing')} />}
+      <Suspense fallback={<LoadingFallback />}>
+        {view === 'about' && <AboutPage onBack={() => setView('landing')} />}
+        {view === 'algorithm' && <AlgorithmPage onBack={() => setView('landing')} />}
+        {view === 'privacy' && <PrivacyPage onBack={() => setView('landing')} />}
+        {view === 'terms' && <TermsPage onBack={() => setView('landing')} />}
+        {view === 'region-us' && <RegionPage region="United States" onBack={() => setView('landing')} />}
+        {view === 'region-uk' && <RegionPage region="United Kingdom" onBack={() => setView('landing')} />}
+        {view === 'region-ca' && <RegionPage region="Canada" onBack={() => setView('landing')} />}
+        {view === 'region-au' && <RegionPage region="Australia" onBack={() => setView('landing')} />}
+      </Suspense>
 
       {view === 'landing' && (
         <>
@@ -361,7 +369,7 @@ const App: React.FC = () => {
                 </div>
 
                 {/* Right: Command Modules */}
-                <div className="lg:col-span-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="lg:col-span-6 grid grid-cols-1 gap-8">
 
                   {/* Module A: Directives (Links) */}
                   <div className="bg-white/5 border border-white/10 p-6 rounded-sm relative group hover:border-lime-accent/50 transition-colors">
@@ -394,30 +402,6 @@ const App: React.FC = () => {
                         </button>
                       </li>
                     </ul>
-                  </div>
-
-                  {/* Module B: Data Uplink */}
-                  <div className="bg-white/5 border border-white/10 p-6 rounded-sm relative group hover:border-lime-accent/50 transition-colors flex flex-col justify-between">
-                    <div className="absolute top-0 left-0 w-2 h-2 border-l border-t border-lime-accent opacity-50"></div>
-                    <div className="absolute top-0 right-0 w-2 h-2 border-r border-t border-lime-accent opacity-50"></div>
-                    <div className="absolute bottom-0 left-0 w-2 h-2 border-l border-b border-lime-accent opacity-50"></div>
-                    <div className="absolute bottom-0 right-0 w-2 h-2 border-r border-b border-lime-accent opacity-50"></div>
-
-                    <div>
-                      <h4 className="text-lime-accent text-xs mb-4 uppercase tracking-[0.2em]">Data_Uplink</h4>
-                      <p className="text-[10px] text-slate-500 mb-4">Input coordinates to receive intel drops.</p>
-                      <div className="relative">
-                        <span className="absolute left-3 top-2.5 text-lime-accent font-bold text-xs">&gt;</span>
-                        <input
-                          type="email"
-                          className="w-full bg-black border border-white/20 pl-8 pr-4 py-2 text-xs text-white placeholder:text-slate-700 focus:border-lime-accent focus:outline-none focus:ring-1 focus:ring-lime-accent/50 transition-all font-mono uppercase"
-                          placeholder="USER_EMAIL"
-                        />
-                      </div>
-                    </div>
-                    <button className="mt-4 w-full bg-lime-accent/10 border border-lime-accent/50 hover:bg-lime-accent hover:text-black py-2 text-xs font-bold uppercase tracking-widest transition-all">
-                      [ TRANSMIT ]
-                    </button>
                   </div>
 
                 </div>
