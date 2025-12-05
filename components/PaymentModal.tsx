@@ -61,6 +61,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
     const [paymentStep, setPaymentStep] = useState<'initial' | 'confirming'>('initial');
 
+
     const handleCheckout = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
@@ -71,7 +72,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 throw new Error('Please add an email so we can send your receipt.');
             }
 
-            // Call your serverless function to create a Stripe Checkout Session
+            // Call serverless function to create Stripe Checkout Session
             const response = await fetch('/api/create-checkout-session', {
                 method: 'POST',
                 headers: {
@@ -87,7 +88,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
+                const errorData = await response.json().catch(() => ({ error: 'Server error' }));
                 throw new Error(errorData.error || 'Failed to create checkout session');
             }
 
