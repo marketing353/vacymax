@@ -60,7 +60,7 @@ interface StepProps {
     onBack?: () => void;
 }
 
-const LocationSelector = ({
+const LocationSelector = React.memo(({
     label,
     countryValue,
     regionValue,
@@ -137,7 +137,7 @@ const LocationSelector = ({
             </div>
         </div>
     );
-};
+});
 
 
 // --- STEP COMPONENTS ---
@@ -148,7 +148,7 @@ const normalizePtoValue = (rawValue: string) => {
     return Math.min(parsed, 365);
 };
 
-export const Step1PTO: React.FC<StepProps> = ({ prefs, updatePrefs, onNext }) => {
+export const Step1PTO: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, onNext }) => {
     const userDays = prefs.ptoDays;
     const buddyDays = prefs.buddyPtoDays || 0;
 
@@ -317,9 +317,9 @@ export const Step1PTO: React.FC<StepProps> = ({ prefs, updatePrefs, onNext }) =>
             <NavButtons onNext={handleNextClick} nextDisabled={!canProceed} nextLabel="Confirm Balance" />
         </div>
     );
-};
+});
 
-export const Step2Timeframe: React.FC<StepProps> = ({ prefs, updatePrefs, onNext, onBack }) => {
+export const Step2Timeframe: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, onNext, onBack }) => {
     const options = [
         { value: TimeframeType.CALENDAR_2026, label: '2026', desc: 'Plan your next year early', tag: 'Recommended' },
         { value: TimeframeType.CALENDAR_2025, label: '2025', desc: 'Remaining holidays this year', tag: 'Closing Soon' },
@@ -355,9 +355,9 @@ export const Step2Timeframe: React.FC<StepProps> = ({ prefs, updatePrefs, onNext
             <NavButtons onNext={onNext} onBack={onBack} nextLabel="Next" />
         </div>
     );
-};
+});
 
-export const Step3Strategy: React.FC<StepProps> = ({ prefs, updatePrefs, onNext, onBack }) => {
+export const Step3Strategy: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, onNext, onBack }) => {
 
     const handleSelection = (id: string) => {
         updatePrefs('strategy', id as any);
@@ -393,9 +393,9 @@ export const Step3Strategy: React.FC<StepProps> = ({ prefs, updatePrefs, onNext,
             <NavButtons onNext={onNext} onBack={onBack} nextLabel="Next" />
         </div>
     );
-};
+});
 
-export const Step4Location: React.FC<StepProps> = ({ prefs, updatePrefs, onNext, onBack }) => {
+export const Step4Location: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, onNext, onBack }) => {
 
     const nextDisabled = !prefs.country || (prefs.hasBuddy && !prefs.buddyCountry);
     const [generating, setGenerating] = useState(false);
@@ -470,4 +470,4 @@ export const Step4Location: React.FC<StepProps> = ({ prefs, updatePrefs, onNext,
             />
         </div>
     );
-};
+});

@@ -365,18 +365,62 @@ const generateVacationPlan = async (prefs: UserPreferences): Promise<Optimizatio
         }
     };
 
-    interface Candidate {
-        startIdx: number;
-        len: number;
-        ptoCost: number;
-        buddyCost: number;
-        efficiency: number;
-        score: number;
+    // SoA (Structure of Arrays) container
+    class CandidateList {
+        startIdx: Int32Array;
+        len: Int32Array;
+        ptoCost: Int32Array;
+        buddyCost: Int32Array;
+        efficiency: Float32Array;
+        score: Float32Array;
+        count: number;
+        capacity: number;
+
+        constructor(initialCapacity: number) {
+            this.capacity = initialCapacity;
+            this.count = 0;
+            this.startIdx = new Int32Array(this.capacity);
+            this.len = new Int32Array(this.capacity);
+            this.ptoCost = new Int32Array(this.capacity);
+            this.buddyCost = new Int32Array(this.capacity);
+            this.efficiency = new Float32Array(this.capacity);
+            this.score = new Float32Array(this.capacity);
+        }
+
+        add(startIdx: number, len: number, ptoCost: number, buddyCost: number, efficiency: number, score: number) {
+            if (this.count >= this.capacity) this.grow();
+            const i = this.count;
+            this.startIdx[i] = startIdx;
+            this.len[i] = len;
+            this.ptoCost[i] = ptoCost;
+            this.buddyCost[i] = buddyCost;
+            this.efficiency[i] = efficiency;
+            this.score[i] = score;
+            this.count++;
+        }
+
+        grow() {
+            this.capacity *= 2;
+            const newStart = new Int32Array(this.capacity); newStart.set(this.startIdx); this.startIdx = newStart;
+            const newLen = new Int32Array(this.capacity); newLen.set(this.len); this.len = newLen;
+            const newPto = new Int32Array(this.capacity); newPto.set(this.ptoCost); this.ptoCost = newPto;
+            const newBuddy = new Int32Array(this.capacity); newBuddy.set(this.buddyCost); this.buddyCost = newBuddy;
+            const newEff = new Float32Array(this.capacity); newEff.set(this.efficiency); this.efficiency = newEff;
+            const newScore = new Float32Array(this.capacity); newScore.set(this.score); this.score = newScore;
+        }
+
+        getSortedIndices(): Int32Array {
+            const indices = new Int32Array(this.count);
+            for (let i = 0; i < this.count; i++) indices[i] = i;
+            // Sort by score descending
+            indices.sort((a, b) => this.score[b] - this.score[a]);
+            return indices;
+        }
     }
 
-    const runScan = (isRescue: boolean): Candidate[] => {
+    const runScan = (isRescue: boolean): CandidateList => {
         const { min, max, threshold } = getStrategyConfig(isRescue);
-        const candidates: Candidate[] = [];
+        const candidates = new CandidateList(1024);
         const hasBuddy = prefs.hasBuddy;
         const gainFactor = hasBuddy ? 2 : 1;
         const effThreshold = (!hasBuddy && !isRescue) ? threshold + 0.2 : threshold;
@@ -388,11 +432,10 @@ const generateVacationPlan = async (prefs: UserPreferences): Promise<Optimizatio
 
             for (let len = min; len <= maxWindow; len++) {
                 const endIdx = i + len;
-
                 const ptoCost = ptoPrefix[endIdx] - ptoPrefix[i];
                 const buddyCost = hasBuddy ? (buddyPtoPrefix[endIdx] - buddyPtoPrefix[i]) : 0;
-
                 const combinedCost = ptoCost + buddyCost;
+
                 const gain = len * gainFactor;
                 const efficiency = combinedCost === 0 ? 100 : gain / combinedCost;
 
@@ -417,7 +460,7 @@ const generateVacationPlan = async (prefs: UserPreferences): Promise<Optimizatio
                     if (startDay === 5) score += 20;
                     if (endDay === 0 || endDay === 1) score += 15;
 
-                    candidates.push({ startIdx: i, len, ptoCost, buddyCost, efficiency, score });
+                    candidates.add(i, len, ptoCost, buddyCost, efficiency, score);
                 }
             }
         }
@@ -425,11 +468,11 @@ const generateVacationPlan = async (prefs: UserPreferences): Promise<Optimizatio
     };
 
     let candidates = runScan(false);
-    if (candidates.length === 0) {
+    if (candidates.count === 0) {
         candidates = runScan(true);
     }
 
-    candidates.sort((a, b) => b.score - a.score);
+    const sortedIndices = candidates.getSortedIndices();
 
     const selectedBlocks: VacationBlock[] = [];
     const occupied = new Uint8Array(totalDays);
@@ -439,28 +482,36 @@ const generateVacationPlan = async (prefs: UserPreferences): Promise<Optimizatio
     const MAX_BLOCKS = 40;
     let blockCount = 0;
 
-    for (const cand of candidates) {
+    // Iterate through sorted indices
+    for (let i = 0; i < candidates.count; i++) {
         if (blockCount >= MAX_BLOCKS) break;
 
-        if (cand.ptoCost > 0 && remainingPto < cand.ptoCost) continue;
-        if (prefs.hasBuddy && cand.buddyCost > 0 && remainingBuddyPto < cand.buddyCost) continue;
+        const idx = sortedIndices[i];
+        const cStartIdx = candidates.startIdx[idx];
+        const cLen = candidates.len[idx];
+        const cPtoCost = candidates.ptoCost[idx];
+        const cBuddyCost = candidates.buddyCost[idx];
+        const cEfficiency = candidates.efficiency[idx];
+
+        if (cPtoCost > 0 && remainingPto < cPtoCost) continue;
+        if (prefs.hasBuddy && cBuddyCost > 0 && remainingBuddyPto < cBuddyCost) continue;
 
         let overlap = false;
-        const endIdx = cand.startIdx + cand.len;
-        for (let k = cand.startIdx; k < endIdx; k++) {
+        const endIdx = cStartIdx + cLen;
+        for (let k = cStartIdx; k < endIdx; k++) {
             if (occupied[k] === 1) { overlap = true; break; }
         }
         if (overlap) continue;
 
-        remainingPto -= cand.ptoCost;
-        if (prefs.hasBuddy) remainingBuddyPto -= cand.buddyCost;
-        for (let k = cand.startIdx; k < endIdx; k++) occupied[k] = 1;
+        remainingPto -= cPtoCost;
+        if (prefs.hasBuddy) remainingBuddyPto -= cBuddyCost;
+        for (let k = cStartIdx; k < endIdx; k++) occupied[k] = 1;
 
-        const bStart = new Date(startTs + (cand.startIdx * msPerDay));
+        const bStart = new Date(startTs + (cStartIdx * msPerDay));
         const bEnd = new Date(startTs + ((endIdx - 1) * msPerDay));
 
         const holidaysUsed: HolidayInfo[] = [];
-        for (let k = cand.startIdx; k < endIdx; k++) {
+        for (let k = cStartIdx; k < endIdx; k++) {
             const hid = holidayNameIds[k];
             const bid = buddyHolidayNameIds[k];
 
@@ -483,13 +534,13 @@ const generateVacationPlan = async (prefs: UserPreferences): Promise<Optimizatio
         const mainHoliday = holidaysUsed.length > 0 ? holidaysUsed[0].name.split(' (')[0].split(':')[0] : null;
 
         if (mainHoliday) {
-            if (cand.efficiency >= 3.5 && cand.len >= 9) desc = `${mainHoliday} Mega Bridge`;
-            else if (cand.efficiency >= 2.5) desc = `${mainHoliday} Super Bridge`;
+            if (cEfficiency >= 3.5 && cLen >= 9) desc = `${mainHoliday} Mega Bridge`;
+            else if (cEfficiency >= 2.5) desc = `${mainHoliday} Super Bridge`;
             else desc = `${mainHoliday} Break`;
         } else {
-            if (cand.len <= 4) desc = "Long Weekend";
-            else if (cand.len <= 6) desc = "Mini-Getaway";
-            else if (cand.len <= 9) desc = "Week-Long Recharge";
+            if (cLen <= 4) desc = "Long Weekend";
+            else if (cLen <= 6) desc = "Mini-Getaway";
+            else if (cLen <= 9) desc = "Week-Long Recharge";
             else desc = "Extended Vacation";
         }
 
@@ -497,13 +548,13 @@ const generateVacationPlan = async (prefs: UserPreferences): Promise<Optimizatio
             id: Math.random().toString(36).substr(2, 9),
             startDate: fastDateStr(bStart.getUTCFullYear(), bStart.getUTCMonth(), bStart.getUTCDate()),
             endDate: fastDateStr(bEnd.getUTCFullYear(), bEnd.getUTCMonth(), bEnd.getUTCDate()),
-            totalDaysOff: cand.len,
-            ptoDaysUsed: cand.ptoCost,
-            buddyPtoDaysUsed: prefs.hasBuddy ? cand.buddyCost : undefined,
+            totalDaysOff: cLen,
+            ptoDaysUsed: cPtoCost,
+            buddyPtoDaysUsed: prefs.hasBuddy ? cBuddyCost : undefined,
             publicHolidaysUsed: holidaysUsed,
             description: desc,
-            efficiencyScore: cand.efficiency,
-            monetaryValue: (cand.len - cand.ptoCost) * DAILY_VALUE_USD
+            efficiencyScore: cEfficiency,
+            monetaryValue: (cLen - cPtoCost) * DAILY_VALUE_USD
         });
 
         blockCount++;
