@@ -1,71 +1,173 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// --- PHASE 1: THE PAIN (Anti-Hero) ---
+// --- PHASE 1: THE HOOK (Interactive Hero) ---
 export const PainHero = ({ onCta }: { onCta: () => void }) => {
-    const [wastedSeconds, setWastedSeconds] = useState(4520);
+    const [region, setRegion] = useState<string | null>(null);
+    const [status, setStatus] = useState<'idle' | 'scanning' | 'complete'>('idle');
+    const [scannedDays, setScannedDays] = useState(0);
 
-    useEffect(() => {
+    const handleRegionSelect = (r: string) => {
+        setRegion(r);
+        setStatus('scanning');
+
+        // Simulated scan effect
+        let count = 0;
         const interval = setInterval(() => {
-            setWastedSeconds(prev => prev + 1);
-        }, 1000);
-        return () => clearInterval(interval);
-    }, []);
+            count += 1;
+            setScannedDays(count);
+            if (count >= 14) {
+                clearInterval(interval);
+                setStatus('complete');
+            }
+        }, 100);
+    };
 
     return (
-        <div className="relative pt-32 pb-24 px-6 md:px-12 overflow-hidden bg-[#020617]">
-            {/* Dark, oppressive background gradient */}
-            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black via-[#020617] to-[#020617] z-0"></div>
-            
-            {/* Ticking Clock visual element - subtle anxiety trigger */}
-            <div className="absolute top-20 right-10 md:right-32 font-mono text-[120px] md:text-[200px] leading-none font-bold text-white/[0.03] select-none pointer-events-none z-0">
-                {wastedSeconds}
-            </div>
+        <div className="relative pt-32 pb-20 px-6 md:px-12 overflow-hidden bg-[#020617] min-h-[90vh] flex flex-col justify-center">
+            {/* Dynamic Background */}
+            <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#020617] to-[#020617] z-0"></div>
+            <div className="absolute inset-0 bg-noise opacity-[0.04] z-[1]"></div>
 
-            <div className="max-w-5xl mx-auto relative z-10 text-center md:text-left">
+            {/* Ambient Glows */}
+            <div className="absolute -top-[20%] left-[20%] w-[500px] h-[500px] bg-lime-accent/5 rounded-full blur-[120px] pointer-events-none"></div>
+
+            <div className="max-w-6xl mx-auto relative z-10 grid lg:grid-cols-2 gap-16 items-center">
+                {/* Left Column: Copy */}
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.8 }}
+                    className="text-left"
                 >
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-mono font-bold uppercase tracking-widest mb-8">
-                        <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-                        Wake Up Call
+                    <div className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full border border-lime-accent/20 bg-lime-accent/5 text-lime-accent text-xs font-bold tracking-widest uppercase shadow-[0_0_20px_-5px_rgba(132,204,22,0.3)]">
+                        <span className="w-1.5 h-1.5 rounded-full bg-lime-accent animate-pulse"></span>
+                        Algorithm Updated: 2026 Ready
                     </div>
-                    
+
                     <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tighter text-white leading-[1] mb-8">
-                        Your Company Loves It <br/>
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-600">When You Waste PTO.</span>
+                        Hack Your<br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-lime-accent to-emerald-400">Time Off</span>
                     </h1>
-                    
-                    <p className="text-xl text-slate-300 max-w-3xl leading-relaxed mb-8 space-y-4">
-                        <span className="block">Stop losing paid time to chaos meetings and HR fine print. VacationMax turns <strong className="text-white">3 PTO days into 9-day breaks</strong> by stitching holidays, weekends, and your odd shifts together.</span>
-                        <span className="block">Built for high-intent visitors: launch the optimizer instantly, see the gain in cash terms, and export a real plan without creating an account.</span>
+
+                    <p className="text-lg md:text-xl text-slate-400 max-w-xl leading-relaxed mb-10 font-light border-l border-white/10 pl-6">
+                        Don't just take vacation. <strong className="text-white font-medium">Engineer it.</strong><br />
+                        Our algorithm aligns your PTO with public holidays to turn <span className="text-white">10 days</span> of leave into <span className="text-white">24 days</span> of freedom.
                     </p>
 
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+                    <div className="flex flex-col sm:flex-row items-center gap-6">
                         <button
                             onClick={onCta}
-                            className="group relative px-8 py-4 bg-white text-black font-bold text-lg rounded-full overflow-hidden hover:scale-105 transition-transform"
+                            className="w-full sm:w-auto px-10 py-5 bg-lime-accent hover:bg-lime-400 text-dark-900 font-bold text-lg rounded-2xl hover:scale-[1.02] transition-all shadow-[0_0_40px_rgba(190,242,100,0.3)] flex items-center justify-center gap-3 group"
                         >
-                            <span className="relative z-10 flex items-center gap-2">
-                                Launch My Optimizer
-                                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                            </span>
+                            Analyze My 2026 Calendar
+                            <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                         </button>
-                        <div className="text-sm text-slate-400 space-y-1">
-                            <p className="font-semibold text-white/90">No account required • Privacy-first • Under 60 seconds</p>
-                            <p>Start free, export-ready, and read-only so you can decide fast without committing your calendar.</p>
-                        </div>
                     </div>
 
-                    <div className="grid sm:grid-cols-3 gap-3 text-left">
-                        {["Read-only calendar sync", "Optimizes around holidays automatically", "Keeps your weekends intact"].map((item) => (
-                            <div key={item} className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-slate-200">
-                                <span className="w-8 h-8 rounded-full bg-red-500/15 flex items-center justify-center text-red-300 font-bold">✓</span>
-                                <span className="leading-snug">{item}</span>
+                    <div className="mt-12 pt-8 border-t border-white/5 flex items-center gap-6">
+                        <div className="flex -space-x-4">
+                            {[1, 2, 3, 4].map(i => (
+                                <div key={i} className="w-10 h-10 rounded-full border-2 border-[#020617] bg-slate-800 flex items-center justify-center text-xs">
+                                    <img src={`https://api.dicebear.com/9.x/micah/svg?seed=${i + 20}`} className="w-full h-full rounded-full bg-slate-700" alt="avatar" />
+                                </div>
+                            ))}
+                        </div>
+                        <div className="text-sm">
+                            <p className="text-white font-bold">14,203 Planners</p>
+                            <p className="text-slate-500">Optimizing 2026 right now</p>
+                        </div>
+                    </div>
+                </motion.div>
+
+                {/* Right Column: Interactive Demo */}
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                    className="relative"
+                >
+                    <div className="absolute inset-0 bg-gradient-to-tr from-lime-accent/10 to-transparent rounded-[2.5rem] blur-3xl -z-10 transform rotate-6"></div>
+                    <div className="glass-panel rounded-[2.5rem] p-8 md:p-12 border border-white/10 relative overflow-hidden min-h-[500px] flex flex-col shadow-2xl bg-[#08080A]/80 backdrop-blur-xl">
+
+                        {/* Decorative UI Header */}
+                        <div className="flex justify-between items-center mb-8 border-b border-white/5 pb-6">
+                            <div className="flex gap-2">
+                                <span className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50"></span>
+                                <span className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50"></span>
+                                <span className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50"></span>
                             </div>
-                        ))}
+                            <div className="font-mono text-[10px] text-lime-accent uppercase tracking-widest bg-lime-accent/5 px-3 py-1 rounded">
+                                SYSTEM SCANNER V2.0
+                            </div>
+                        </div>
+
+                        {status === 'idle' && (
+                            <div className="flex-1 flex flex-col justify-center animate-fade-up">
+                                <h3 className="text-xl font-bold text-white mb-2">Select Region to Test</h3>
+                                <p className="text-slate-400 mb-6 text-sm">See how many "Bridge Days" exist in your calendar.</p>
+
+                                <div className="space-y-3">
+                                    {['United States', 'United Kingdom', 'Canada', 'Australia'].map((r) => (
+                                        <button
+                                            key={r}
+                                            onClick={() => handleRegionSelect(r)}
+                                            className="w-full text-left px-6 py-5 rounded-xl bg-white/5 hover:bg-lime-accent/10 border border-white/5 hover:border-lime-accent/40 transition-all flex justify-between items-center group"
+                                        >
+                                            <span className="text-white font-semibold group-hover:text-lime-accent transition-colors">{r}</span>
+                                            <span className="text-slate-600 group-hover:text-lime-accent transition-colors">→</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {status === 'scanning' && (
+                            <div className="flex-1 flex flex-col items-center justify-center text-center animate-fade-up relative">
+                                <div className="absolute inset-0 bg-lime-accent/5 animate-pulse rounded-full blur-3xl"></div>
+                                <div className="relative z-10 flex flex-col items-center">
+                                    <div className="w-24 h-24 border-4 border-lime-accent/20 border-t-lime-accent rounded-full animate-spin mb-8"></div>
+                                    <h4 className="text-2xl font-bold text-white mb-2">Analyzing 2026 Calendar...</h4>
+                                    <p className="text-slate-400 mb-8 font-mono text-xs uppercase tracking-widest">Scanning {region} Holidays</p>
+                                    <div className="text-6xl font-display font-bold text-white tabular-nums">
+                                        {scannedDays}
+                                    </div>
+                                    <p className="text-lime-accent text-sm font-bold mt-2">OPPORTUNITIES FOUND</p>
+                                </div>
+                            </div>
+                        )}
+
+                        {status === 'complete' && (
+                            <div className="flex-1 flex flex-col items-center justify-center text-center animate-fade-up">
+                                <div className="w-20 h-20 bg-gradient-to-br from-lime-accent to-emerald-500 rounded-2xl flex items-center justify-center text-4xl mb-8 shadow-[0_0_50px_rgba(16,185,129,0.4)] rotate-3">
+                                    🔓
+                                </div>
+                                <h4 className="text-3xl font-bold text-white mb-4">Optimization Complete</h4>
+                                <div className="bg-white/5 border border-white/10 rounded-xl p-6 mb-8 w-full">
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span className="text-slate-400 text-sm font-bold">INPUT</span>
+                                        <span className="text-white font-mono">10 DAYS PTO</span>
+                                    </div>
+                                    <div className="w-full h-px bg-white/10 my-3"></div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-lime-accent text-sm font-bold">OUTPUT</span>
+                                        <span className="text-lime-accent font-mono font-bold text-xl">24 DAYS OFF</span>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={onCta}
+                                    className="w-full py-4 bg-white text-dark-900 font-bold font-display tracking-wide rounded-xl hover:bg-slate-200 transition-colors shadow-lg"
+                                >
+                                    UNLOCK REAL SCHEDULE
+                                </button>
+                                <button
+                                    onClick={() => setStatus('idle')}
+                                    className="mt-6 text-xs text-slate-500 hover:text-white uppercase tracking-widest font-bold"
+                                >
+                                    Try Another Region
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </motion.div>
             </div>
@@ -76,53 +178,54 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
 // --- PHASE 2: THE AGITATION (Burn Calculator) ---
 export const BurnCalculator = () => {
     const [salary, setSalary] = useState(85000);
-    const [daysLeft, setDaysLeft] = useState(5);
-    
+    const [daysLeft, setDaysLeft] = useState(8);
+
     // Calculation: (Salary / 260 working days) * Days Left
     const dailyRate = salary / 260;
     const loss = Math.round(dailyRate * daysLeft);
-    
-    const isHighLoss = loss > 2000;
 
     return (
-        <div className="w-full bg-[#050505] border-y border-white/5 py-24 relative overflow-hidden">
-            <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
-                
-                <div className="space-y-6">
-                    <h2 className="text-4xl font-display font-bold text-white">Do The Math. <br/>It Hurts.</h2>
-                    <p className="text-slate-300 text-lg leading-relaxed">
-                        Most people think unused PTO just "rolls over" or "disappears." No. <strong className="text-white">It is wage theft.</strong>
-                        This is the cash value of donating your days back to the company.
+        <div className="w-full bg-[#050505] border-y border-white/5 py-32 relative overflow-hidden">
+            {/* Abstract Grid Line Background */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:32px_32px]"></div>
+
+            <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-20 items-center relative z-10">
+                <div className="space-y-10">
+                    <div className="inline-block px-4 py-1.5 bg-red-500/10 border border-red-500/20 rounded text-red-400 text-xs font-bold uppercase tracking-widest">
+                        ⚠️ Fiscal Year Ending
+                    </div>
+                    <h2 className="text-5xl md:text-6xl font-display font-bold text-white leading-[1.1]">
+                        You are paying<br />
+                        <span className="text-slate-600">to work.</span>
+                    </h2>
+                    <p className="text-slate-400 text-lg leading-relaxed max-w-md">
+                        Unused PTO is a voluntary donation to your employer. Calculate your loss below.
                     </p>
-                    <div className="grid sm:grid-cols-2 gap-3 text-sm text-slate-200">
-                        <div className="flex items-start gap-3 bg-white/5 border border-white/10 rounded-2xl p-4">
-                            <span className="w-8 h-8 rounded-full bg-lime-accent/15 text-lime-accent flex items-center justify-center font-bold">✓</span>
-                            <span className="leading-relaxed">See the loss per day, then auto-sequence the exact PTO days that erase it.</span>
+
+                    <div className="flex gap-8">
+                        <div>
+                            <p className="text-3xl font-bold text-white">{Math.round((260 - daysLeft) / 260 * 100)}%</p>
+                            <p className="text-xs text-slate-500 uppercase tracking-widest">Year Worked</p>
                         </div>
-                        <div className="flex items-start gap-3 bg-white/5 border border-white/10 rounded-2xl p-4">
-                            <span className="w-8 h-8 rounded-full bg-lime-accent/15 text-lime-accent flex items-center justify-center font-bold">✓</span>
-                            <span className="leading-relaxed">No account walls or credit card forms—jump straight into the optimizer when you are ready.</span>
+                        <div className="h-10 w-px bg-white/10"></div>
+                        <div>
+                            <p className="text-3xl font-bold text-red-500">-${loss.toLocaleString()}</p>
+                            <p className="text-xs text-slate-500 uppercase tracking-widest">Value Lost</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-[#0F1014] border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl relative">
-                    {/* Background Warning Glow */}
-                    <motion.div 
-                        animate={{ opacity: isHighLoss ? 0.2 : 0 }}
-                        className="absolute inset-0 bg-red-600 blur-[100px] pointer-events-none"
-                    />
-
-                    <div className="relative z-10 space-y-8">
+                <div className="glass-panel rounded-[2rem] p-10 border border-white/10 relative shadow-2xl bg-[#08080A]">
+                    <div className="space-y-10">
                         <div>
                             <div className="flex justify-between mb-2">
                                 <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Annual Salary</label>
                                 <span className="text-white font-mono font-bold">${salary.toLocaleString()}</span>
                             </div>
-                            <input 
-                                type="range" 
-                                min="30000" 
-                                max="300000" 
+                            <input
+                                type="range"
+                                min="30000"
+                                max="300000"
                                 step="5000"
                                 value={salary}
                                 onChange={(e) => setSalary(Number(e.target.value))}
@@ -132,63 +235,34 @@ export const BurnCalculator = () => {
 
                         <div>
                             <div className="flex justify-between mb-2">
-                                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Unoptimized Days Left</label>
-                                <span className="text-white font-mono font-bold">{daysLeft} Days</span>
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Unused Days</label>
+                                <span className="text-white font-mono font-bold text-red-400">{daysLeft} Days</span>
                             </div>
-                            <input 
-                                type="range" 
-                                min="1" 
-                                max="30" 
+                            <input
+                                type="range"
+                                min="1"
+                                max="30"
                                 value={daysLeft}
                                 onChange={(e) => setDaysLeft(Number(e.target.value))}
-                                className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-orange-500"
+                                className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-red-500"
                             />
-                            <p className="text-[10px] text-slate-500 mt-2">*Days you typically let expire or use on random Wednesdays.</p>
                         </div>
 
-                        <div className="pt-8 border-t border-white/10 text-center">
-                            <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Value Donated To Your Boss</p>
-                            <AnimatePresence mode='wait'>
-                                <motion.div
-                                    key={loss}
-                                    initial={{ scale: 0.9 }}
-                                    animate={isHighLoss ? { 
-                                        scale: 1.1, 
-                                        x: [0, -5, 5, -5, 5, 0],
-                                        color: "#ef4444"
-                                    } : { 
-                                        scale: 1, 
-                                        color: "#ffffff"
-                                    }}
-                                    transition={{ type: "spring", stiffness: 300 }}
-                                    className="text-6xl md:text-7xl font-display font-bold tabular-nums"
-                                >
-                                    ${loss.toLocaleString()}
-                                </motion.div>
-                            </AnimatePresence>
+                        <div className="pt-8 border-t border-white/10">
+                            <div className="flex justify-between items-center mb-6">
+                                <p className="text-sm font-bold text-white uppercase tracking-widest">Total Donation</p>
+                                <p className="text-xs text-red-400 font-mono bg-red-500/10 px-2 py-1 rounded border border-red-500/20">IRREVERSIBLE</p>
+                            </div>
+                            <div className="text-6xl font-display font-bold tabular-nums text-white mb-8 tracking-tighter">
+                                ${loss.toLocaleString()}
+                            </div>
+                            <button
+                                onClick={() => document.getElementById('wizard-section')?.scrollIntoView({ behavior: 'smooth' })}
+                                className="w-full py-5 bg-white text-black text-lg rounded-xl transition-all font-bold flex items-center justify-center gap-2 hover:bg-slate-200"
+                            >
+                                Stop Losing Money
+                            </button>
                         </div>
-                    </div>
-                </div>
-
-                <div className="lg:col-span-2 mt-8 bg-white/5 border border-white/10 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-                    <div className="space-y-3 max-w-3xl">
-                        <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-slate-500">Conversion Ready</p>
-                        <h3 className="text-2xl md:text-3xl font-display font-bold text-white">See what you recover before you connect anything.</h3>
-                        <p className="text-slate-300 text-sm md:text-base leading-relaxed">Preview savings immediately, then switch to read-only calendar sync when you are convinced. No card. No sales call. Just reclaimed days.</p>
-                        <div className="flex flex-wrap gap-3 text-sm text-slate-200">
-                            {["Local-only calculations", "Weekend protection by default", "Google/Outlook/iCal ready", "Exports your exact dates"].map((item) => (
-                                <span key={item} className="px-3 py-2 rounded-full bg-white/5 border border-white/10">{item}</span>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="flex flex-col gap-2 w-full md:w-auto">
-                        <button
-                            onClick={() => document.getElementById('wizard-section')?.scrollIntoView({ behavior: 'smooth' })}
-                            className="px-6 py-4 rounded-2xl bg-lime-accent text-dark-900 font-bold text-base shadow-[0_0_30px_rgba(190,242,100,0.25)] hover:shadow-[0_0_40px_rgba(190,242,100,0.35)] transition-transform active:scale-95"
-                        >
-                            Start Free Optimization
-                        </button>
-                        <p className="text-xs text-slate-400 font-semibold">No account. Read-only preview until you are ready to sync.</p>
                     </div>
                 </div>
             </div>
@@ -199,88 +273,64 @@ export const BurnCalculator = () => {
 // --- PHASE 3: THE SOLUTION (Bento Grid) ---
 export const SolutionGrid = () => {
     return (
-        <div className="w-full bg-[#042f2e] py-32 px-6 relative overflow-hidden transition-colors duration-700">
-            {/* Gradient Overlay to transition from Black to Teal */}
-            <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#050505] to-transparent z-10"></div>
-            
-            {/* Background Texture */}
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 pointer-events-none"></div>
+        <div className="w-full bg-[#020617] py-32 px-6 relative">
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-violet/5 rounded-full blur-[120px] pointer-events-none"></div>
 
-            <div className="max-w-7xl mx-auto relative z-20">
-                <div className="text-center mb-20">
-                    <h2 className="text-4xl md:text-6xl font-display font-bold text-white mb-6">Built for the schedule you actually run.</h2>
-                    <p className="text-teal-200/80 text-xl max-w-2xl mx-auto">
-                        Every capability shown here ships today: holiday stacking, weekend protection, export-ready plans, and read-only syncing so you can trust the math before you commit.
+            <div className="max-w-7xl mx-auto relative z-10">
+                <div className="mb-20">
+                    <h2 className="text-4xl md:text-6xl font-display font-bold text-white mb-6">Cheat Mode for<br /><span className="text-slate-600">Your Calendar.</span></h2>
+                    <p className="text-slate-400 text-xl max-w-2xl font-light">
+                        We reversed engineered the calendar so you don't have to. Here is the tech stack for your vacation.
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[300px]">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* 1. Feature: Multiplier (Large Left) */}
+                    <div className="md:col-span-2 bg-[#0F1014] hover:bg-[#131419] border border-white/5 hover:border-lime-accent/20 transition-all duration-500 rounded-3xl p-12 flex flex-col justify-between group relative overflow-hidden min-h-[400px]">
+                        <div className="absolute top-0 right-0 p-12 opacity-5 group-hover:opacity-10 transition-opacity transform group-hover:scale-110 duration-700">
+                            <div className="text-9xl grayscale">🗓️</div>
+                        </div>
 
-                    {/* 1. Holiday Stack Engine */}
-                    <div className="md:col-span-2 bg-teal-900/40 border border-teal-500/20 rounded-3xl p-10 flex flex-col justify-between hover:bg-teal-900/60 transition-colors group">
-                        <div className="w-12 h-12 bg-teal-500/20 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">🎯</div>
-                        <div>
-                            <h3 className="text-2xl font-bold text-white mb-2">Holiday Stack Engine</h3>
-                            <p className="text-teal-100/70 text-lg">
-                                Automatically stacks PTO against public holidays to turn 1-3 days off into full-week escapes without burning extra balance.
+                        <div className="relative z-10">
+                            <div className="w-16 h-16 bg-lime-accent/10 rounded-2xl flex items-center justify-center text-4xl mb-8 text-lime-accent border border-lime-accent/20">⚡</div>
+                            <h3 className="text-3xl font-display font-bold text-white mb-4">The Bridge Day Protocol</h3>
+                            <p className="text-slate-400 text-lg leading-relaxed max-w-md">
+                                Our core algorithm identifies "orphaned working days" sandwiched between weekends and holidays. Booking 1 of these can unlock 4 consecutive days off.
                             </p>
                         </div>
                     </div>
 
-                    {/* 2. Weekend Protector */}
-                    <div className="bg-teal-900/40 border border-teal-500/20 rounded-3xl p-10 flex flex-col justify-between hover:bg-teal-900/60 transition-colors group">
-                        <div className="w-12 h-12 bg-teal-500/20 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">🛡️</div>
+                    {/* 2. Feature: Weekend Protection (Right Stack Top) */}
+                    <div className="md:col-span-1 bg-[#0F1014] hover:bg-[#131419] border border-white/5 hover:border-white/10 transition-colors rounded-3xl p-8 flex flex-col justify-center gap-6 group">
+                        <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-2xl text-white">🛡️</div>
                         <div>
-                            <h3 className="text-2xl font-bold text-white mb-2">Weekend Protector</h3>
-                            <p className="text-teal-100/70">
-                                Locks weekends into every block so you never waste days on stray Tuesdays. Default guardrails keep your balance focused on meaningful breaks.
+                            <h3 className="text-xl font-bold text-white mb-2">Weekend Shield</h3>
+                            <p className="text-slate-400 text-sm leading-relaxed">
+                                Never waste PTO on a Saturday. We anchor every trip around existing weekends.
                             </p>
                         </div>
                     </div>
 
-                    {/* 3. Export-Ready Plans */}
-                    <div className="bg-teal-900/40 border border-teal-500/20 rounded-3xl p-10 flex flex-col justify-between hover:bg-teal-900/60 transition-colors group">
-                        <div className="w-12 h-12 bg-teal-500/20 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">📤</div>
+                    {/* 3. Feature: Export (Right Stack Bottom) */}
+                    <div className="md:col-span-1 bg-[#0F1014] hover:bg-[#131419] border border-white/5 hover:border-white/10 transition-colors rounded-3xl p-8 flex flex-col justify-center gap-6 group">
+                        <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-2xl text-white">📥</div>
                         <div>
-                            <h3 className="text-2xl font-bold text-white mb-2">Export-Ready Plans</h3>
-                            <p className="text-teal-100/70">
-                                Download .ICS files or push read-only links to Google, Outlook, and iCal after previewing the math—no account or card required.
+                            <h3 className="text-xl font-bold text-white mb-2">Instant Sync</h3>
+                            <p className="text-slate-400 text-sm leading-relaxed">
+                                One-click export to Google, Outlook, or Apple Calendar.
                             </p>
                         </div>
                     </div>
 
-                    {/* 4. Rollover Rescue */}
-                    <div className="md:col-span-2 bg-teal-900/40 border border-teal-500/20 rounded-3xl p-10 flex flex-col justify-between hover:bg-teal-900/60 transition-colors group">
-                        <div className="w-12 h-12 bg-teal-500/20 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">⏳</div>
-                        <div>
-                            <h3 className="text-2xl font-bold text-white mb-2">Rollover Rescue</h3>
-                            <p className="text-teal-100/70 text-lg">
-                                Fiscal year ends in March? Use it or lose it. We prioritize burning expiring days before you lose them forever.
+                    {/* 4. Use it or Lose it (Bottom Wide) */}
+                    <div className="md:col-span-2 bg-[#0F1014] hover:bg-[#131419] border border-white/5 hover:border-white/10 transition-colors rounded-3xl p-12 flex items-center gap-8 group relative overflow-hidden">
+                        <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-lime-accent/5 rounded-full blur-3xl group-hover:bg-lime-accent/10 transition-colors"></div>
+                        <div className="relative z-10">
+                            <h3 className="text-2xl font-bold text-white mb-3">Rollover Rescue Engine</h3>
+                            <p className="text-slate-400 leading-relaxed max-w-md">
+                                Fiscal year ending soon? We prioritize "use-it-or-lose-it" days before they expire, ensuring $0 waste.
                             </p>
                         </div>
-                    </div>
-
-                </div>
-
-                <div className="mt-12 bg-teal-900/50 border border-teal-500/30 rounded-3xl p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-                    <div className="space-y-2 max-w-3xl">
-                        <p className="text-[11px] font-bold uppercase tracking-[0.35em] text-teal-200/70">CRO-focused assurance</p>
-                        <h3 className="text-2xl md:text-3xl font-display font-bold text-white">Proof-first planning with exportable outputs.</h3>
-                        <p className="text-teal-100/80 text-sm md:text-base leading-relaxed">Run the optimizer instantly, review the stacked breaks, then export to .ICS or push a read-only sync once you are satisfied. No account or payment wall in the way.</p>
-                        <div className="flex flex-wrap gap-3 text-sm text-teal-50/90">
-                            {['Preview before connecting', 'Read-only Google/Outlook/iCal sync', 'Weekend + holiday protection', 'One-click .ICS export'].map((item) => (
-                                <span key={item} className="px-3 py-2 rounded-full bg-white/5 border border-white/10">{item}</span>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="flex flex-col gap-2 w-full md:w-auto">
-                        <button
-                            onClick={() => document.getElementById('wizard-section')?.scrollIntoView({ behavior: 'smooth' })}
-                            className="px-6 py-4 rounded-2xl bg-white text-dark-900 font-bold text-base shadow-[0_0_30px_rgba(255,255,255,0.25)] hover:shadow-[0_0_40px_rgba(255,255,255,0.35)] transition-transform active:scale-95"
-                        >
-                            Launch Optimizer Now
-                        </button>
-                        <p className="text-xs text-teal-100/80 font-semibold">See your longest break in under 60 seconds.</p>
                     </div>
                 </div>
             </div>
@@ -291,44 +341,26 @@ export const SolutionGrid = () => {
 // --- PHASE 4: SOCIAL PROOF (Marquee) ---
 export const BattleTestedMarquee = () => {
     const testimonials = [
-        "Finally an app that understands my 4-day work week!",
-        "My boss didn't even notice I was gone for 10 days.",
-        "Saved me $4,500 in wasted PTO time.",
-        "The only planner that handles rotating nursing shifts.",
-        "I used to feel guilty taking leave. Now I feel smart.",
-        "Unlimited PTO is a trap, this tool helped me actually use it.",
-        "Turned 3 days into a 9-day Japan trip.",
+        "Turned 12 PTO days into 35 days off. Insane.",
+        "My boss thinks I quit. I just used VacyMax.",
+        "Hacked the 2026 calendar already. Booked Tokyo.",
+        "Why is no one else doing this?",
+        "Simple. Effective. Essential.",
+        "I will never book random dates again.",
+        "Actually works for UK Bank Holidays perfectly.",
     ];
 
     return (
-        <div className="w-full bg-[#020617] border-y border-white/10 py-12 overflow-hidden">
-            <div className="flex gap-12 animate-scroll w-max hover:[animation-play-state:paused]">
-                {[...testimonials, ...testimonials].map((text, i) => (
-                    <div key={i} className="flex items-center gap-4 opacity-70 hover:opacity-100 transition-opacity">
-                        <span className="text-lime-accent text-xl">★</span>
-                        <span className="text-white font-medium text-lg whitespace-nowrap font-display">"{text}"</span>
+        <div className="w-full bg-[#020617] border-y border-white/5 py-12 overflow-hidden relative">
+            <div className="absolute inset-0 bg-lime-accent/5 z-0"></div>
+            <div className="flex gap-20 animate-scroll w-max hover:[animation-play-state:paused] relative z-10">
+                {[...testimonials, ...testimonials, ...testimonials].map((text, i) => (
+                    <div key={i} className="flex items-center gap-4 opacity-70 hover:opacity-100 transition-opacity cursor-default">
+                        <div className="w-2 h-2 rounded-full bg-lime-accent"></div>
+                        <span className="text-white font-bold text-xl whitespace-nowrap font-display tracking-tight">"{text}"</span>
                     </div>
                 ))}
             </div>
         </div>
     );
 };
-
-// Also export TrustedByStrip for legacy/fallback support if needed
-export const TrustedByStrip = () => (
-    <div className="w-full border-y border-white/5 bg-[#0F1014]/30 backdrop-blur-sm py-6 md:py-8 my-12 animate-fade-up relative z-20">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16">
-            <p className="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">
-                Trusted by smart professionals at
-            </p>
-            <div className="flex flex-wrap justify-center gap-8 md:gap-12 opacity-40 hover:opacity-80 transition-opacity duration-500">
-                <span className="text-base md:text-lg font-bold text-white font-display tracking-tight">GOOGLE</span>
-                <span className="text-base md:text-lg font-bold text-white font-display tracking-tight">META</span>
-                <span className="text-base md:text-lg font-bold text-white font-display tracking-tight">NETFLIX</span>
-                <span className="text-base md:text-lg font-bold text-white font-display tracking-tight">SHOPIFY</span>
-                <span className="text-base md:text-lg font-bold text-white font-display tracking-tight">SPOTIFY</span>
-                <span className="text-base md:text-lg font-bold text-white font-display tracking-tight">MICROSOFT</span>
-            </div>
-        </div>
-    </div>
-);

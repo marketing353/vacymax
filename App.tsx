@@ -5,6 +5,7 @@ import { generateVacationPlan } from './services/vacationService';
 import { SEOHead } from './components/SEOHead';
 import { PainHero, BurnCalculator, SolutionGrid, BattleTestedMarquee } from './components/LandingVisuals';
 import { TrustSection } from './components/TrustSection';
+import { AboutPage, AlgorithmPage, PrivacyPage, TermsPage, RegionPage } from './components/ContentPages';
 // Eagerly load the results view to remove chunk-fetch failures when users finish the wizard.
 import { ResultsView } from './components/ResultsView';
 
@@ -43,7 +44,7 @@ const initialPrefs: UserPreferences = {
   buddyRegion: '',
 };
 
-type ViewState = 'landing' | 'how-it-works' | 'results';
+type ViewState = 'landing' | 'how-it-works' | 'results' | 'about' | 'algorithm' | 'privacy' | 'terms' | 'region-us' | 'region-uk' | 'region-ca' | 'region-au';
 
 // --- Solver Terminal ---
 const SolverTerminal = ({ timeframe }: { timeframe: TimeframeType }) => {
@@ -77,7 +78,7 @@ const SolverTerminal = ({ timeframe }: { timeframe: TimeframeType }) => {
 
   return (
     <div className="w-full h-full min-h-[400px] flex flex-col items-center justify-center p-6">
-      <div className="w-full max-w-md bg-[#050505] border border-white/10 rounded-xl p-6 font-mono text-xs md:text-sm shadow-2xl relative overflow-hidden transform-gpu">
+      <div className="w-full max-w-md glass-panel rounded-xl p-6 font-mono text-xs md:text-sm relative overflow-hidden transform-gpu">
         <div className="absolute top-0 left-0 w-full h-1 bg-lime-accent animate-shimmer"></div>
         <div className="space-y-2 h-[250px] overflow-y-auto font-bold scrollbar-hide will-change-transform">
           {lines.map((line, i) => (
@@ -126,11 +127,7 @@ const App: React.FC = () => {
     return rect.top > -120 && rect.top < viewportHeight * 0.6;
   }, []);
 
-  useEffect(() => {
-    if (step > 0 && !isWizardTopInView()) {
-      wizardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }, [step, isWizardTopInView]);
+
 
   // Scroll only when starting the wizard from hero/How it Works
   const scrollToWizard = useCallback(() => {
@@ -197,6 +194,18 @@ const App: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
+  const handleFooterLink = useCallback((e: React.MouseEvent, viewName: ViewState) => {
+    e.preventDefault();
+    setView(viewName);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  const handleStart = useCallback(() => {
+    setStep(1);
+    const element = document.getElementById('wizard-section');
+    element?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
+
   return (
     <div className="min-h-[100dvh] flex flex-col text-slate-200 pb-12 overflow-x-hidden">
       <SEOHead view={view} prefs={prefs} result={result || undefined} country={prefs.country} />
@@ -213,15 +222,26 @@ const App: React.FC = () => {
         <div className="flex items-center gap-2 md:gap-6">
           <button
             onClick={() => setView('how-it-works')}
-            className="text-xs md:text-sm font-medium text-slate-400 hover:text-white transition-colors"
+            className="text-xs md:text-sm font-medium text-slate-400 hover:text-white transition-colors hidden md:block" // Hidden on mobile for space
           >
             How it Works
           </button>
+
+          {/* New Reset Button */}
+          {step > 0 && (
+            <button
+              onClick={handleReset}
+              className="text-xs md:text-sm font-medium text-slate-500 hover:text-white transition-colors"
+            >
+              Restart
+            </button>
+          )}
+
           <button
             onClick={scrollToWizard}
-            className="px-4 py-2 text-xs md:text-sm font-bold bg-white/10 hover:bg-white/20 text-white rounded-full transition-all active:scale-95"
+            className="px-4 py-2 text-xs md:text-sm font-bold bg-lime-accent hover:bg-lime-accent/90 text-black rounded-full transition-all active:scale-95 shadow-[0_0_20px_rgba(190,242,100,0.3)]"
           >
-            {step > 0 && view === 'landing' ? 'Resume' : 'Start Plan'}
+            {step > 0 && view === 'landing' ? 'Resume Plan' : 'Start Plan'}
           </button>
         </div>
       </nav>
@@ -232,12 +252,20 @@ const App: React.FC = () => {
         </Suspense>
       )}
 
+      {view === 'about' && <AboutPage onBack={() => setView('landing')} />}
+      {view === 'algorithm' && <AlgorithmPage onBack={() => setView('landing')} />}
+      {view === 'privacy' && <PrivacyPage onBack={() => setView('landing')} />}
+      {view === 'terms' && <TermsPage onBack={() => setView('landing')} />}
+      {view === 'region-us' && <RegionPage region="United States" onBack={() => setView('landing')} />}
+      {view === 'region-uk' && <RegionPage region="United Kingdom" onBack={() => setView('landing')} />}
+      {view === 'region-ca' && <RegionPage region="Canada" onBack={() => setView('landing')} />}
+      {view === 'region-au' && <RegionPage region="Australia" onBack={() => setView('landing')} />}
+
       {view === 'landing' && (
         <>
           <PainHero onCta={scrollToWizard} />
           <BurnCalculator />
           <SolutionGrid />
-          <BattleTestedMarquee />
           <TrustSection />
 
           {/* THE WIZARD */}
@@ -250,7 +278,7 @@ const App: React.FC = () => {
 
               {/* FIX: Removed 'overflow-hidden' and 'backdrop-blur' to fix mobile sticky buttons */}
               {/* FIX: Added z-[60] to ensure it sits ABOVE the bg-noise layer */}
-              <div className="relative z-[60] bg-[#0F1014] border border-white/10 rounded-[2rem] p-6 md:p-12 shadow-2xl min-h-[600px] flex flex-col">
+              <div className="relative z-[60] glass-panel rounded-[2rem] p-6 md:p-12 min-h-[600px] flex flex-col">
                 <div className="min-h-[52px] mb-4" aria-live="polite" aria-atomic="true">
                   <div
                     className={`bg-red-500/15 text-red-200 px-4 py-3 rounded-lg text-sm border border-red-500/20 text-center transition-all duration-300 ${error ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'}`}
@@ -286,8 +314,137 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          <footer className="max-w-7xl mx-auto py-24 text-center text-slate-600 border-t border-white/5 mt-20 relative z-[60]">
-            <p className="text-sm">VacationMax © 2025. Rest harder.</p>
+          <footer className="w-full bg-black border-t border-lime-accent/20 pt-16 pb-12 relative z-[60] overflow-hidden font-mono text-sm leading-relaxed selection:bg-lime-accent selection:text-black">
+            {/* CRT Overlay Effect */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[size:100%_2px,3px_100%] pointer-events-none z-10 opacity-20"></div>
+            <div className="absolute inset-0 bg-lime-accent/5 animate-pulse pointer-events-none"></div>
+
+            {/* Scrolling Marquee */}
+            <div className="absolute top-0 left-0 right-0 h-8 bg-lime-accent/10 border-b border-lime-accent/20 flex items-center overflow-hidden">
+              <div className="animate-[marquee_20s_linear_infinite] whitespace-nowrap text-[10px] text-lime-accent/60 font-bold tracking-widest uppercase px-4 flex gap-8">
+                <span>// SYSTEM_ALERT: TIME_IS_NON_REFUNDABLE</span>
+                <span>// OPTIMIZE_SCHEDULE_IMMEDIATELY</span>
+                <span>// DETECTING_WEEKEND_OPPORTUNITIES</span>
+                <span>// PTO_BALANCE_CRITICAL</span>
+                <span>// INITIATE_VACATION_PROTOCOL</span>
+                <span>// SYSTEM_ALERT: TIME_IS_NON_REFUNDABLE</span>
+                <span>// OPTIMIZE_SCHEDULE_IMMEDIATELY</span>
+                <span>// DETECTING_WEEKEND_OPPORTUNITIES</span>
+                <span>// PTO_BALANCE_CRITICAL</span>
+                <span>// INITIATE_VACATION_PROTOCOL</span>
+              </div>
+            </div>
+
+            <div className="max-w-7xl mx-auto px-6 relative z-20 pt-8">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-16">
+
+                {/* Left: Terminal Header */}
+                <div className="lg:col-span-6 flex flex-col justify-between">
+                  <div>
+                    <div className="inline-block border border-lime-accent/50 text-lime-accent px-2 py-1 text-[10px] mb-6 uppercase tracking-widest shadow-[0_0_10px_rgba(132,204,22,0.3)]">
+                      VACYMAX_OS v3.0
+                    </div>
+                    <h2 className="text-4xl md:text-6xl font-display font-black text-white mb-6 tracking-tighter uppercase relative">
+                      Rest<span className="text-lime-accent">.Is.Resistance</span>
+                      <span className="absolute -right-4 -top-4 w-2 h-2 bg-lime-accent animate-ping"></span>
+                    </h2>
+                    <div className="max-w-md border-l-4 border-lime-accent/20 pl-6 py-2">
+                      <p className="text-slate-400 mb-4 font-sans">
+                        "The calendar is a construct. Break it."
+                      </p>
+                      <div className="flex gap-2 text-[10px] uppercase tracking-wider text-lime-accent/50">
+                        <span>[Encryption: Verified]</span>
+                        <span>[Tracker: Blocked]</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right: Command Modules */}
+                <div className="lg:col-span-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                  {/* Module A: Directives (Links) */}
+                  <div className="bg-white/5 border border-white/10 p-6 rounded-sm relative group hover:border-lime-accent/50 transition-colors">
+                    <div className="absolute top-0 left-0 w-2 h-2 border-l border-t border-lime-accent opacity-50"></div>
+                    <div className="absolute top-0 right-0 w-2 h-2 border-r border-t border-lime-accent opacity-50"></div>
+                    <div className="absolute bottom-0 left-0 w-2 h-2 border-l border-b border-lime-accent opacity-50"></div>
+                    <div className="absolute bottom-0 right-0 w-2 h-2 border-r border-b border-lime-accent opacity-50"></div>
+
+                    <h4 className="text-lime-accent text-xs mb-6 uppercase tracking-[0.2em] border-b border-dashed border-lime-accent/30 pb-2">Primary_Directives</h4>
+                    <ul className="space-y-3">
+                      <li>
+                        <button onClick={(e) => handleFooterLink(e, 'about')} className="flex items-center gap-3 w-full text-left group/link hover:bg-lime-accent/10 p-2 -mx-2 transition-colors">
+                          <span className="text-slate-500 group-hover/link:text-lime-accent text-[10px] transition-colors">01</span>
+                          <span className="text-slate-300 font-bold group-hover/link:text-white transition-colors">IDENTITY_MANIFESTO</span>
+                          <span className="ml-auto opacity-0 group-hover/link:opacity-100 text-lime-accent text-[10px] tracking-widest">[LOAD]</span>
+                        </button>
+                      </li>
+                      <li>
+                        <button onClick={(e) => handleFooterLink(e, 'privacy')} className="flex items-center gap-3 w-full text-left group/link hover:bg-lime-accent/10 p-2 -mx-2 transition-colors">
+                          <span className="text-slate-500 group-hover/link:text-lime-accent text-[10px] transition-colors">02</span>
+                          <span className="text-slate-300 font-bold group-hover/link:text-white transition-colors">PRIVACY_SHIELD</span>
+                          <span className="ml-auto opacity-0 group-hover/link:opacity-100 text-lime-accent text-[10px] tracking-widest">[ENGAGE]</span>
+                        </button>
+                      </li>
+                      <li>
+                        <button onClick={(e) => handleFooterLink(e, 'terms')} className="flex items-center gap-3 w-full text-left group/link hover:bg-lime-accent/10 p-2 -mx-2 transition-colors">
+                          <span className="text-slate-500 group-hover/link:text-lime-accent text-[10px] transition-colors">03</span>
+                          <span className="text-slate-300 font-bold group-hover/link:text-white transition-colors">OPERATIONAL_TERMS</span>
+                          <span className="ml-auto opacity-0 group-hover/link:opacity-100 text-lime-accent text-[10px] tracking-widest">[READ]</span>
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* Module B: Data Uplink */}
+                  <div className="bg-white/5 border border-white/10 p-6 rounded-sm relative group hover:border-lime-accent/50 transition-colors flex flex-col justify-between">
+                    <div className="absolute top-0 left-0 w-2 h-2 border-l border-t border-lime-accent opacity-50"></div>
+                    <div className="absolute top-0 right-0 w-2 h-2 border-r border-t border-lime-accent opacity-50"></div>
+                    <div className="absolute bottom-0 left-0 w-2 h-2 border-l border-b border-lime-accent opacity-50"></div>
+                    <div className="absolute bottom-0 right-0 w-2 h-2 border-r border-b border-lime-accent opacity-50"></div>
+
+                    <div>
+                      <h4 className="text-lime-accent text-xs mb-4 uppercase tracking-[0.2em]">Data_Uplink</h4>
+                      <p className="text-[10px] text-slate-500 mb-4">Input coordinates to receive intel drops.</p>
+                      <div className="relative">
+                        <span className="absolute left-3 top-2.5 text-lime-accent font-bold text-xs">&gt;</span>
+                        <input
+                          type="email"
+                          className="w-full bg-black border border-white/20 pl-8 pr-4 py-2 text-xs text-white placeholder:text-slate-700 focus:border-lime-accent focus:outline-none focus:ring-1 focus:ring-lime-accent/50 transition-all font-mono uppercase"
+                          placeholder="USER_EMAIL"
+                        />
+                      </div>
+                    </div>
+                    <button className="mt-4 w-full bg-lime-accent/10 border border-lime-accent/50 hover:bg-lime-accent hover:text-black py-2 text-xs font-bold uppercase tracking-widest transition-all">
+                      [ TRANSMIT ]
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+
+              {/* Footer Status Bar */}
+              <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-end gap-6 text-[10px] uppercase tracking-widest text-slate-600">
+                <div className="flex gap-8">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-lime-accent/50">Core</span>
+                    <span className="text-white">Online</span>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-lime-accent/50">Ping</span>
+                    <span className="text-white">12ms</span>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-lime-accent/50">Build</span>
+                    <span className="text-white">2025.1.4</span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p>VacyMax Inc. © 2025</p>
+                  <p className="text-red-500/50 mt-1">Authorized Personnel Only</p>
+                </div>
+              </div>
+            </div>
           </footer>
         </>
       )}
