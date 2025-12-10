@@ -1,8 +1,9 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { OptimizationResult } from '../types';
+import { OptimizationResult, UserPreferences } from '../types';
 import { PaymentModal, getRegionalPrice } from './PaymentModal';
 import { formatDate, formatCurrency, generateGoogleCalendarLink, downloadICS } from '../services/utils';
 import { HolidayTooltip, EfficiencyGauge, DistributionChart, YearTimeline } from './Visualizations';
+import { CountUpNumber } from './Celebrations';
 
 interface ResultsViewProps {
     result: OptimizationResult;
@@ -10,7 +11,7 @@ interface ResultsViewProps {
     onUnlock: () => void;
     isLocked: boolean;
     userCountry?: string;
-    prefs: any;
+    prefs: UserPreferences;
 }
 
 export const ResultsView: React.FC<ResultsViewProps> = ({ result, onReset, onUnlock, isLocked, userCountry, prefs }) => {
@@ -154,7 +155,11 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ result, onReset, onUnl
                             </div>
 
                             <h2 className="text-3xl md:text-5xl font-display font-bold text-gray-800 mb-2 tracking-tight">
-                                {result.totalDaysOff} Days Off
+                                <CountUpNumber
+                                    end={result.totalDaysOff}
+                                    duration={1500}
+                                    className="inline-block"
+                                /> Days Off
                             </h2>
 
                             <div className="text-gray-500 text-sm md:text-base min-h-[48px]">
@@ -169,7 +174,14 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ result, onReset, onUnl
                         <div className="mt-8 pt-6 border-t border-rose-50 grid grid-cols-2 gap-4">
                             <div>
                                 <p className="text-[10px] uppercase text-gray-400 font-bold mb-1">Value Recovered</p>
-                                <p className="text-2xl font-bold text-gray-800 tracking-tight">{formatCurrency(result.totalValueRecovered)}</p>
+                                <p className="text-2xl font-bold text-gray-800 tracking-tight">
+                                    <CountUpNumber
+                                        end={result.totalValueRecovered}
+                                        duration={2000}
+                                        prefix="$"
+                                        className="inline-block"
+                                    />
+                                </p>
                             </div>
                             <div>
                                 <p className="text-[10px] uppercase text-gray-400 font-bold mb-1">

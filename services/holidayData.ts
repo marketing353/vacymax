@@ -14,6 +14,7 @@ import { CountryData } from "../types";
 
 export const HOLIDAY_DB: Record<string, CountryData> = {
   "United States": {
+    name: "United States",
     federal: {
       "2025": [
         "2025-01-01:New Year's Day",
@@ -93,6 +94,7 @@ export const HOLIDAY_DB: Record<string, CountryData> = {
   },
 
   "United Kingdom": {
+    name: "United Kingdom",
     federal: {
       "2025": [
         "2025-01-01:New Year's Day",
@@ -145,6 +147,7 @@ export const HOLIDAY_DB: Record<string, CountryData> = {
   },
 
   "Canada": {
+    name: "Canada",
     federal: {
       "2025": [
         "2025-01-01:New Year's Day",
@@ -211,6 +214,7 @@ export const HOLIDAY_DB: Record<string, CountryData> = {
   },
 
   "Australia": {
+    name: "Australia",
     federal: {
       "2025": [
         "2025-01-01:New Year's Day",
@@ -273,6 +277,7 @@ export const HOLIDAY_DB: Record<string, CountryData> = {
   },
 
   "Europe": {
+    name: "Europe",
     federal: {
       "2025": [
         "2025-01-01:New Year's Day",

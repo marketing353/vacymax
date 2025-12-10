@@ -60,6 +60,7 @@ export interface OptimizationResult {
 export type HolidaySet = string[]; // "YYYY-MM-DD:Holiday Name"
 
 export interface CountryData {
+  name: string;  // Required for cache keys
   federal: Record<string, HolidaySet>;
   regions?: Record<string, Record<string, HolidaySet>>;
   regionAliases?: Record<string, string>; // Maps "vic" -> "Victoria"

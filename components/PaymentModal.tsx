@@ -111,8 +111,11 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             const paymentLink = 'https://buy.stripe.com/test_14k7sN7KU0Qb5yQ000';
             window.location.href = `${paymentLink}?prefilled_email=${encodeURIComponent(email)}`;
 
-        } catch (err: any) {
-            setError(err.message || 'Unable to start checkout. Please try again.');
+        } catch (err) {
+            const errorMessage = err instanceof Error
+                ? err.message
+                : 'Unable to start checkout. Please try again.';
+            setError(errorMessage);
             setLoading(false);
         }
     };

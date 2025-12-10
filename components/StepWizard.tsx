@@ -150,6 +150,9 @@ const normalizePtoValue = (rawValue: string) => {
     return Math.min(parsed, 365);
 };
 
+const PRESETS = [10, 15, 20, 25];
+
+
 export const Step1PTO: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, onNext }) => {
     const userDays = prefs.ptoDays;
     const buddyDays = prefs.buddyPtoDays || 0;
@@ -195,16 +198,14 @@ export const Step1PTO: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, o
         onNext();
     };
 
-    const PRESETS = [10, 15, 20, 25];
-
     return (
         <div className="flex flex-col h-full relative pb-32">
             <div className="pt-2">
                 <StepHeader
                     stepNumber={1}
                     totalSteps={TOTAL_STEPS}
-                    title="Your Wellness Days"
-                    subtitle="How many days can you dedicate to yourself this year?"
+                    title="Your Freedom Fund 💸"
+                    subtitle="How many days can you invest in yourself this year?"
                 />
             </div>
 
@@ -218,6 +219,7 @@ export const Step1PTO: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, o
                     >
                         <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${prefs.hasBuddy ? 'translate-x-4' : 'translate-x-0'}`} />
                     </button>
+                    {prefs.hasBuddy && <span className="text-xs animate-fade-in pl-1">👯‍♀️</span>}
                 </div>
 
                 <div className={`grid gap-8 ${prefs.hasBuddy ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 max-w-2xl'}`}>
@@ -227,7 +229,7 @@ export const Step1PTO: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, o
                         <div className="flex justify-between items-center mb-6">
                             <div className="flex items-center gap-2">
                                 {prefs.hasBuddy && <span className="bg-rose-accent text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-widest">You</span>}
-                                <label className="text-xs font-bold text-rose-300 uppercase tracking-widest">Days Available</label>
+                                <label className="text-xs font-bold text-rose-300 uppercase tracking-widest">Your Days</label>
                             </div>
                             {/* Quick Select Chips */}
                             <div className="flex gap-2">
@@ -254,6 +256,13 @@ export const Step1PTO: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, o
                                 placeholder="0"
                             />
                             <span className="text-xl font-bold text-gray-300 absolute right-0 bottom-4 uppercase tracking-widest pointer-events-none">Days</span>
+
+                            {/* Dynamic Encouragement Chip */}
+                            {userDays >= 15 && (
+                                <div className="absolute -top-12 right-0 bg-rose-500 text-white text-[10px] font-bold py-1 px-3 rounded-full animate-bounce shadow-sm whitespace-nowrap">
+                                    Love that for you! 💅
+                                </div>
+                            )}
                         </div>
 
                         <input
@@ -318,10 +327,11 @@ export const Step1PTO: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, o
             </div>
 
             <NavButtons onNext={handleNextClick} nextDisabled={!canProceed} nextLabel="Confirm Balance" />
-        </div>
+        </div >
     );
 });
 
+// --- STEP 2 ---
 export const Step2Timeframe: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, onNext, onBack }) => {
     const options = [
         { value: TimeframeType.CALENDAR_2026, label: '2026', desc: 'Plan your next year early', tag: 'Recommended' },
@@ -338,8 +348,8 @@ export const Step2Timeframe: React.FC<StepProps> = React.memo(({ prefs, updatePr
             <StepHeader
                 stepNumber={2}
                 totalSteps={TOTAL_STEPS}
-                title="Select Year"
-                subtitle="Which calendar should we look at?"
+                title="Pick Your Timeline 📅"
+                subtitle="When are we manifesting this dream life?"
             />
 
             <div className="grid grid-cols-1 gap-4 max-w-3xl mb-8 pr-1">
@@ -371,8 +381,8 @@ export const Step3Strategy: React.FC<StepProps> = React.memo(({ prefs, updatePre
             <StepHeader
                 stepNumber={3}
                 totalSteps={TOTAL_STEPS}
-                title="Your Vibe"
-                subtitle="How do you like to spend your time off?"
+                title="Your Energy ⚡"
+                subtitle="How do you want to spend your well-deserved breaks?"
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mb-8 pr-1">
@@ -402,6 +412,7 @@ export const Step4Location: React.FC<StepProps> = React.memo(({ prefs, updatePre
 
     const nextDisabled = !prefs.country || (prefs.hasBuddy && !prefs.buddyCountry);
     const [generating, setGenerating] = useState(false);
+    const [loadingText, setLoadingText] = useState("Generate Plan");
 
     const handleCopyMine = () => {
         updatePrefs('buddyCountry', prefs.country);
@@ -410,9 +421,13 @@ export const Step4Location: React.FC<StepProps> = React.memo(({ prefs, updatePre
 
     const handleGenerateClick = () => {
         setGenerating(true);
+        setLoadingText("✨ Manifesting...");
+        setTimeout(() => setLoadingText("Analysing 14,000+ combos..."), 400);
+        setTimeout(() => setLoadingText("Finalizing your dream year..."), 1200);
+
         setTimeout(() => {
             onNext();
-        }, 600);
+        }, 1800);
     };
 
     return (
@@ -420,8 +435,8 @@ export const Step4Location: React.FC<StepProps> = React.memo(({ prefs, updatePre
             <StepHeader
                 stepNumber={4}
                 totalSteps={TOTAL_STEPS}
-                title="Your Location"
-                subtitle="We need this to load your public holidays."
+                title="Where's Home Base? 🏡"
+                subtitle="We need this to load your local holidays."
             />
 
             <div className="space-y-8 max-w-4xl mb-8 relative pr-1 pb-4">
@@ -468,8 +483,8 @@ export const Step4Location: React.FC<StepProps> = React.memo(({ prefs, updatePre
                 onNext={handleGenerateClick}
                 onBack={onBack}
                 nextDisabled={nextDisabled}
-                nextLabel="Generate Plan"
-                isLoading={generating}
+                nextLabel={generating ? loadingText : "Reveal My Dream Schedule"}
+                isLoading={false} // We handle text manually for effect
             />
         </div>
     );

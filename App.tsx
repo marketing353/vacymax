@@ -6,6 +6,7 @@ import { SEOHead } from './components/SEOHead';
 import { PainHero, BurnCalculator, SolutionGrid, BattleTestedMarquee } from './components/LandingVisuals';
 import { TrustSection } from './components/TrustSection';
 import { supabaseHelpers } from './services/supabase';
+import { CelebrationOverlay, ProgressMilestone } from './components/Celebrations';
 // Eagerly load the results view to remove chunk-fetch failures when users finish the wizard.
 import { ResultsView } from './components/ResultsView';
 
@@ -116,6 +117,10 @@ const App: React.FC = () => {
   const [isLocked, setIsLocked] = useState(true);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
+  // Behavioral UX states
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [showMilestone, setShowMilestone] = useState(false);
+
   const wizardRef = useRef<HTMLDivElement>(null);
 
   const scrollWizardIntoView = useCallback(() => {
@@ -156,7 +161,15 @@ const App: React.FC = () => {
   }, []);
 
   const handleNext = useCallback(() => {
-    setStep((prev) => prev + 1);
+    const nextStep = step + 1;
+    setStep(nextStep);
+
+    // Show milestone celebration for steps 1-4
+    if (nextStep <= 4) {
+      setShowMilestone(true);
+      setTimeout(() => setShowMilestone(false), 2000);
+    }
+
     // Auto-scroll on mobile (with header offset)
     if (window.innerWidth < 768) {
       if (!isWizardTopInView()) {
@@ -168,7 +181,7 @@ const App: React.FC = () => {
         });
       }
     }
-  }, [isWizardTopInView]);
+  }, [isWizardTopInView, step]);
 
   const handleBack = useCallback(() => setStep((prev) => prev - 1), []);
 
@@ -189,9 +202,14 @@ const App: React.FC = () => {
         strategy: prefs.strategy,
       }).catch(err => console.error('Failed to log plan:', err));
 
-      setStep(6);
-      setView('results');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Show celebration before showing results
+      setShowCelebration(true);
+
+      setTimeout(() => {
+        setStep(6);
+        setView('results');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 500);
     } catch (err) {
       console.error(err);
       setError("We couldn't generate a plan. Please check your inputs.");
@@ -265,6 +283,19 @@ const App: React.FC = () => {
   return (
     <div className="min-h-[100dvh] flex flex-col text-dark-text pb-12 overflow-x-hidden bg-light-100">
       <SEOHead view={view} prefs={prefs} result={result || undefined} country={prefs.country} />
+
+      {/* Behavioral UX Enhancements */}
+      <CelebrationOverlay
+        show={showCelebration}
+        onComplete={() => setShowCelebration(false)}
+        title="You're a Genius! 🎉"
+        subtitle="Your dream year is manifested"
+      />
+      <ProgressMilestone
+        step={step}
+        totalSteps={4}
+        show={showMilestone}
+      />
 
       {/* Navigation */}
       <nav className="w-full py-3 md:py-6 px-4 md:px-12 flex justify-between items-center z-[60] fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-rose-100 transition-all duration-300 safe-pt shadow-sm">
