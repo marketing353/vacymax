@@ -13,9 +13,31 @@ export default {
                 display: ['Plus Jakarta Sans', 'sans-serif'],
             },
             colors: {
-                lime: { accent: '#bef264' },
-                brand: { violet: '#7c3aed' },
-                dark: { 900: '#020617', 800: '#0f172a' }
+                rose: {
+                    accent: '#ff6b9d',
+                    light: '#fce7f3',
+                    DEFAULT: '#ff6b9d'
+                },
+                lavender: {
+                    accent: '#c084fc',
+                    light: '#e9d5ff',
+                    DEFAULT: '#c084fc'
+                },
+                peach: {
+                    accent: '#fbbf24',
+                    light: '#fef3c7',
+                    DEFAULT: '#fbbf24'
+                },
+                brand: {
+                    rose: '#ff6b9d',
+                    lavender: '#c084fc',
+                    peach: '#fbbf24'
+                },
+                light: {
+                    100: '#fef3f8',
+                    200: '#fef9f3',
+                    300: '#f3f4ff'
+                }
             },
             animation: {
                 'shimmer': 'shimmer 2s linear infinite',

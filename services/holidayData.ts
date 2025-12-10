@@ -270,6 +270,84 @@ export const HOLIDAY_DB: Record<string, CountryData> = {
       "wa": "Western Australia", "western australia": "Western Australia", "perth": "Western Australia",
       "sa": "South Australia", "south australia": "South Australia", "adelaide": "South Australia"
     }
+  },
+
+  "Europe": {
+    federal: {
+      "2025": [
+        "2025-01-01:New Year's Day",
+        "2025-04-18:Good Friday",
+        "2025-04-20:Easter Sunday",
+        "2025-04-21:Easter Monday",
+        "2025-05-01:Labour Day",
+        "2025-05-29:Ascension Day",
+        "2025-06-09:Whit Monday",
+        "2025-08-15:Assumption Day",
+        "2025-11-01:All Saints' Day",
+        "2025-12-25:Christmas Day",
+        "2025-12-26:St. Stephen's Day"
+      ],
+      "2026": [
+        "2026-01-01:New Year's Day",
+        "2026-04-03:Good Friday",
+        "2026-04-05:Easter Sunday",
+        "2026-04-06:Easter Monday",
+        "2026-05-01:Labour Day",
+        "2026-05-14:Ascension Day",
+        "2026-05-25:Whit Monday",
+        "2026-08-15:Assumption Day",
+        "2026-11-01:All Saints' Day",
+        "2026-12-25:Christmas Day",
+        "2026-12-26:St. Stephen's Day"
+      ],
+      "2027": [
+        "2027-01-01:New Year's Day",
+        "2027-03-26:Good Friday",
+        "2027-03-28:Easter Sunday",
+        "2027-03-29:Easter Monday",
+        "2027-05-01:Labour Day",
+        "2027-05-06:Ascension Day",
+        "2027-05-17:Whit Monday",
+        "2027-08-15:Assumption Day",
+        "2027-11-01:All Saints' Day",
+        "2027-12-25:Christmas Day",
+        "2027-12-26:St. Stephen's Day"
+      ]
+    },
+    regions: {
+      "Germany": {
+        "2025": ["2025-10-03:German Unity Day", "2025-12-24:Christmas Eve"],
+        "2026": ["2026-10-03:German Unity Day", "2026-12-24:Christmas Eve"],
+        "2027": ["2027-10-03:German Unity Day", "2027-12-24:Christmas Eve"]
+      },
+      "France": {
+        "2025": ["2025-07-14:Bastille Day", "2025-11-11:Armistice Day"],
+        "2026": ["2026-07-14:Bastille Day", "2026-11-11:Armistice Day"],
+        "2027": ["2027-07-14:Bastille Day", "2027-11-11:Armistice Day"]
+      },
+      "Spain": {
+        "2025": ["2025-10-12:Hispanic Day", "2025-12-06:Constitution Day", "2025-12-08:Immaculate Conception"],
+        "2026": ["2026-10-12:Hispanic Day", "2026-12-07:Constitution Day (Observed)", "2026-12-08:Immaculate Conception"],
+        "2027": ["2027-10-12:Hispanic Day", "2027-12-06:Constitution Day", "2027-12-08:Immaculate Conception"]
+      },
+      "Italy": {
+        "2025": ["2025-04-25:Liberation Day", "2025-06-02:Republic Day"],
+        "2026": ["2026-04-25:Liberation Day", "2026-06-02:Republic Day"],
+        "2027": ["2027-04-26:Liberation Day (Observed)", "2027-06-02:Republic Day"]
+      },
+      "Netherlands": {
+        "2025": ["2025-04-27:King's Day", "2025-05-05:Liberation Day"],
+        "2026": ["2026-04-27:King's Day", "2026-05-05:Liberation Day"],
+        "2027": ["2027-04-27:King's Day", "2027-05-05:Liberation Day"]
+      }
+    },
+    regionAliases: {
+      "de": "Germany", "germany": "Germany", "deutschland": "Germany", "berlin": "Germany", "munich": "Germany",
+      "fr": "France", "france": "France", "paris": "France",
+      "es": "Spain", "spain": "Spain", "españa": "Spain", "madrid": "Spain", "barcelona": "Spain",
+      "it": "Italy", "italy": "Italy", "italia": "Italy", "rome": "Italy", "milan": "Italy",
+      "nl": "Netherlands", "netherlands": "Netherlands", "holland": "Netherlands", "amsterdam": "Netherlands"
+    }
   }
 };
 
@@ -279,11 +357,11 @@ export const HOLIDAY_DB: Record<string, CountryData> = {
  * e.g., const data = await import(`./holidays/${countryCode}.json`);
  */
 export const fetchCountryData = async (country: string): Promise<CountryData | null> => {
-    // Simulate network latency or file read time
-    // await new Promise(resolve => setTimeout(resolve, 50));
-    
-    if (HOLIDAY_DB[country]) {
-        return HOLIDAY_DB[country];
-    }
-    return null;
+  // Simulate network latency or file read time
+  // await new Promise(resolve => setTimeout(resolve, 50));
+
+  if (HOLIDAY_DB[country]) {
+    return HOLIDAY_DB[country];
+  }
+  return null;
 }
