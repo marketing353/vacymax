@@ -11,6 +11,7 @@ import { CelebrationOverlay, ProgressMilestone } from './components/Celebrations
 // Eagerly load the results view to remove chunk-fetch failures when users finish the wizard.
 import { ResultsView } from './components/ResultsView';
 import { StrategyDemosPage } from './components/StrategyDemos';
+import { MobileMenu } from './components/MobileMenu';
 
 // Lazy load content pages
 const AboutPage = lazy(() => import('./components/ContentPages').then(module => ({ default: module.AboutPage })));
@@ -122,6 +123,7 @@ const App: React.FC = () => {
   // Behavioral UX states
   const [showCelebration, setShowCelebration] = useState(false);
   const [showMilestone, setShowMilestone] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const wizardRef = useRef<HTMLDivElement>(null);
 
@@ -319,7 +321,7 @@ const App: React.FC = () => {
         <div className="flex items-center gap-2 md:gap-6">
           <button
             onClick={() => setView('how-it-works')}
-            className="text-xs md:text-sm font-medium text-slate-500 hover:text-rose-accent transition-colors hidden md:block" // Hidden on mobile for space
+            className="text-xs md:text-sm font-medium text-slate-500 hover:text-rose-accent transition-colors hidden md:block"
           >
             How it Works
           </button>
@@ -334,7 +336,7 @@ const App: React.FC = () => {
           {step > 0 && (
             <button
               onClick={handleReset}
-              className="text-xs md:text-sm font-medium text-slate-500 hover:text-rose-accent transition-colors"
+              className="text-xs md:text-sm font-medium text-slate-500 hover:text-rose-accent transition-colors hidden sm:block"
             >
               Restart
             </button>
@@ -342,9 +344,20 @@ const App: React.FC = () => {
 
           <button
             onClick={scrollToWizard}
-            className="px-6 py-2.5 text-xs md:text-sm font-bold bg-gradient-to-r from-rose-accent to-peach-accent hover:shadow-lg hover:shadow-rose-accent/30 text-white rounded-full transition-all active:scale-95 transform hover:-translate-y-0.5"
+            className="px-4 sm:px-6 py-2.5 text-xs md:text-sm font-bold bg-gradient-to-r from-rose-accent to-peach-accent hover:shadow-lg hover:shadow-rose-accent/30 text-white rounded-full transition-all active:scale-95 transform hover:-translate-y-0.5"
           >
-            {step > 0 && view === 'landing' ? 'Resume Plan ✨' : 'Start Planning 💖'}
+            {step > 0 && view === 'landing' ? 'Resume ✨' : 'Start 💖'}
+          </button>
+
+          {/* Mobile Menu Hamburger */}
+          <button
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center md:hidden text-gray-600 hover:text-rose-accent transition-colors -mr-2"
+            aria-label="Open mobile menu"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
           </button>
         </div>
       </nav>
@@ -398,7 +411,7 @@ const App: React.FC = () => {
 
               {/* FIX: Removed 'overflow-hidden' and 'backdrop-blur' to fix mobile sticky buttons */}
               {/* FIX: Added z-[60] to ensure it sits ABOVE the bg-noise layer */}
-              <div {...swipeHandlers} className="relative z-[60] glass-panel rounded-[2rem] p-6 md:p-12 min-h-[600px] flex flex-col shadow-2xl touch-pan-y">
+              <div {...swipeHandlers} className="relative z-[60] glass-panel rounded-[2rem] p-6 md:p-12 min-h-[500px] md:min-h-[600px] flex flex-col shadow-2xl touch-pan-y">
                 <div className="min-h-[52px] mb-4" aria-live="polite" aria-atomic="true">
                   <div
                     className={`bg-rose-100 text-rose-700 px-4 py-3 rounded-2xl text-sm border border-rose-200 text-center transition-all duration-300 ${error ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'}`}
@@ -573,6 +586,14 @@ const App: React.FC = () => {
           </Suspense>
         </main>
       )}
+
+      {/* Mobile Menu */}
+      <MobileMenu
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+        onNavigate={(newView) => setView(newView as ViewState)}
+        currentView={view}
+      />
     </div>
   );
 };

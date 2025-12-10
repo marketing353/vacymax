@@ -10,8 +10,12 @@ export const Confetti: React.FC<ConfettiProps> = ({ active, duration = 3000 }) =
 
     useEffect(() => {
         if (active) {
+            // Reduce particle count on mobile for better performance
+            const isMobile = window.matchMedia('(max-width: 768px)').matches;
+            const particleCount = isMobile ? 25 : 50;
+
             const colors = ['#F43F5E', '#FB923C', '#A78BFA', '#EC4899', '#F472B6', '#FBBF24'];
-            const newParticles = Array.from({ length: 50 }, (_, i) => ({
+            const newParticles = Array.from({ length: particleCount }, (_, i) => ({
                 id: i,
                 x: Math.random() * 100,
                 y: -10,
