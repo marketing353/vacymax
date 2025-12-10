@@ -121,36 +121,31 @@ const App: React.FC = () => {
   const wizardRef = useRef<HTMLDivElement>(null);
 
   const scrollWizardIntoView = useCallback(() => {
-    const element = wizardRef.current || document.getElementById('wizard-section');
-    element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const element = wizardRef.current;
+    if (!element) return;
+    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    element.focus({ preventScroll: true });
   }, []);
 
-  const isWizardTopInView = useCallback(() => {
-    const node = wizardRef.current;
-    if (!node) return false;
+  // Ensure the wizard is always in view when users progress through steps
+  useEffect(() => {
+    if (step > 0) {
+        scrollWizardIntoView();
+    }
+  }, [scrollWizardIntoView, step]);
 
-    const rect = node.getBoundingClientRect();
-    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-
-    // Treat the wizard as visible when its top is within a comfortable viewport buffer.
-    return rect.top > -120 && rect.top < viewportHeight * 0.6;
-  }, []);
-
-
-
-  // Scroll only when starting the wizard from hero/How it Works
   const scrollToWizard = useCallback(() => {
     if (view === 'how-it-works') {
-      setView('landing');
-      setTimeout(() => {
-        scrollWizardIntoView();
-        if (step === 0) setStep(1);
-      }, 100);
+        setView('landing');
+        requestAnimationFrame(() => {
+             scrollWizardIntoView();
+             if(step === 0) setStep(1);
+        });
     } else {
-      scrollWizardIntoView();
-      if (step === 0) setStep(1);
+        scrollWizardIntoView();
+        if(step === 0) setStep(1);
     }
-  }, [scrollWizardIntoView, view, step]);
+  }, [scrollWizardIntoView, step, view]);
 
   // FIX: Type-safe update
   const updatePrefs = useCallback(<K extends keyof UserPreferences>(key: K, value: UserPreferences[K]) => {
@@ -158,19 +153,11 @@ const App: React.FC = () => {
   }, []);
 
   const handleNext = useCallback(() => {
-    setStep((prev) => prev + 1);
-    // Auto-scroll on mobile (with header offset)
-    if (window.innerWidth < 768) {
-      if (!isWizardTopInView()) {
-        // Offset by 100px to account for fixed header and some padding
-        const offsetPosition = (wizardRef.current?.offsetTop || 0) - 100;
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
+      setStep((prev) => prev + 1);
+      if (window.innerWidth < 768) {
+          scrollWizardIntoView();
       }
-    }
-  }, [isWizardTopInView]);
+  }, [scrollWizardIntoView]);
 
   const handleBack = useCallback(() => setStep((prev) => prev - 1), []);
 
@@ -393,6 +380,75 @@ const App: React.FC = () => {
                 <span>💫 Balance work and life</span>
               </div>
             </div>
+        </nav>
+
+        {view === 'how-it-works' && (
+            <Suspense fallback={<LoadingFallback />}>
+                <HowItWorks onBack={() => setView('landing')} onLaunch={scrollToWizard} />
+            </Suspense>
+        )}
+
+        {/* --- PAS LANDING PAGE ARCHITECTURE --- */}
+        {view === 'landing' && (
+            <>
+                {/* 1. THE PAIN: Wake Up Call */}
+                <PainHero onCta={scrollToWizard} />
+
+                {/* 2. THE AGITATION: Burn Calculator */}
+                <BurnCalculator />
+
+                {/* 3. THE SOLUTION: Feature Grid (Teal Transition) */}
+                <SolutionGrid />
+
+                {/* 4. SOCIAL PROOF: Marquee */}
+                <BattleTestedMarquee />
+
+                {/* THE WIZARD (The Actual Product) */}
+                <div
+                    id="wizard-section"
+                    ref={wizardRef}
+                    tabIndex={-1}
+                    className="w-full bg-[#020617] py-24 px-4 scroll-mt-24"
+                >
+                     <div className="max-w-4xl mx-auto">
+                         <div className="text-center mb-12">
+                             <h2 className="text-3xl font-display font-bold text-white mb-2">Okay, Let's Fix It.</h2>
+                             <p className="text-slate-400">Build your optimized schedule in 60 seconds.</p>
+                         </div>
+
+                         <div className="relative bg-[#0F1014] border border-white/10 rounded-[2rem] p-6 md:p-12 shadow-2xl min-h-[550px] flex flex-col overflow-hidden backdrop-blur-sm">
+                            <div className="absolute inset-0 opacity-[0.03] bg-repeat pointer-events-none hidden md:block" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
+
+                            {error && (
+                                <div className="absolute top-4 left-0 right-0 mx-auto w-max bg-red-500/20 text-red-200 px-4 py-2 rounded-lg text-sm mb-4 border border-red-500/20 z-20">
+                                    {error}
+                                </div>
+                            )}
+
+                            {step === 0 && (
+                                <div className="text-center space-y-8 animate-fade-up relative z-10 py-10 my-auto">
+                                    <div className="w-24 h-24 bg-gradient-to-br from-lime-accent/20 to-transparent rounded-full flex items-center justify-center mx-auto text-4xl border border-lime-accent/20 shadow-[0_0_30px_rgba(132,204,22,0.1)]">
+                                        ✨
+                                    </div>
+                                    <div>
+                                        <h3 className="text-3xl font-display font-bold text-white mb-2">Ready to plan?</h3>
+                                        <p className="text-slate-400 max-w-xs mx-auto">Tell us how many days off you have, and we'll do the rest.</p>
+                                    </div>
+                                    <button onClick={() => setStep(1)} className="w-full py-5 bg-white/5 border border-white/10 hover:border-lime-accent/50 text-white text-lg font-bold rounded-xl transition-all hover:bg-white/10 hover:shadow-lg flex items-center justify-center gap-2 group">
+                                        Let's Get Started
+                                        <span className="group-hover:translate-x-1 transition-transform">→</span>
+                                    </button>
+                                </div>
+                            )}
+
+                            {step === 1 && <Step1PTO prefs={prefs} updatePrefs={updatePrefs} onNext={handleNext} />}
+                            {step === 2 && <Step2Timeframe prefs={prefs} updatePrefs={updatePrefs} onNext={handleNext} onBack={handleBack} />}
+                            {step === 3 && <Step3Strategy prefs={prefs} updatePrefs={updatePrefs} onNext={handleNext} onBack={handleBack} />}
+                            {step === 4 && <Step4Location prefs={prefs} updatePrefs={updatePrefs} onNext={handleGenerate} onBack={handleBack} />}
+                            {step === 5 && <SolverTerminal timeframe={prefs.timeframe} />}
+                         </div>
+                     </div>
+                </div>
 
             <div className="max-w-7xl mx-auto px-6 relative z-20 pt-8 pb-8">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 mb-8 md:mb-16">
