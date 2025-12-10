@@ -45,7 +45,24 @@ export const generateVacationPlan = (prefs: UserPreferences): Promise<Optimizati
 
     return new Promise((resolve, reject) => {
         const id = Math.random().toString(36).substr(2, 9);
-        pendingMap.set(id, { resolve, reject });
+
+        // Add timeout (30 seconds) to prevent hanging
+        const timeoutId = setTimeout(() => {
+            pendingMap.delete(id);
+            reject(new Error('Optimization timed out. Please try again with different settings.'));
+        }, 30000);
+
+        pendingMap.set(id, {
+            resolve: (val: OptimizationResult) => {
+                clearTimeout(timeoutId);
+                resolve(val);
+            },
+            reject: (err: Error) => {
+                clearTimeout(timeoutId);
+                reject(err);
+            }
+        });
+
         worker!.postMessage({ id, prefs });
     });
 };

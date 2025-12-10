@@ -318,17 +318,54 @@ export const HOLIDAY_DB: Record<string, CountryData> = {
   }
 };
 
+// --- COUNTRY ALIASES ---
+const COUNTRY_ALIASES: Record<string, string> = {
+  "usa": "United States",
+  "us": "United States",
+  "america": "United States",
+  "united states of america": "United States",
+  "uk": "United Kingdom",
+  "britain": "United Kingdom",
+  "england": "United Kingdom",
+  "great britain": "United Kingdom",
+  "canada": "Canada",
+  "ca": "Canada",
+  "australia": "Australia",
+  "au": "Australia",
+  "aussie": "Australia",
+  "eu": "Europe",
+  "european union": "Europe",
+};
+
 /**
- * Simulates an async fetch to a database or API.
+ * Fetches country data with alias resolution and fuzzy matching.
  * In a real-world scenario, you could use dynamic imports here to split code:
  * e.g., const data = await import(`./holidays/${countryCode}.json`);
  */
 export const fetchCountryData = async (country: string): Promise<CountryData | null> => {
-  // Simulate network latency or file read time
-  // await new Promise(resolve => setTimeout(resolve, 50));
+  if (!country || typeof country !== 'string') {
+    return null;
+  }
 
+  const normalizedInput = country.toLowerCase().trim();
+
+  // Direct match first
   if (HOLIDAY_DB[country]) {
     return HOLIDAY_DB[country];
   }
+
+  // Check aliases
+  const resolvedCountry = COUNTRY_ALIASES[normalizedInput];
+  if (resolvedCountry && HOLIDAY_DB[resolvedCountry]) {
+    return HOLIDAY_DB[resolvedCountry];
+  }
+
+  // Fuzzy match fallback (case-insensitive partial match)
+  for (const key of Object.keys(HOLIDAY_DB)) {
+    if (key.toLowerCase() === normalizedInput || key.toLowerCase().includes(normalizedInput)) {
+      return HOLIDAY_DB[key];
+    }
+  }
+
   return null;
 }

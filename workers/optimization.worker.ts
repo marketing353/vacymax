@@ -4,6 +4,21 @@ import { fetchCountryData } from "../services/holidayData";
 
 const DAILY_VALUE_USD = 460;
 
+// --- INPUT VALIDATION ---
+const validatePrefs = (prefs: UserPreferences): UserPreferences => {
+    return {
+        ptoDays: Math.max(0, Math.min(365, Math.floor(prefs.ptoDays || 0))),
+        timeframe: prefs.timeframe || TimeframeType.CALENDAR_2025,
+        strategy: prefs.strategy || OptimizationStrategy.BALANCED,
+        country: (prefs.country || '').trim(),
+        region: (prefs.region || '').trim(),
+        hasBuddy: Boolean(prefs.hasBuddy),
+        buddyPtoDays: prefs.hasBuddy ? Math.max(0, Math.min(365, Math.floor(prefs.buddyPtoDays || 0))) : 0,
+        buddyCountry: prefs.hasBuddy ? (prefs.buddyCountry || '').trim() : '',
+        buddyRegion: prefs.hasBuddy ? (prefs.buddyRegion || '').trim() : '',
+    };
+};
+
 // --- BITMASKS FOR EFFICIENT STATE TRACKING ---
 const FLAG_WEEKEND = 1 << 0;       // 0001
 const FLAG_HOLIDAY = 1 << 1;       // 0010
@@ -232,7 +247,10 @@ const getHolidaysMap = async (country: string, region: string, startYear: number
 };
 
 // --- CORE ENGINE ---
-const generateVacationPlan = async (prefs: UserPreferences): Promise<OptimizationResult> => {
+const generateVacationPlan = async (rawPrefs: UserPreferences): Promise<OptimizationResult> => {
+    // Validate and sanitize inputs
+    const prefs = validatePrefs(rawPrefs);
+
     // Check Cache
     const cacheKey = JSON.stringify(prefs);
     const cachedPlan = planCache.get(cacheKey);
@@ -598,6 +616,24 @@ const generateVacationPlan = async (prefs: UserPreferences): Promise<Optimizatio
 
     const selectedBlocks = winner.blocks;
     selectedBlocks.sort((a, b) => a.startDate.localeCompare(b.startDate));
+
+    // Handle empty results gracefully
+    if (selectedBlocks.length === 0) {
+        const emptyResult: OptimizationResult = {
+            planName: "No Opportunities Found",
+            targetYear: startYear,
+            timelineStartDate: startDate.toISOString(),
+            totalPtoUsed: 0,
+            totalPtoUsedBuddy: prefs.hasBuddy ? 0 : undefined,
+            totalDaysOff: 0,
+            totalFreeDays: 0,
+            totalValueRecovered: 0,
+            vacationBlocks: [],
+            summary: `No vacation blocks could be optimized for ${prefs.country || 'your region'}. Try adjusting your PTO days or strategy.`
+        };
+        planCache.set(cacheKey, emptyResult);
+        return emptyResult;
+    }
 
     const totalDaysOff = winner.totalDays;
     const usedPto = selectedBlocks.reduce((sum, b) => sum + b.ptoDaysUsed, 0);
