@@ -32,6 +32,10 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
             <div className="absolute -top-[10%] left-[10%] w-[500px] h-[500px] bg-rose-200/20 rounded-full blur-[100px] pointer-events-none animate-float"></div>
             <div className="absolute top-[20%] right-[10%] w-[300px] h-[300px] bg-lavender-200/20 rounded-full blur-[80px] pointer-events-none animate-pulse-slow"></div>
 
+            {/* Decorative Stickers */}
+            <div className="absolute top-24 left-10 text-4xl opacity-20 rotate-12 animate-float pointer-events-none">✨</div>
+            <div className="absolute bottom-20 right-20 text-6xl opacity-10 -rotate-12 animate-float pointer-events-none">🌸</div>
+
             <div className="max-w-7xl mx-auto relative z-10 grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
                 {/* Left Column: Copy */}
                 <motion.div
@@ -42,17 +46,17 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
                 >
                     <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full border border-rose-200 bg-rose-50 text-rose-accent text-xs font-bold tracking-widest uppercase shadow-sm">
                         <span className="w-2 h-2 rounded-full bg-rose-accent animate-pulse"></span>
-                        For the Girl who needs a break
+                        The Planner for the It-Girl
                     </div>
 
                     <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight text-dark-text leading-[1.1] mb-6">
-                        Reclaim Your<br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-accent to-peach-accent italic">Inner Peace.</span>
+                        Manifest Your<br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-accent to-peach-accent italic">Dream Year.</span>
                     </h1>
 
                     <p className="text-lg md:text-xl text-gray-600 max-w-xl leading-relaxed mb-10 border-l-4 border-rose-200 pl-6">
-                        Stop asking for permission to rest. <strong className="text-rose-accent">Design your dream life.</strong><br />
-                        Our smart planner turns <span className="text-rose-accent font-bold">10 days</span> of PTO into <span className="text-rose-accent font-bold">24 days</span> of pure bliss. 🥂
+                        You work hard, but you should rest harder. <strong className="text-rose-accent">Design a life you don't need a vacation from.</strong><br />
+                        Our intelligent planner turns <span className="text-rose-accent font-bold">10 days</span> of PTO into <span className="text-rose-accent font-bold">24 days</span> of pure bliss. 🥂
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center gap-6">
@@ -60,7 +64,7 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
                             onClick={onCta}
                             className="w-full sm:w-auto px-10 py-5 bg-gradient-to-r from-rose-accent to-peach-accent hover:shadow-lg hover:shadow-rose-accent/40 text-white font-bold text-lg rounded-full hover:scale-[1.02] transition-all flex items-center justify-center gap-3 group"
                         >
-                            Design My Dream Year
+                            Start Manifesting
                             <span className="group-hover:translate-x-1 transition-transform">✨</span>
                         </button>
                     </div>
@@ -68,17 +72,17 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
                     <div className="mt-12 pt-8 border-t border-rose-100 flex items-center gap-6">
                         <div className="flex -space-x-4">
                             {[1, 2, 3, 4].map(i => (
-                                <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-rose-100 flex items-center justify-center text-xs shadow-sm overflow-hidden">
-                                    <img src={`https://api.dicebear.com/9.x/micah/svg?seed=${i + 30}&backgroundColor=ffe4e6`} className="w-full h-full object-cover" alt="avatar" />
+                                <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-rose-100 flex items-center justify-center text-xs shadow-sm overflow-hidden ring-2 ring-rose-50">
+                                    <img src={`https://api.dicebear.com/9.x/micah/svg?seed=${i + 40}&backgroundColor=ffe4e6`} className="w-full h-full object-cover" alt="avatar" />
                                 </div>
                             ))}
                         </div>
                         <div className="text-sm">
-                            <div className="flex text-yellow-400 mb-0.5 text-[12px] gap-0.5">
+                            <div className="flex text-rose-400 mb-0.5 text-[12px] gap-0.5">
                                 <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
                             </div>
-                            <p className="text-gray-800 font-bold">14,000+ Happy Travelers</p>
-                            <p className="text-gray-500 text-xs">Living their best life in 2026</p>
+                            <p className="text-gray-800 font-bold">14,000+ Girls Planning</p>
+                            <p className="text-gray-500 text-xs">Join the wellness era</p>
                         </div>
                     </div>
                 </motion.div>
@@ -101,14 +105,14 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
                                 <span className="w-3 h-3 rounded-full bg-lavender-accent/30"></span>
                             </div>
                             <div className="text-[10px] text-rose-accent uppercase tracking-widest bg-rose-50 px-3 py-1 rounded-full font-bold">
-                                ✨ WELLNESS CHECK
+                                ✨ VIBE CHECK
                             </div>
                         </div>
 
                         {status === 'idle' && (
                             <div className="flex-1 flex flex-col justify-center animate-fade-up">
-                                <h3 className="text-2xl font-display font-bold text-gray-800 mb-2">Where do you want to go? 🌍</h3>
-                                <p className="text-gray-500 mb-8 text-sm">Select a region to see how much relaxation awaits you.</p>
+                                <h3 className="text-2xl font-display font-bold text-gray-800 mb-2">Where to next, bestie? 🌍</h3>
+                                <p className="text-gray-500 mb-8 text-sm">Select a region to unlock your time off.</p>
 
                                 <div className="space-y-3">
                                     {['United States', 'United Kingdom', 'Canada', 'Australia'].map((r) => (
@@ -118,7 +122,7 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
                                             className="w-full text-left px-6 py-4 rounded-2xl bg-white hover:bg-rose-50 border border-rose-100 hover:border-rose-200 transition-all flex justify-between items-center group shadow-sm hover:shadow-md"
                                         >
                                             <span className="text-gray-700 font-medium group-hover:text-rose-accent transition-colors">{r}</span>
-                                            <span className="text-rose-200 group-hover:text-rose-accent transition-colors">→</span>
+                                            <span className="text-rose-200 group-hover:text-rose-accent transition-colors">🌸</span>
                                         </button>
                                     ))}
                                 </div>
@@ -130,8 +134,8 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
                                 <div className="absolute inset-0 bg-rose-50 animate-pulse rounded-full blur-3xl opacity-50"></div>
                                 <div className="relative z-10 flex flex-col items-center">
                                     <div className="w-24 h-24 border-4 border-rose-100 border-t-rose-accent rounded-full animate-spin mb-8"></div>
-                                    <h4 className="text-2xl font-bold text-gray-800 mb-2">Finding your bliss... 🧘‍♀️</h4>
-                                    <p className="text-gray-500 mb-8 text-xs uppercase tracking-widest">Checking {region} Calendar</p>
+                                    <h4 className="text-2xl font-bold text-gray-800 mb-2">Manifesting... 🧘‍♀️</h4>
+                                    <p className="text-gray-500 mb-8 text-xs uppercase tracking-widest">Checking {region} Vibes</p>
                                     <div className="text-6xl font-display font-bold text-rose-accent tabular-nums">
                                         {scannedDays}
                                     </div>
@@ -145,7 +149,7 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
                                 <div className="w-20 h-20 bg-gradient-to-br from-rose-accent to-peach-accent rounded-full flex items-center justify-center text-4xl mb-6 shadow-lg rotate-3 text-white">
                                     💖
                                 </div>
-                                <h4 className="text-3xl font-display font-bold text-gray-800 mb-4">You deserve this!</h4>
+                                <h4 className="text-3xl font-display font-bold text-gray-800 mb-4">Glow Up Complete!</h4>
                                 <div className="bg-white/50 border border-rose-100 rounded-2xl p-6 mb-8 w-full shadow-inner">
                                     <div className="flex justify-between items-center mb-2">
                                         <span className="text-gray-500 text-xs font-bold uppercase">YOUR INPUT</span>
@@ -161,7 +165,7 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
                                     onClick={onCta}
                                     className="w-full py-4 bg-gray-900 text-white font-bold tracking-wide rounded-xl hover:bg-black transition-colors shadow-lg flex items-center justify-center gap-2"
                                 >
-                                    Unlock My Schedule
+                                    Unlock My Best Life
                                 </button>
                                 <button
                                     onClick={() => setStatus('idle')}
@@ -194,14 +198,14 @@ export const BurnCalculator = () => {
             <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-20 items-center relative z-10">
                 <div className="space-y-8">
                     <div className="inline-block px-4 py-1.5 bg-rose-100 rounded-lg text-rose-500 text-xs font-bold uppercase tracking-widest">
-                        ⚠️ Burnout Alert
+                        ⚠️ Reality Check
                     </div>
                     <h2 className="text-5xl md:text-6xl font-display font-bold text-gray-900 leading-[1.1]">
-                        Are you donating<br />
-                        <span className="text-rose-400 italic">your happiness?</span>
+                        Are you skipping<br />
+                        <span className="text-rose-400 italic">your self-care?</span>
                     </h2>
                     <p className="text-gray-500 text-lg leading-relaxed max-w-md">
-                        Unused PTO is a voluntary donation to your boss. But more importantly, it's time you stole from your own wellbeing.
+                        Unused PTO isn't a badge of honor, it's a donation to corporate. Reclaim your time and invest in your own happiness.
                     </p>
 
                     <div className="flex gap-8">
@@ -212,7 +216,7 @@ export const BurnCalculator = () => {
                         <div className="h-12 w-px bg-gray-200"></div>
                         <div>
                             <p className="text-4xl font-bold text-rose-500">-${loss.toLocaleString()}</p>
-                            <p className="text-xs text-gray-400 uppercase tracking-widest mt-1">Value Donated</p>
+                            <p className="text-xs text-gray-400 uppercase tracking-widest mt-1">Value Lost</p>
                         </div>
                     </div>
                 </div>
@@ -252,8 +256,8 @@ export const BurnCalculator = () => {
 
                         <div className="pt-8 border-t border-rose-100">
                             <div className="flex justify-between items-center mb-6">
-                                <p className="text-sm font-bold text-gray-800 uppercase tracking-widest">Total Loss</p>
-                                <p className="text-xs text-rose-500 font-bold bg-rose-50 px-2 py-1 rounded">DON'T DO IT</p>
+                                <p className="text-sm font-bold text-gray-800 uppercase tracking-widest">Total Value</p>
+                                <p className="text-xs text-rose-500 font-bold bg-rose-50 px-2 py-1 rounded">CLAIM IT</p>
                             </div>
                             <div className="text-6xl font-display font-bold tabular-nums text-gray-900 mb-8 tracking-tight">
                                 ${loss.toLocaleString()}
@@ -262,10 +266,10 @@ export const BurnCalculator = () => {
                                 onClick={() => document.getElementById('wizard-section')?.scrollIntoView({ behavior: 'smooth' })}
                                 className="w-full py-5 bg-gradient-to-r from-rose-accent to-peach-accent text-white text-lg rounded-xl transition-all font-bold flex items-center justify-center gap-2 hover:shadow-lg hover:-translate-y-1"
                             >
-                                Stop Losing Money & Sanity
+                                Reclaim My Worth
                             </button>
                             <p className="text-center mt-4 text-[10px] text-gray-400 uppercase tracking-widest">
-                                <span className="inline-block w-2 h-2 bg-rose-400 rounded-full mr-2 animate-pulse"></span> Your time is non-refundable
+                                <span className="inline-block w-2 h-2 bg-rose-400 rounded-full mr-2 animate-pulse"></span> Prioritize yourself
                             </p>
                         </div>
                     </div>
@@ -281,7 +285,7 @@ export const SolutionGrid = () => {
         <div className="w-full bg-light-100 py-32 px-6 relative">
             <div className="max-w-7xl mx-auto relative z-10">
                 <div className="mb-20 text-center">
-                    <h2 className="text-4xl md:text-6xl font-display font-bold text-gray-900 mb-6">Work Smarter,<br /><span className="text-rose-400 italic">Play Harder.</span></h2>
+                    <h2 className="text-4xl md:text-6xl font-display font-bold text-gray-900 mb-6">Main Character<br /><span className="text-rose-400 italic">Energy.</span></h2>
                     <p className="text-gray-500 text-xl max-w-2xl mx-auto font-light">
                         We hacked the calendar so you can live your best life. Consider this your cheat code for happiness.
                     </p>
@@ -347,7 +351,7 @@ export const BattleTestedMarquee = () => {
         "Finally booked that girl's trip to Tulum! 🌴",
         "My boss asked how I have so much vacation time lol 🤫",
         "Self-care isn't selfish, it's scheduled. 💅",
-        "I feel like a genius planner. 🧠",
+        "Entering my villain era (vacation mode). 😈",
         "Booked my honeymoon for 2026 already! 💍",
         "The best money I spent on myself this year. 💆‍♀️",
     ];

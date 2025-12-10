@@ -63,8 +63,8 @@ const SolverTerminal = ({ timeframe }: { timeframe: TimeframeType }) => {
       'Loading dreamy destinations... ✈️',
       'Adding long weekends... 🥂',
       'Extending your breaks... 💆‍♀️',
-      'Finding the best dates... ✨',
-      'Maximizing your relaxation... 🛁',
+      'Aligning your stars... ✨',
+      'Manifesting abundance... 🌟',
       'Your perfect plan is ready! 💖'
     ];
 

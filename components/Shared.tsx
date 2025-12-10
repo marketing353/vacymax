@@ -4,7 +4,7 @@ export const StepHeader = React.memo(({ stepNumber, totalSteps, title, subtitle 
     <div className="space-y-3 md:space-y-4 mb-6 md:mb-10 animate-fade-up px-1">
         <div className="flex items-center gap-3">
             <span className="w-8 h-[1px] bg-rose-accent"></span>
-            <span className="text-rose-accent font-mono text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase">Step {stepNumber} of {totalSteps}</span>
+            <span className="text-rose-accent text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase">Step {stepNumber} of {totalSteps}</span>
         </div>
         <div className="flex items-center gap-3">
             <div className="flex-1 h-2 rounded-full bg-rose-100 overflow-hidden">
@@ -121,6 +121,11 @@ export const SelectionCard: React.FC<SelectionCardProps> = ({
                 : 'bg-white/40 border-white/60 text-gray-600 hover:bg-white/80 hover:border-rose-200'
                 }`}
         >
+            {/* Added decorative background glow for selected state */}
+            {selected && (
+                <div className={`absolute inset-0 rounded-3xl opacity-20 pointer-events-none ${isRose ? 'bg-gradient-to-br from-rose-50 to-peach-50' : 'bg-gradient-to-br from-lavender-50 to-indigo-50'}`} />
+            )}
+
             {children}
             <div className="relative z-10">
                 <div className="flex justify-between items-start mb-2">
@@ -151,10 +156,10 @@ export const SelectionCard: React.FC<SelectionCardProps> = ({
                                 )}
                             </div>
                         )}
-                        {selected && <span className={`${activeText} text-xl animate-pulse`}>●</span>}
+                        {selected && <span className={`${activeText} text-xl animate-pulse`}>✨</span>}
                     </div>
                 </div>
-                <h3 className={`text-xl md:text-2xl font-display font-bold mb-1 ${selected ? 'text-gray-900' : 'text-gray-700'}`}>{title}</h3>
+                <h3 className={`text-xl md:text-2xl font-display font-bold mb-1 ${selected ? 'text-gray-900 ' + (isRose ? 'group-hover:text-rose-accent' : 'group-hover:text-lavender-accent') : 'text-gray-700'}`}>{title}</h3>
                 <p className={`text-xs md:text-sm leading-relaxed ${selected ? 'text-gray-600' : 'text-gray-500'}`}>{desc}</p>
             </div>
         </button>
