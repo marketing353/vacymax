@@ -1,5 +1,5 @@
-import Stripe from 'stripe';
-import { createClient } from '@supabase/supabase-js';
+const Stripe = require('stripe');
+const { createClient } = require('@supabase/supabase-js');
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const supabase = createClient(
@@ -20,7 +20,7 @@ const supabase = createClient(
 // Stripe webhook signature verification
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-export const config = {
+module.exports.config = {
     api: {
         bodyParser: false, // Disable body parsing, need raw body for signature verification
     },
@@ -40,7 +40,7 @@ async function getRawBody(req) {
     });
 }
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.setHeader('Allow', 'POST').status(405).json({ error: 'Method not allowed' });
     }

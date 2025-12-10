@@ -13,14 +13,14 @@ export const HolidayTooltip: React.FC<{ holiday: HolidayInfo }> = ({ holiday }) 
             onMouseLeave={() => setIsOpen(false)}
             onClick={() => setIsOpen(!isOpen)}
         >
-            <span className="cursor-help text-[10px] font-bold bg-lavender-50 text-lavender-accent border border-lavender-100 px-2 py-1 rounded uppercase tracking-wider hover:bg-lavender-100 transition-colors shadow-sm">
-                {holiday.name}
+            <span className="cursor-help text-xs font-semibold bg-lavender-50 text-lavender-accent border-2 border-lavender-accent/20 px-3 py-1.5 rounded-full hover:bg-lavender-100 transition-colors">
+                🎉 {holiday.name}
             </span>
             <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 transition-all duration-200 pointer-events-none ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
-                <div className="bg-white border border-rose-100 p-3 rounded-lg shadow-xl text-xs text-center backdrop-blur-md relative z-50">
+                <div className="bg-white border-2 border-rose-accent/20 p-3 rounded-2xl shadow-xl text-xs text-center backdrop-blur-md relative">
                     <div className="font-bold text-gray-800 mb-1">{formatDate(holiday.date)}</div>
-                    <div className="text-gray-500 leading-tight">{desc}</div>
-                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-white border-r border-b border-rose-100"></div>
+                    <div className="text-gray-600 leading-tight">{desc}</div>
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-white border-r-2 border-b-2 border-rose-accent/20"></div>
                 </div>
             </div>
         </div>
@@ -32,11 +32,11 @@ export const EfficiencyGauge: React.FC<{ multiplier: number, isJoint?: boolean, 
     const percentage = Math.min(100, Math.max(0, (displayMultiplier - 1) / 4 * 100));
 
     return (
-        <div className="bg-white border border-rose-100 rounded-2xl p-6 h-full min-h-[220px] relative overflow-hidden flex flex-col items-center justify-center text-center shadow-sm">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-peach-accent via-rose-accent to-lavender-accent"></div>
+        <div className="bg-white/80 border-2 border-rose-accent/20 rounded-3xl p-6 h-full min-h-[220px] relative overflow-hidden flex flex-col items-center justify-center text-center shadow-xl">
+            <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-rose-accent via-lavender-accent to-peach-accent rounded-t-3xl"></div>
 
             <div className="relative w-32 h-16 mt-4 mb-2 overflow-hidden">
-                <div className="absolute w-32 h-32 rounded-full border-[12px] border-rose-50 top-0 left-0 box-border"></div>
+                <div className="absolute w-32 h-32 rounded-full border-[12px] border-rose-100 top-0 left-0 box-border"></div>
                 <div
                     className="absolute w-32 h-32 rounded-full border-[12px] border-rose-accent border-b-transparent border-r-transparent top-0 left-0 box-border transition-all duration-1000 ease-out origin-center rotate-45"
                     style={{ transform: `rotate(${45 + (percentage * 1.8)}deg)` }}
@@ -47,15 +47,15 @@ export const EfficiencyGauge: React.FC<{ multiplier: number, isJoint?: boolean, 
                 <div className="text-4xl font-display font-bold text-gray-800">
                     {isInfinite ? '∞' : `${multiplier.toFixed(1)}x`}
                 </div>
-                <div className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mt-1">Smart Multiplier</div>
+                <div className="text-xs text-rose-accent font-semibold mt-1">✨ Smart Multiplier</div>
             </div>
 
             <p className="text-xs text-gray-500 mt-4 max-w-[180px]">
                 {isJoint
-                    ? 'Total combined efficiency.'
+                    ? 'Your combined vacation power! 💕'
                     : isInfinite
-                        ? 'Free vacation! No PTO days used.'
-                        : `For every 1 day of PTO, you get ${multiplier.toFixed(1)} days of vacation.`
+                        ? 'Free days off! No vacation days used 🎉'
+                        : `For every 1 day you use, get ${multiplier.toFixed(1)} days off!`
                 }
             </p>
         </div>
@@ -67,30 +67,30 @@ export const DistributionChart: React.FC<{ pto: number, free: number }> = ({ pto
     const ptoPct = total > 0 ? (pto / total) * 100 : 0;
 
     return (
-        <div className="bg-white border border-rose-100 rounded-2xl p-6 h-full flex flex-col justify-between shadow-sm">
-            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Total Breakdown</h4>
+        <div className="bg-white/80 border-2 border-lavender-accent/20 rounded-3xl p-6 h-full flex flex-col justify-between shadow-xl">
+            <h4 className="text-xs font-semibold text-gray-600 mb-4">Your Breakdown ✨</h4>
 
             <div className="flex gap-4 items-end h-32 px-4 pb-2 justify-center">
                 <div className="w-16 flex flex-col items-center gap-2 group cursor-help">
-                    <span className="text-xs font-bold text-gray-400 opacity-100 transition-opacity">{pto}d</span>
-                    <div className="w-full bg-gray-200 rounded-t-lg relative overflow-hidden" style={{ height: `${Math.max(ptoPct, 5)}%` }}>
-                        <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                    <span className="text-xs font-bold text-gray-500">{pto}d</span>
+                    <div className="w-full bg-gray-300 rounded-t-xl relative overflow-hidden" style={{ height: `${Math.max(ptoPct, 5)}%` }}>
+                        <div className="absolute inset-0 bg-white/30 animate-pulse"></div>
                     </div>
-                    <span className="text-[10px] font-bold text-gray-500 uppercase">Used</span>
+                    <span className="text-xs font-semibold text-gray-500">Used</span>
                 </div>
 
                 <div className="w-16 flex flex-col items-center gap-2 group cursor-help">
-                    <span className="text-xs font-bold text-rose-accent opacity-100 transition-opacity">+{free}d</span>
-                    <div className="w-full bg-rose-accent rounded-t-lg shadow-[0_0_20px_rgba(244,63,94,0.3)] relative overflow-hidden" style={{ height: `100%` }}>
+                    <span className="text-xs font-bold text-rose-accent">+{free}d</span>
+                    <div className="w-full bg-gradient-to-t from-rose-accent to-lavender-accent rounded-t-xl shadow-lg relative overflow-hidden" style={{ height: `100%` }}>
                         <div className="absolute inset-0 bg-white/20"></div>
                     </div>
-                    <span className="text-[10px] font-bold text-rose-accent uppercase">Free</span>
+                    <span className="text-xs font-semibold text-rose-accent">Free! 🎉</span>
                 </div>
             </div>
 
-            <div className="mt-4 pt-4 border-t border-rose-50 flex justify-between text-xs">
-                <span className="text-gray-400">Total Bonus:</span>
-                <span className="text-gray-800 font-bold">{total > 0 && pto > 0 ? ((free / pto) * 100).toFixed(0) : (free > 0 ? '∞' : 0)}%</span>
+            <div className="mt-4 pt-4 border-t-2 border-rose-accent/10 flex justify-between text-xs">
+                <span className="text-gray-500">Bonus Days:</span>
+                <span className="text-rose-accent font-bold">{total > 0 && pto > 0 ? ((free / pto) * 100).toFixed(0) : (free > 0 ? '∞' : 0)}% 💖</span>
             </div>
         </div>
     )
@@ -111,7 +111,7 @@ export const MonthGrid: React.FC<{ year: number, month: number, statusMap: DaySt
 
     return (
         <div className="space-y-2 w-[160px] flex-shrink-0 select-none snap-start relative z-10 flex flex-col">
-            <div className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 border-b border-rose-100 pb-1">{monthName}</div>
+            <div className="text-xs font-bold text-gray-600 mb-2 border-b-2 border-rose-accent/10 pb-1">{monthName}</div>
 
             <div className="grid grid-cols-7 gap-1 mb-1">
                 {weekDays.map((d, i) => (
@@ -129,11 +129,11 @@ export const MonthGrid: React.FC<{ year: number, month: number, statusMap: DaySt
                     const status = statusMap.get(dateStr);
                     const isHovered = activeDay === day;
 
-                    let bgClass = "bg-gray-100 border border-transparent";
-                    if (status?.type === 'pto') bgClass = "bg-rose-accent border-rose-accent shadow-md scale-110 ring-1 ring-rose-200";
-                    if (status?.type === 'holiday') bgClass = "bg-lavender-accent border-lavender-accent shadow-md scale-110 ring-1 ring-lavender-200";
-                    if (status?.type === 'weekend') bgClass = "bg-rose-50/50 border-transparent";
-                    if (status?.type === 'locked') bgClass = "bg-gray-200 opacity-50 border border-gray-300 striped-bg";
+                    let bgClass = "bg-rose-50 border-2 border-rose-accent/10";
+                    if (status?.type === 'pto') bgClass = "bg-gradient-to-br from-rose-accent to-lavender-accent border-2 border-rose-accent shadow-lg scale-110";
+                    if (status?.type === 'holiday') bgClass = "bg-lavender-accent border-2 border-lavender-accent shadow-lg scale-110";
+                    if (status?.type === 'weekend') bgClass = "bg-gray-100 border-2 border-gray-200";
+                    if (status?.type === 'locked') bgClass = "bg-gray-200 opacity-50 border-2 border-gray-300 striped-bg";
 
                     return (
                         <div
@@ -141,18 +141,18 @@ export const MonthGrid: React.FC<{ year: number, month: number, statusMap: DaySt
                             onMouseEnter={() => setActiveDay(day)}
                             onMouseLeave={() => setActiveDay(null)}
                             onClick={() => setActiveDay(activeDay === day ? null : day)}
-                            className={`w-4 h-4 rounded-full ${bgClass} group relative cursor-default transition-all duration-300 ${isHovered ? 'z-[200] scale-125' : 'hover:z-[100] active:z-[100]'}`}
+                            className={`w-4 h-4 rounded-md ${bgClass} group relative cursor-default transition-all duration-300 ${isHovered ? 'z-[200]' : 'hover:z-[100] active:z-[100]'}`}
                         >
                             {/* Start Marker */}
                             {status?.isStart && !['locked', 'weekend'].includes(status.type) && (
-                                <div className="absolute -top-1 -right-1 w-2 h-2 bg-white rounded-full shadow-sm z-20 ring-1 ring-gray-200"></div>
+                                <div className="absolute -top-1 -right-1 w-2 h-2 bg-white rounded-full shadow-md z-20 ring-2 ring-rose-accent"></div>
                             )}
 
                             {status && !['locked', 'weekend'].includes(status.type) && isHovered && (
                                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-[140px] pointer-events-none z-[200] animate-in fade-in zoom-in-95 duration-200">
-                                    <div className="bg-white text-gray-800 text-[10px] font-bold px-3 py-1.5 rounded-lg border border-rose-100 shadow-xl whitespace-normal text-center relative">
+                                    <div className="bg-white/95 backdrop-blur text-gray-800 text-[10px] font-bold px-3 py-2 rounded-xl border-2 border-rose-accent/20 shadow-xl whitespace-normal text-center relative">
                                         {status.name}
-                                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-rose-100"></div>
+                                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-white"></div>
                                     </div>
                                 </div>
                             )}
@@ -164,7 +164,7 @@ export const MonthGrid: React.FC<{ year: number, month: number, statusMap: DaySt
             {holidaysList.length > 0 && (
                 <div className="mt-auto pt-2 space-y-1">
                     {holidaysList.slice(0, 2).map((h, i) => (
-                        <div key={i} className="flex items-start gap-1 text-[9px] text-gray-400 leading-tight">
+                        <div key={i} className="flex items-start gap-1.5 text-[9px] text-gray-500 leading-tight">
                             <div className="w-1.5 h-1.5 rounded-full bg-lavender-accent mt-0.5 flex-shrink-0"></div>
                             <span>{h.name}</span>
                         </div>
@@ -228,7 +228,7 @@ export const YearTimeline: React.FC<{ blocks: VacationBlock[], isLocked: boolean
 
                 map.set(dateStr, {
                     type,
-                    name: isHoliday ? isHoliday.name : (type === 'pto' ? 'PTO Day' : 'Weekend'),
+                    name: isHoliday ? isHoliday.name : (type === 'pto' ? 'Your Vacation Day 💖' : 'Weekend'),
                     blockId: b.id,
                     isStart: dateStr === b.startDate
                 });
@@ -240,23 +240,25 @@ export const YearTimeline: React.FC<{ blocks: VacationBlock[], isLocked: boolean
     }, [blocks, isLocked]);
 
     return (
-        <div className="w-full bg-light-100 border border-rose-100 rounded-3xl pt-6 pb-2 md:p-8 animate-fade-up relative group shadow-sm hover:shadow-md transition-shadow">
+        <div className="w-full bg-white/80 border-2 border-rose-accent/20 rounded-3xl pt-6 pb-2 md:p-8 animate-fade-up relative group shadow-xl">
+            <div className="absolute inset-0 bg-gradient-to-br from-rose-50/30 to-lavender-50/30 pointer-events-none rounded-3xl overflow-hidden"></div>
+
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-2 gap-4 relative z-10 px-6 md:px-0">
                 <div>
                     <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                        <span className="text-rose-accent text-xl">🗓</span> Year at a Glance
+                        <span className="text-xl">📅</span> Your Year at a Glance
                     </h3>
-                    <p className="text-xs text-gray-500 font-mono mt-1 uppercase tracking-wider">Your Visual Plan ({startYear} - {months[11].year})</p>
+                    <p className="text-xs text-gray-500 font-medium mt-1">Your beautiful plan for {startYear} - {months[11].year} ✨</p>
                 </div>
 
-                <div className="flex flex-wrap gap-4 md:gap-6 text-[10px] font-bold uppercase tracking-wider bg-white px-4 py-2 rounded-full border border-rose-50 shadow-sm">
+                <div className="flex flex-wrap gap-4 md:gap-6 text-xs font-semibold bg-rose-50 px-4 py-2.5 rounded-full border-2 border-rose-accent/10">
                     <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-rose-accent shadow-sm"></div>
-                        <span className="text-gray-500">Vacation</span>
+                        <div className="w-3 h-3 rounded-md bg-gradient-to-br from-rose-accent to-lavender-accent shadow-md"></div>
+                        <span className="text-gray-700">Your Days Off</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-lavender-accent shadow-sm"></div>
-                        <span className="text-gray-500">Holiday</span>
+                        <div className="w-3 h-3 rounded-md bg-lavender-accent shadow-md"></div>
+                        <span className="text-gray-700">Holidays 🎉</span>
                     </div>
                 </div>
             </div>
@@ -275,7 +277,7 @@ export const YearTimeline: React.FC<{ blocks: VacationBlock[], isLocked: boolean
                 </div>
             </div>
 
-            <div className="absolute top-0 right-0 h-full w-8 bg-gradient-to-l from-light-100 to-transparent pointer-events-none z-20 md:hidden"></div>
+            <div className="absolute top-0 right-0 h-full w-8 bg-gradient-to-l from-white/80 to-transparent pointer-events-none z-20 md:hidden rounded-r-3xl"></div>
         </div>
     )
 }

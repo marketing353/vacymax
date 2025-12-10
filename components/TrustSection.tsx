@@ -14,36 +14,36 @@ const integrations = [
     color: '#0A64AD',
     accent: 'linear-gradient(135deg, #0A64AD 0%, #50B5FF 100%)',
   },
-  { name: 'iCal', initials: '', color: '#666666', accent: '#ffffff' },
+  { name: 'iCal', initials: '🍎', color: '#A2AAAD', accent: '#ffffff' },
 ];
 
 const wallOfLove = [
   {
-    handle: '@sarah_travels',
-    role: 'Digital Nomad',
-    quote: 'Finally planned a 3-week Bali trip without using all my PTO. This tool is magic! ✨',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=sarah&backgroundColor=ffd5dc',
+    handle: '@mariewellness',
+    role: 'Lifestyle Coach',
+    quote: 'This saved my sanity! Turned 12 days into 5 weeks of breaks. Finally prioritizing myself 💖',
+    avatar: 'https://api.dicebear.com/7.x/lorelei/svg?seed=marie',
   },
   {
-    handle: '@jess_designs',
-    role: 'Creative Director',
-    quote: 'I used to burn out every Q4. Now I have regular long weekends scheduled automatically.',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=jess&backgroundColor=e0e7ff',
+    handle: '@jessicatravel',
+    role: 'Travel Blogger',
+    quote: 'Essential for planning girls trips! We finally coordinated our calendars perfectly ✨',
+    avatar: 'https://api.dicebear.com/7.x/lorelei/svg?seed=jessica',
   },
   {
-    handle: '@mindful_mia',
-    role: 'Wellness Coach',
-    quote: 'Privacy was my main concern. I love that it doesn\'t store my calendar data. 10/10.',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=mia&backgroundColor=ffedd5',
+    handle: '@sarahbalance',
+    role: 'Working Mom',
+    quote: 'As a busy mom, this helps me actually use my vacation days instead of losing them. Life-changing!',
+    avatar: 'https://api.dicebear.com/7.x/lorelei/svg?seed=sarah',
   }
 ];
 
 // --- BEHAVIORAL TRIGGER: LIVE ACTIVITY FEED ---
 const LiveActivityFeed = () => {
   const [activities, setActivities] = useState([
-    { user: 'Sarah (UK)', action: 'planned her Bali retreat 🌸' },
-    { user: 'Emma (USA)', action: 'found 4 long weekends' },
-    { user: 'Olivia (Canada)', action: 'reclaimed 12 days of joy' },
+    { user: 'Sarah (UK)', action: 'just planned 34 days of rest! 💖' },
+    { user: 'Emma (USA)', action: 'found 5 perfect long weekends ✨' },
+    { user: 'Jessica (Canada)', action: 'maximized her vacation value!' },
   ]);
 
   useEffect(() => {
@@ -58,7 +58,7 @@ const LiveActivityFeed = () => {
   }, []);
 
   return (
-    <div className="absolute top-0 right-0 p-6 hidden md:block pointer-events-none overflow-hidden h-[200px] w-[300px]">
+    <div className="absolute top-0 right-0 p-6 hidden md:block pointer-events-none overflow-hidden h-[200px] w-[320px]">
       <AnimatePresence mode='popLayout'>
         {activities.slice(0, 2).map((activity, i) => (
           <motion.div
@@ -66,10 +66,10 @@ const LiveActivityFeed = () => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="mb-3 flex items-center gap-3 bg-white/70 backdrop-blur-md border border-rose-100 p-3 rounded-xl shadow-sm"
+            className="mb-3 flex items-center gap-3 bg-white/80 backdrop-blur-md border-2 border-rose-accent/20 p-3 rounded-2xl shadow-lg"
           >
-            <div className="w-2 h-2 rounded-full bg-rose-accent animate-pulse"></div>
-            <p className="text-xs text-gray-500">
+            <div className="w-3 h-3 rounded-full bg-gradient-to-r from-rose-accent to-lavender-accent animate-pulse"></div>
+            <p className="text-xs text-gray-700">
               <span className="font-bold text-gray-800">{activity.user}</span> {activity.action}
             </p>
           </motion.div>
@@ -81,15 +81,18 @@ const LiveActivityFeed = () => {
 
 export const TrustSection: React.FC = () => {
   return (
-    <section className="w-full bg-gradient-to-b from-white to-light-200 border-t border-rose-50 py-24 px-6 relative" id="trust">
-      <div className="max-w-6xl mx-auto space-y-24 relative z-10">
+    <section className="w-full bg-gradient-to-br from-lavender-50 via-white to-rose-50 border-y-2 border-rose-accent/10 py-24 px-6 relative" id="trust">
+      <div className="max-w-6xl mx-auto space-y-20 relative z-10">
 
         {/* Header with Live Feed */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 relative">
           <div className="space-y-4 max-w-2xl">
-            <h2 className="text-3xl md:text-5xl font-display font-bold text-gray-800">Your Privacy, Our Priority.</h2>
-            <p className="text-gray-500 text-lg leading-relaxed">
-              We operate with a "Local First" philosophy. We sync with your calendar to find optimization gaps, but your data never leaves your browser's secure memory.
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-rose-50 border-2 border-rose-accent/20 rounded-full text-rose-accent text-sm font-semibold">
+              💖 Why women love us
+            </div>
+            <h2 className="text-3xl md:text-5xl font-display font-bold text-gray-800">Your wellbeing, our priority.</h2>
+            <p className="text-gray-600 text-lg leading-relaxed">
+              We built this with care - your data stays private, your calendar stays yours, and your time off gets maximized. ✨
             </p>
           </div>
           <LiveActivityFeed />
@@ -97,66 +100,64 @@ export const TrustSection: React.FC = () => {
 
         {/* Integration Grid */}
         <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-3xl p-8 border border-rose-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+          <div className="glass-panel rounded-3xl p-8 border-2 border-rose-accent/20 flex flex-col justify-between shadow-lg hover:shadow-xl transition-shadow">
             <div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2 flex items-center gap-2">
-                Seamless Integration
-                <span className="bg-rose-50 text-rose-600 border border-rose-100 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wide">Instant Setup</span>
+              <h3 className="text-xl font-bold text-gray-800 mb-2 flex items-center gap-3">
+                Easy Calendar Sync 📅
+                <span className="bg-gradient-to-r from-rose-accent to-lavender-accent text-white text-xs px-3 py-1 rounded-full font-semibold">One-Click</span>
               </h3>
-              <p className="text-gray-500 text-sm">Connects with your existing calendar tools in seconds.</p>
+              <p className="text-gray-600 text-sm">Connects with your favorite calendar apps in seconds.</p>
             </div>
             <div className="mt-8 flex gap-4">
               {integrations.map((item) => (
-                <div key={item.name} className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold bg-gray-50 border border-gray-100 text-gray-400 hover:text-gray-600 hover:border-rose-200 hover:bg-white transition-all cursor-pointer shadow-sm">
+                <div key={item.name} className="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-bold bg-white border-2 border-rose-accent/10 hover:border-rose-accent/30 hover:shadow-md transition-all cursor-pointer" style={{ color: item.color }}>
                   {item.initials}
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl p-8 border border-rose-100 shadow-sm relative overflow-hidden flex flex-col justify-center hover:shadow-md transition-shadow">
+          <div className="glass-panel rounded-3xl p-8 border-2 border-lavender-accent/20 relative overflow-hidden flex flex-col justify-center shadow-lg hover:shadow-xl transition-shadow">
             <div className="relative z-10">
-              <div className="flex items-center gap-3 mb-4 text-rose-accent">
+              <div className="flex items-center gap-3 mb-4 text-lavender-accent">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                <span className="font-bold tracking-widest uppercase text-xs">Secure & Private</span>
+                <span className="font-bold text-sm">Privacy First 🔒</span>
               </div>
               <h3 className="text-2xl font-bold text-gray-800 mb-2">Your Data Stays Yours</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">
-                We use a local-first architecture. Your schedule is processed in your browser memory and is never stored on our servers.
+              <p className="text-gray-600 text-sm leading-relaxed">
+                We use local-first technology - your calendar is processed in your browser and never stored on our servers. Complete peace of mind. 💜
               </p>
             </div>
-            <div className="absolute right-0 bottom-0 opacity-5 pointer-events-none">
-              <svg className="w-40 h-40 text-rose-accent" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path></svg>
-            </div>
+            <div className="absolute right-4 bottom-4 text-5xl opacity-20 pointer-events-none">🔐</div>
           </div>
         </div>
 
         {/* Wall of Love */}
         <div className="space-y-8">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-[2px] bg-rose-accent"></div>
-            <p className="text-sm uppercase tracking-[0.3em] text-gray-400 font-bold">14,000+ Happy Planners</p>
+            <div className="w-10 h-1 bg-gradient-to-r from-rose-accent to-lavender-accent rounded-full"></div>
+            <p className="text-sm font-semibold text-gray-600">💖 14,000+ Happy Planners</p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {wallOfLove.map((post) => (
               <motion.div
                 key={post.handle}
                 whileHover={{ y: -5 }}
-                className="bg-white rounded-3xl p-8 border border-rose-100 relative overflow-hidden group shadow-sm hover:shadow-lg transition-all"
+                className="glass-panel glass-panel-hover rounded-3xl p-8 border-2 border-rose-accent/10 relative overflow-hidden group shadow-lg hover:shadow-xl"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-rose-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-rose-50/50 to-lavender-50/50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="relative z-10">
                   <div className="flex items-center gap-4 mb-6">
-                    <img src={post.avatar} alt={post.handle} className="w-12 h-12 rounded-full border-2 border-rose-100" />
+                    <img src={post.avatar} alt={post.handle} className="w-14 h-14 rounded-full border-3 border-rose-accent/20 bg-rose-50" />
                     <div>
                       <div className="flex items-center gap-2 text-gray-800 font-bold">
                         <span>{post.handle}</span>
-                        <span className="text-rose-400 text-[10px]">Verified</span>
+                        <span className="text-rose-accent text-xs">✓</span>
                       </div>
-                      <p className="text-xs text-gray-400 font-medium">{post.role}</p>
+                      <p className="text-xs text-gray-500 font-medium">{post.role}</p>
                     </div>
                   </div>
-                  <p className="text-gray-600 leading-relaxed text-base italic">"{post.quote}"</p>
+                  <p className="text-gray-700 leading-relaxed text-base italic">"{post.quote}"</p>
                 </div>
               </motion.div>
             ))}

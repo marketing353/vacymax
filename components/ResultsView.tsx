@@ -98,9 +98,10 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ result, onReset, onUnl
     if (!result.vacationBlocks || result.vacationBlocks.length === 0) {
         return (
             <div className="max-w-4xl mx-auto pt-12 text-center animate-enter">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">No optimal blocks found.</h2>
-                <p className="text-gray-500 mb-8">Try adjusting your preferences to find more opportunities.</p>
-                <button onClick={onReset} className="px-6 py-3 bg-white border border-rose-100 hover:bg-rose-50 rounded-lg text-rose-accent font-bold transition-all active:scale-95 shadow-sm">Start Over</button>
+                <div className="text-6xl mb-6">😔</div>
+                <h2 className="text-2xl font-bold text-gray-800 mb-4">No optimal blocks found</h2>
+                <p className="text-gray-600 mb-8">Try adjusting your preferences and we'll find something perfect for you! 💖</p>
+                <button onClick={onReset} className="px-6 py-3 bg-gradient-to-r from-rose-accent to-lavender-accent hover:shadow-lg rounded-xl text-white font-bold transition-all active:scale-95">Start Over</button>
             </div>
         )
     }
@@ -121,59 +122,60 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ result, onReset, onUnl
             {/* Header Cards with Staggered Entrance */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
 
-                {/* Main Stat Card - Glassmorphism */}
-                <div className="lg:col-span-7 md:col-span-2 bg-gradient-to-br from-white to-rose-50/50 rounded-3xl p-6 md:p-8 relative overflow-hidden group animate-enter shadow-sm border border-rose-100">
+                {/* Main Stat Card - Feminine Glassmorphism */}
+                <div className="lg:col-span-7 md:col-span-2 glass-panel rounded-3xl p-6 md:p-8 relative overflow-hidden group animate-enter shadow-xl border-2 border-rose-accent/20">
                     {/* Animated Glow */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-rose-200/20 rounded-full blur-[100px] pointer-events-none group-hover:bg-rose-200/30 transition-colors duration-700"></div>
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-rose-accent/10 rounded-full blur-[100px] pointer-events-none group-hover:bg-rose-accent/20 transition-colors duration-700"></div>
+                    <div className="absolute bottom-0 left-0 w-48 h-48 bg-lavender-accent/10 rounded-full blur-[80px] pointer-events-none"></div>
 
                     <div className="relative z-10 flex flex-col justify-between h-full">
                         <div>
                             <div className="flex justify-between items-start mb-4">
-                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-50 border border-rose-100 text-rose-accent text-[10px] font-bold uppercase tracking-widest">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-rose-accent animate-pulse"></span>
-                                    {result.planName || "Optimal Schedule"}
+                                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-rose-50 to-lavender-50 border-2 border-rose-accent/20 text-rose-accent text-xs font-semibold shadow-sm">
+                                    <span className="text-base">✨</span>
+                                    {result.planName || "Your Perfect Plan!"}
                                 </div>
 
                                 {/* Interactive Toggle */}
                                 {hasBuddy && (
-                                    <div className="flex bg-white/60 border border-rose-100 rounded-full p-1 backdrop-blur-md">
+                                    <div className="flex bg-white/80 border-2 border-rose-accent/20 rounded-full p-1 shadow-sm">
                                         <button
                                             onClick={() => setViewMode('joint')}
-                                            className={`px-3 py-1 text-[10px] font-bold uppercase tracking-wide rounded-full transition-all duration-300 ${viewMode === 'joint' ? 'bg-rose-100 text-rose-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+                                            className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-all duration-300 ${viewMode === 'joint' ? 'bg-gradient-to-r from-rose-accent to-lavender-accent text-white shadow-md' : 'text-gray-500 hover:text-gray-700'}`}
                                         >
-                                            Together
+                                            Together 💕
                                         </button>
                                         <button
                                             onClick={() => setViewMode('solo')}
-                                            className={`px-3 py-1 text-[10px] font-bold uppercase tracking-wide rounded-full transition-all duration-300 ${viewMode === 'solo' ? 'bg-rose-100 text-rose-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+                                            className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-all duration-300 ${viewMode === 'solo' ? 'bg-gradient-to-r from-rose-accent to-lavender-accent text-white shadow-md' : 'text-gray-500 hover:text-gray-700'}`}
                                         >
-                                            Me Time
+                                            Just Me
                                         </button>
                                     </div>
                                 )}
                             </div>
 
                             <h2 className="text-3xl md:text-5xl font-display font-bold text-gray-800 mb-2 tracking-tight">
-                                {result.totalDaysOff} Days Off
+                                {result.totalDaysOff} Days Off! 🎉
                             </h2>
 
-                            <div className="text-gray-500 text-sm md:text-base min-h-[48px]">
+                            <div className="text-gray-600 text-sm md:text-base min-h-[48px]">
                                 {viewMode === 'joint' ? (
-                                    <>Joint wellness plan using <strong className="text-gray-700">{result.totalPtoUsed}</strong> of your days and <strong className="text-gray-700">{result.totalPtoUsedBuddy}</strong> partner days.</>
+                                    <>Your shared adventure uses <strong className="text-rose-accent">{result.totalPtoUsed}</strong> of your days and <strong className="text-lavender-accent">{result.totalPtoUsedBuddy}</strong> of your partner's. 💖</>
                                 ) : (
-                                    <>Viewing your personal refresh time: <strong className="text-gray-700">{result.totalPtoUsed} PTO days</strong> used.</>
+                                    <>Your personal plan uses just <strong className="text-rose-accent">{result.totalPtoUsed} vacation days</strong>. Amazing! ✨</>
                                 )}
                             </div>
                         </div>
 
-                        <div className="mt-8 pt-6 border-t border-rose-50 grid grid-cols-2 gap-4">
-                            <div>
-                                <p className="text-[10px] uppercase text-gray-400 font-bold mb-1">Value Recovered</p>
+                        <div className="mt-8 pt-6 border-t-2 border-rose-accent/10 grid grid-cols-2 gap-4">
+                            <div className="bg-white/60 rounded-2xl p-4 text-center shadow-sm">
+                                <p className="text-xs text-gray-500 font-semibold mb-1">Vacation Value</p>
                                 <p className="text-2xl font-bold text-gray-800 tracking-tight">{formatCurrency(result.totalValueRecovered)}</p>
                             </div>
-                            <div>
-                                <p className="text-[10px] uppercase text-gray-400 font-bold mb-1">
-                                    {viewMode === 'joint' ? 'Joint Efficiency' : 'Your Efficiency'}
+                            <div className="bg-gradient-to-r from-rose-50 to-lavender-50 rounded-2xl p-4 text-center shadow-sm border-2 border-rose-accent/10">
+                                <p className="text-xs text-rose-accent font-semibold mb-1">
+                                    {viewMode === 'joint' ? 'Together Bonus' : 'Your Bonus'} ✨
                                 </p>
                                 <p className="text-2xl font-bold text-rose-accent tracking-tight">
                                     {isInfiniteEfficiency ? '∞' : `+${((multiplier - 1) * 100).toFixed(0)}%`}
@@ -204,13 +206,13 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ result, onReset, onUnl
 
             <div className="space-y-4">
                 <div className="flex items-center justify-between px-2 animate-enter delay-400">
-                    <h3 className="text-xl font-bold text-gray-800">Your Wellness Schedule</h3>
+                    <h3 className="text-xl font-bold text-gray-800">Your Perfect Schedule 💖</h3>
                     <div className="flex gap-2">
                         <button
                             onClick={() => downloadICS(visibleBlocks)}
-                            className="text-xs bg-white hover:bg-rose-50 border border-rose-100 px-3 py-1.5 rounded-lg text-gray-500 transition-all hover:scale-105 active:scale-95 shadow-sm"
+                            className="text-xs bg-white/80 hover:bg-white border-2 border-rose-accent/20 hover:border-rose-accent/40 px-4 py-2 rounded-xl text-gray-700 font-semibold transition-all hover:shadow-md active:scale-95"
                         >
-                            Download .ICS
+                            📥 Download Calendar
                         </button>
                     </div>
                 </div>
@@ -219,44 +221,43 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ result, onReset, onUnl
                     {visibleBlocks.map((block, i) => (
                         <div
                             key={block.id}
-                            className="bg-white/70 backdrop-blur-sm border border-rose-100 rounded-2xl p-5 md:p-6 transition-all duration-300 group relative overflow-hidden animate-enter hover:shadow-md"
-                            style={{ animationDelay: `${500 + (i * 100)}ms` }} // Staggered list items
+                            className="glass-panel glass-panel-hover rounded-2xl p-5 md:p-6 transition-all duration-300 group relative overflow-hidden animate-enter border-2 border-rose-accent/10 hover:border-rose-accent/30 shadow-lg hover:shadow-xl"
+                            style={{ animationDelay: `${500 + (i * 100)}ms` }}
                         >
-                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-rose-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-rose-accent to-lavender-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-l-full"></div>
 
                             <div className="flex flex-col md:flex-row gap-4 md:items-center justify-between relative z-10">
                                 <div>
-                                    <div className="flex items-center gap-3 mb-1">
-                                        <span className="text-[10px] font-bold bg-white border border-rose-50 px-2 py-0.5 rounded text-gray-400 uppercase tracking-wider shadow-sm">
-                                            Trip {i + 1}
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <span className="text-xs font-semibold bg-rose-50 border-2 border-rose-accent/20 px-3 py-1 rounded-full text-rose-accent">
+                                            Trip {i + 1} ✨
                                         </span>
                                         {block.efficiencyScore > 3 && (
-                                            <span className="text-[10px] font-bold bg-rose-50 text-rose-accent border border-rose-100 px-2 py-0.5 rounded uppercase tracking-wider flex items-center gap-1">
-                                                ★ Optimal
+                                            <span className="text-xs font-semibold bg-gradient-to-r from-rose-accent to-lavender-accent text-white px-3 py-1 rounded-full flex items-center gap-1 shadow-md">
+                                                ⭐ Best Value!
                                             </span>
                                         )}
-                                        {/* View Mode Logic for Tags */}
                                         {viewMode === 'joint' && block.buddyPtoDaysUsed === 0 && block.ptoDaysUsed === 0 && (
-                                            <span className="text-[10px] font-bold bg-lavender-50 text-lavender-accent border border-lavender-100 px-2 py-0.5 rounded uppercase tracking-wider flex items-center gap-1">
-                                                ♥ Free for Both
+                                            <span className="text-xs font-semibold bg-lavender-50 text-lavender-accent border-2 border-lavender-accent/20 px-3 py-1 rounded-full flex items-center gap-1">
+                                                💕 Free Together!
                                             </span>
                                         )}
                                     </div>
                                     <h4 className="text-lg font-bold text-gray-800 tracking-tight">{block.description}</h4>
-                                    <div className="text-sm text-gray-500 mt-1 flex flex-wrap items-center gap-x-4 gap-y-1">
+                                    <div className="text-sm text-gray-600 mt-1 flex flex-wrap items-center gap-x-4 gap-y-1">
                                         <span className="flex items-center gap-1.5">
                                             📅 {formatDate(block.startDate)} — {formatDate(block.endDate)}
                                         </span>
-                                        <span className="flex items-center gap-1.5 text-rose-400 font-medium">
-                                            ⏱ {block.totalDaysOff} Days Off
+                                        <span className="flex items-center gap-1.5 text-rose-accent font-semibold">
+                                            🎉 {block.totalDaysOff} Days Off
                                         </span>
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-4 border-t md:border-t-0 border-rose-50 pt-4 md:pt-0">
+                                <div className="flex items-center gap-4 border-t-2 md:border-t-0 border-rose-accent/10 pt-4 md:pt-0">
                                     <div className="text-right hidden md:block">
-                                        <div className="text-xs text-gray-400 uppercase tracking-widest">Pto Cost</div>
-                                        <div className="font-bold text-gray-700 text-sm">
+                                        <div className="text-xs text-gray-500 font-semibold">Days Used</div>
+                                        <div className="font-bold text-gray-800 text-sm">
                                             You: <span className={block.ptoDaysUsed === 0 ? "text-rose-accent" : ""}>{block.ptoDaysUsed}d</span>
                                             {viewMode === 'joint' && hasBuddy && (
                                                 <span className="ml-2 text-gray-400">| Partner: <span className={block.buddyPtoDaysUsed === 0 ? "text-lavender-accent" : ""}>{block.buddyPtoDaysUsed}d</span></span>
@@ -267,9 +268,9 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ result, onReset, onUnl
                                         href={generateGoogleCalendarLink(block)}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="px-4 py-2 bg-white hover:bg-rose-50 text-rose-accent text-xs font-bold rounded-lg border border-rose-100 transition-all active:scale-95 whitespace-nowrap shadow-sm"
+                                        className="px-4 py-2.5 bg-gradient-to-r from-rose-accent to-lavender-accent hover:shadow-lg text-white text-xs font-bold rounded-xl transition-all active:scale-95 whitespace-nowrap"
                                     >
-                                        Add to Calendar
+                                        Add to Calendar 📅
                                     </a>
                                 </div>
                             </div>
@@ -289,58 +290,59 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ result, onReset, onUnl
             {isLocked && hiddenCount > 0 && (
                 <div className="relative mt-8 group cursor-pointer animate-enter delay-500" onClick={handleUnlockClick}>
                     {/* Premium Gradient Border Animation */}
-                    <div className="absolute -inset-[1px] bg-gradient-to-r from-rose-accent via-peach-accent to-rose-accent rounded-[25px] opacity-75 blur-sm group-hover:opacity-100 transition-opacity animate-shimmer bg-[length:200%_100%]"></div>
+                    <div className="absolute -inset-[2px] bg-gradient-to-r from-rose-accent via-lavender-accent to-peach-accent rounded-[28px] opacity-75 blur-sm group-hover:opacity-100 transition-opacity animate-shimmer bg-[length:200%_100%]"></div>
 
-                    <div className="absolute inset-0 z-10 backdrop-blur-xl bg-white/90 flex items-center justify-center rounded-3xl border border-rose-100">
+                    <div className="absolute inset-0 z-10 backdrop-blur-xl bg-white/90 flex items-center justify-center rounded-3xl border-2 border-rose-accent/20 shadow-2xl">
                         <div className="text-center p-6 md:p-8 max-w-lg mx-auto relative w-full">
 
-                            <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-gradient-to-r from-rose-accent to-peach-accent text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-[0_4px_10px_rgba(244,63,94,0.3)] z-20 whitespace-nowrap transform group-hover:-translate-y-1 transition-transform">
-                                Your Best Life Awaits: Unlock {formatCurrency(hiddenValue)} Value
+                            <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-gradient-to-r from-rose-accent to-lavender-accent text-white text-xs font-bold px-5 py-2 rounded-full shadow-lg z-20 whitespace-nowrap transform group-hover:-translate-y-1 transition-transform">
+                                ✨ Unlock {formatCurrency(hiddenValue)} in vacation value!
                             </div>
 
-                            <div className="w-16 h-16 bg-rose-50 text-rose-accent rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-rose-100 relative mt-2 group-hover:scale-110 transition-transform duration-500">
-                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                            <div className="w-20 h-20 bg-gradient-to-br from-rose-accent to-lavender-accent rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl relative mt-4 group-hover:scale-110 transition-transform duration-500">
+                                <span className="text-4xl">🔓</span>
+                                <div className="absolute -inset-2 bg-rose-accent/30 rounded-3xl blur-lg -z-10 animate-pulse"></div>
                             </div>
 
-                            <h3 className="text-2xl md:text-3xl font-display font-bold text-gray-800 mb-2 leading-tight">
+                            <h3 className="text-2xl md:text-3xl font-display font-bold text-gray-800 mb-3 leading-tight">
                                 {bestHiddenBlock
-                                    ? `Unlock your ${bestHiddenBlock.totalDaysOff}-Day ${bestHiddenBlock.description.split(':')[0]} Reset`
-                                    : `Reveal ${hiddenCount} More Trips`
+                                    ? `Unlock your ${bestHiddenBlock.totalDaysOff}-day getaway! 💖`
+                                    : `Discover ${hiddenCount} more amazing trips!`
                                 }
                             </h3>
 
-                            <p className="text-gray-500 mb-8 leading-relaxed text-sm md:text-base">
-                                See exactly when to book to get <strong className="text-rose-500">{hiddenCount} more vacations</strong> worth <strong>{formatCurrency(hiddenValue)}</strong>.
+                            <p className="text-gray-600 mb-8 leading-relaxed text-sm md:text-base">
+                                See exactly when to book for <strong className="text-gray-800">{hiddenCount} more vacations</strong> worth <strong className="text-rose-accent">{formatCurrency(hiddenValue)}</strong>. ✨
                             </p>
 
-                            <button className="w-full py-4 bg-gradient-to-r from-rose-accent to-peach-accent text-white font-bold text-lg rounded-xl hover:scale-[1.02] transition-transform shadow-lg active:scale-95 flex items-center justify-center gap-2 group-hover:shadow-[0_10px_25px_rgba(244,63,94,0.4)]">
-                                <span>Unlock Full Schedule</span>
-                                <span className="text-rose-100 font-medium line-through decoration-rose-200/50">$49</span>
-                                <span className="bg-white/20 text-white px-2 py-0.5 rounded text-sm">
+                            <button className="w-full py-4 bg-gradient-to-r from-rose-accent to-lavender-accent text-white font-bold text-lg rounded-2xl hover:shadow-2xl transition-all shadow-xl active:scale-95 flex items-center justify-center gap-3">
+                                <span>Get My Full Schedule</span>
+                                <span className="text-white/70 font-medium line-through">$49</span>
+                                <span className="bg-white/20 text-white px-3 py-1 rounded-full text-sm font-bold">
                                     {price.symbol}{price.amount.toFixed(2)}
                                 </span>
                             </button>
-                            <div className="flex flex-wrap items-center justify-center gap-4 mt-6 opacity-60">
-                                <div className="flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded-md border border-gray-100">
-                                    <svg className="w-3 h-3 text-rose-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-                                    <span className="text-[10px] text-gray-500 uppercase tracking-wide font-bold">Secure Stripe Checkout</span>
+                            <div className="flex flex-wrap items-center justify-center gap-4 mt-6">
+                                <div className="flex items-center gap-2 bg-rose-50 px-3 py-1.5 rounded-full border-2 border-rose-accent/10">
+                                    <span className="text-rose-accent">🔒</span>
+                                    <span className="text-xs text-gray-700 font-semibold">Secure Payment</span>
                                 </div>
-                                <div className="flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded-md border border-gray-100">
-                                    <svg className="w-3 h-3 text-rose-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                    <span className="text-[10px] text-gray-500 uppercase tracking-wide font-bold">100% Happiness Guarantee</span>
+                                <div className="flex items-center gap-2 bg-lavender-50 px-3 py-1.5 rounded-full border-2 border-lavender-accent/10">
+                                    <span className="text-lavender-accent">💯</span>
+                                    <span className="text-xs text-gray-700 font-semibold">Money-back Guarantee</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     {/* Placeholder Card Blur */}
-                    <div className="opacity-30 pointer-events-none select-none blur-sm" aria-hidden="true">
+                    <div className="opacity-20 pointer-events-none select-none blur-sm" aria-hidden="true">
                         <div className="space-y-4">
                             {[1, 2, 3].map(i => (
-                                <div key={i} className="bg-white border border-rose-100 rounded-2xl p-6 h-32 flex items-center justify-between">
+                                <div key={i} className="glass-panel rounded-2xl p-6 h-32 flex items-center justify-between">
                                     <div className="space-y-2">
-                                        <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
-                                        <div className="h-3 w-48 bg-gray-100 rounded"></div>
+                                        <div className="h-4 w-32 bg-rose-200 rounded animate-pulse"></div>
+                                        <div className="h-3 w-48 bg-rose-100 rounded"></div>
                                     </div>
                                 </div>
                             ))}
@@ -350,8 +352,8 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ result, onReset, onUnl
             )}
 
             <div className="text-center pt-8 pb-4 animate-enter delay-500">
-                <button onClick={onReset} className="text-gray-400 hover:text-rose-accent text-sm font-bold transition-colors underline decoration-gray-200 hover:decoration-rose-200 underline-offset-4">
-                    Start Over
+                <button onClick={onReset} className="text-gray-500 hover:text-rose-accent text-sm font-semibold transition-colors">
+                    ← Start Over
                 </button>
             </div>
         </div>

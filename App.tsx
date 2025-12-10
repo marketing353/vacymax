@@ -82,28 +82,28 @@ const SolverTerminal = ({ timeframe }: { timeframe: TimeframeType }) => {
   }, []);
 
   return (
-    <div className="w-full h-full min-h-[400px] flex flex-col items-center justify-center p-6 bg-white/50 backdrop-blur-sm rounded-3xl">
-      <div className="text-center mb-8 animate-pulse">
-        <span className="text-6xl">✨</span>
+    <div className="w-full h-full min-h-[400px] flex flex-col items-center justify-center p-6">
+      <div className="w-full max-w-md glass-panel rounded-3xl p-8 text-xs md:text-sm relative overflow-hidden transform-gpu shadow-xl">
+        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-rose-accent via-lavender-accent to-peach-accent animate-shimmer rounded-t-3xl"></div>
+        <div className="space-y-3 h-[250px] overflow-y-auto font-medium scrollbar-hide will-change-transform">
+          {lines.map((line, i) => (
+            <div key={i} className="text-rose-accent animate-fade-up flex items-center gap-2">
+              <span className="text-lavender-accent">✨</span> {line}
+            </div>
+          ))}
+          <div className="animate-pulse text-rose-accent flex items-center gap-2"><span className="text-lavender-accent">✨</span> _</div>
+        </div>
       </div>
-      <div className="w-full max-w-sm space-y-4">
-        {lines.map((line, i) => (
-          <div key={i} className="flex items-center gap-3 animate-fade-up">
-            <div className="w-6 h-6 rounded-full bg-rose-100 flex items-center justify-center text-xs text-rose-accent">✓</div>
-            <span className="text-dark-text font-medium">{line}</span>
-          </div>
-        ))}
-      </div>
-      <p className="mt-12 text-rose-accent/70 text-sm font-medium tracking-wide animate-pulse">
-        Designing your dream year...
+      <p className="mt-8 text-gray-600 text-sm animate-pulse font-medium tracking-wide">
+        ✨ Creating your perfect schedule for {timeframe}...
       </p>
     </div>
   );
 };
 
 const LoadingFallback = () => (
-  <div className="w-full min-h-screen flex items-center justify-center bg-light-100">
-    <div className="w-12 h-12 border-4 border-rose-accent border-t-transparent rounded-full animate-spin"></div>
+  <div className="w-full min-h-screen flex items-center justify-center bg-gradient-to-br from-light-100 via-light-200 to-light-300">
+    <div className="w-16 h-16 border-4 border-rose-accent border-t-transparent rounded-full animate-spin shadow-lg"></div>
   </div>
 );
 
@@ -119,36 +119,31 @@ const App: React.FC = () => {
   const wizardRef = useRef<HTMLDivElement>(null);
 
   const scrollWizardIntoView = useCallback(() => {
-    const element = wizardRef.current || document.getElementById('wizard-section');
-    element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const element = wizardRef.current;
+    if (!element) return;
+    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    element.focus({ preventScroll: true });
   }, []);
 
-  const isWizardTopInView = useCallback(() => {
-    const node = wizardRef.current;
-    if (!node) return false;
+  // Ensure the wizard is always in view when users progress through steps
+  useEffect(() => {
+    if (step > 0) {
+        scrollWizardIntoView();
+    }
+  }, [scrollWizardIntoView, step]);
 
-    const rect = node.getBoundingClientRect();
-    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-
-    // Treat the wizard as visible when its top is within a comfortable viewport buffer.
-    return rect.top > -120 && rect.top < viewportHeight * 0.6;
-  }, []);
-
-
-
-  // Scroll only when starting the wizard from hero/How it Works
   const scrollToWizard = useCallback(() => {
     if (view === 'how-it-works') {
-      setView('landing');
-      setTimeout(() => {
-        scrollWizardIntoView();
-        if (step === 0) setStep(1);
-      }, 100);
+        setView('landing');
+        requestAnimationFrame(() => {
+             scrollWizardIntoView();
+             if(step === 0) setStep(1);
+        });
     } else {
-      scrollWizardIntoView();
-      if (step === 0) setStep(1);
+        scrollWizardIntoView();
+        if(step === 0) setStep(1);
     }
-  }, [scrollWizardIntoView, view, step]);
+  }, [scrollWizardIntoView, step, view]);
 
   // FIX: Type-safe update
   const updatePrefs = useCallback(<K extends keyof UserPreferences>(key: K, value: UserPreferences[K]) => {
@@ -156,19 +151,11 @@ const App: React.FC = () => {
   }, []);
 
   const handleNext = useCallback(() => {
-    setStep((prev) => prev + 1);
-    // Auto-scroll on mobile (with header offset)
-    if (window.innerWidth < 768) {
-      if (!isWizardTopInView()) {
-        // Offset by 100px to account for fixed header and some padding
-        const offsetPosition = (wizardRef.current?.offsetTop || 0) - 100;
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
+      setStep((prev) => prev + 1);
+      if (window.innerWidth < 768) {
+          scrollWizardIntoView();
       }
-    }
-  }, [isWizardTopInView]);
+  }, [scrollWizardIntoView]);
 
   const handleBack = useCallback(() => setStep((prev) => prev - 1), []);
 
@@ -263,22 +250,22 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-[100dvh] flex flex-col text-dark-text pb-12 overflow-x-hidden bg-light-100">
+    <div className="min-h-[100dvh] flex flex-col text-gray-700 pb-12 overflow-x-hidden">
       <SEOHead view={view} prefs={prefs} result={result || undefined} country={prefs.country} />
 
       {/* Navigation */}
-      <nav className="w-full py-3 md:py-6 px-4 md:px-12 flex justify-between items-center z-[60] fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-rose-100 transition-all duration-300 safe-pt shadow-sm">
-        <div className="flex items-center gap-2 cursor-pointer group flex-shrink-0" onClick={handleReset}>
-          <div className="w-8 h-8 bg-gradient-to-br from-rose-accent to-peach-accent rounded-xl flex items-center justify-center shadow-lg transform group-hover:rotate-12 transition-transform">
-            <span className="text-white text-lg">🌸</span>
+      <nav className="w-full py-4 md:py-6 px-4 md:px-12 flex justify-between items-center z-[60] fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-rose-accent/10 transition-all duration-300 safe-pt shadow-sm">
+        <div className="flex items-center gap-3 cursor-pointer group flex-shrink-0" onClick={handleReset}>
+          <div className="w-10 h-10 bg-gradient-to-br from-rose-accent to-lavender-accent rounded-2xl flex items-center justify-center shadow-lg shadow-rose-accent/20 group-hover:shadow-rose-accent/40 transition-all">
+            <div className="text-white text-xl">✨</div>
           </div>
-          <span className="font-display font-bold text-lg md:text-xl bg-gradient-to-r from-rose-accent to-peach-accent bg-clip-text text-transparent">VacationMax</span>
+          <span className="font-display font-bold text-lg md:text-2xl bg-gradient-to-r from-rose-accent to-lavender-accent bg-clip-text text-transparent">VacationMax</span>
         </div>
 
-        <div className="flex items-center gap-2 md:gap-6">
+        <div className="flex items-center gap-3 md:gap-6">
           <button
             onClick={() => setView('how-it-works')}
-            className="text-xs md:text-sm font-medium text-slate-500 hover:text-rose-accent transition-colors hidden md:block" // Hidden on mobile for space
+            className="text-xs md:text-sm font-medium text-gray-600 hover:text-rose-accent transition-colors hidden md:block"
           >
             How it Works
           </button>
@@ -287,7 +274,7 @@ const App: React.FC = () => {
           {step > 0 && (
             <button
               onClick={handleReset}
-              className="text-xs md:text-sm font-medium text-slate-500 hover:text-rose-accent transition-colors"
+              className="text-xs md:text-sm font-medium text-gray-500 hover:text-rose-accent transition-colors"
             >
               Restart
             </button>
@@ -295,9 +282,9 @@ const App: React.FC = () => {
 
           <button
             onClick={scrollToWizard}
-            className="px-6 py-2.5 text-xs md:text-sm font-bold bg-gradient-to-r from-rose-accent to-peach-accent hover:shadow-lg hover:shadow-rose-accent/30 text-white rounded-full transition-all active:scale-95 transform hover:-translate-y-0.5"
+            className="px-5 py-2.5 text-xs md:text-sm font-bold bg-gradient-to-r from-rose-accent to-lavender-accent hover:shadow-lg text-white rounded-full transition-all active:scale-95 shadow-md hover:shadow-rose-accent/30"
           >
-            {step > 0 && view === 'landing' ? 'Resume Plan ✨' : 'Start Planning 💖'}
+            {step > 0 && view === 'landing' ? '✨ Resume Plan' : '✨ Start Plan'}
           </button>
         </div>
       </nav>
@@ -392,58 +379,128 @@ const App: React.FC = () => {
                 <span>💫 Balance work and life</span>
               </div>
             </div>
+        </nav>
+
+        {view === 'how-it-works' && (
+            <Suspense fallback={<LoadingFallback />}>
+                <HowItWorks onBack={() => setView('landing')} onLaunch={scrollToWizard} />
+            </Suspense>
+        )}
+
+        {/* --- PAS LANDING PAGE ARCHITECTURE --- */}
+        {view === 'landing' && (
+            <>
+                {/* 1. THE PAIN: Wake Up Call */}
+                <PainHero onCta={scrollToWizard} />
+
+                {/* 2. THE AGITATION: Burn Calculator */}
+                <BurnCalculator />
+
+                {/* 3. THE SOLUTION: Feature Grid (Teal Transition) */}
+                <SolutionGrid />
+
+                {/* 4. SOCIAL PROOF: Marquee */}
+                <BattleTestedMarquee />
+
+                {/* THE WIZARD (The Actual Product) */}
+                <div
+                    id="wizard-section"
+                    ref={wizardRef}
+                    tabIndex={-1}
+                    className="w-full bg-[#020617] py-24 px-4 scroll-mt-24"
+                >
+                     <div className="max-w-4xl mx-auto">
+                         <div className="text-center mb-12">
+                             <h2 className="text-3xl font-display font-bold text-white mb-2">Okay, Let's Fix It.</h2>
+                             <p className="text-slate-400">Build your optimized schedule in 60 seconds.</p>
+                         </div>
+
+                         <div className="relative bg-[#0F1014] border border-white/10 rounded-[2rem] p-6 md:p-12 shadow-2xl min-h-[550px] flex flex-col overflow-hidden backdrop-blur-sm">
+                            <div className="absolute inset-0 opacity-[0.03] bg-repeat pointer-events-none hidden md:block" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
+
+                            {error && (
+                                <div className="absolute top-4 left-0 right-0 mx-auto w-max bg-red-500/20 text-red-200 px-4 py-2 rounded-lg text-sm mb-4 border border-red-500/20 z-20">
+                                    {error}
+                                </div>
+                            )}
+
+                            {step === 0 && (
+                                <div className="text-center space-y-8 animate-fade-up relative z-10 py-10 my-auto">
+                                    <div className="w-24 h-24 bg-gradient-to-br from-lime-accent/20 to-transparent rounded-full flex items-center justify-center mx-auto text-4xl border border-lime-accent/20 shadow-[0_0_30px_rgba(132,204,22,0.1)]">
+                                        ✨
+                                    </div>
+                                    <div>
+                                        <h3 className="text-3xl font-display font-bold text-white mb-2">Ready to plan?</h3>
+                                        <p className="text-slate-400 max-w-xs mx-auto">Tell us how many days off you have, and we'll do the rest.</p>
+                                    </div>
+                                    <button onClick={() => setStep(1)} className="w-full py-5 bg-white/5 border border-white/10 hover:border-lime-accent/50 text-white text-lg font-bold rounded-xl transition-all hover:bg-white/10 hover:shadow-lg flex items-center justify-center gap-2 group">
+                                        Let's Get Started
+                                        <span className="group-hover:translate-x-1 transition-transform">→</span>
+                                    </button>
+                                </div>
+                            )}
+
+                            {step === 1 && <Step1PTO prefs={prefs} updatePrefs={updatePrefs} onNext={handleNext} />}
+                            {step === 2 && <Step2Timeframe prefs={prefs} updatePrefs={updatePrefs} onNext={handleNext} onBack={handleBack} />}
+                            {step === 3 && <Step3Strategy prefs={prefs} updatePrefs={updatePrefs} onNext={handleNext} onBack={handleBack} />}
+                            {step === 4 && <Step4Location prefs={prefs} updatePrefs={updatePrefs} onNext={handleGenerate} onBack={handleBack} />}
+                            {step === 5 && <SolverTerminal timeframe={prefs.timeframe} />}
+                         </div>
+                     </div>
+                </div>
 
             <div className="max-w-7xl mx-auto px-6 relative z-20 pt-12 pb-8">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 mb-8 md:mb-16">
 
-                {/* Left: Brand Identity */}
+                {/* Left: Brand Header */}
                 <div className="lg:col-span-6 flex flex-col justify-between">
                   <div>
-                    <div className="inline-block border border-rose-accent/30 text-rose-accent bg-rose-50 px-3 py-1 rounded-full text-[10px] mb-6 font-bold tracking-widest shadow-sm">
-                      THE #1 PLANNER FOR HER 🌸
+                    <div className="inline-block border-2 border-rose-accent/30 bg-rose-50 text-rose-accent px-4 py-2 text-xs mb-6 rounded-full font-semibold shadow-sm">
+                      ✨ VacationMax v3.0
                     </div>
-                    <h2 className="text-4xl md:text-5xl font-display font-bold text-gray-800 mb-6 tracking-tight">
-                      Rest is <span className="bg-gradient-to-r from-rose-accent to-lavender-accent bg-clip-text text-transparent italic">productive.</span>
+                    <h2 className="text-4xl md:text-5xl font-display font-bold bg-gradient-to-r from-rose-accent via-lavender-accent to-peach-accent bg-clip-text text-transparent mb-6 leading-tight">
+                      Rest. Recharge. Repeat. 💖
                     </h2>
-                    <div className="max-w-md border-l-4 border-rose-200 pl-6 py-2">
-                      <p className="text-gray-600 mb-4 font-sans text-lg italic">
-                        "Because you can't pour from an empty cup. Let's fill yours up." 🥂
+                    <div className="max-w-md border-l-4 border-rose-accent/30 pl-6 py-2 bg-white/50 rounded-r-2xl">
+                      <p className="text-gray-700 mb-4 font-medium">
+                        "Your wellbeing matters. Let's make every day count."
                       </p>
+                      <div className="flex gap-3 text-xs text-rose-accent/70 font-medium">
+                        <span>🔒 Private & Secure</span>
+                        <span>✨ Made with Care</span>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Right: Links */}
-                <div className="lg:col-span-6 grid grid-cols-1 gap-6">
+                {/* Right: Links Module */}
+                <div className="lg:col-span-6 grid grid-cols-1 gap-8">
 
-                  {/* Glass Card */}
-                  <div className="bg-white/40 backdrop-blur-md border border-white/60 p-8 rounded-3xl shadow-lg relative overflow-hidden group hover:bg-white/60 transition-all duration-500">
-                    <div className="absolute -right-10 -top-10 w-32 h-32 bg-rose-100 rounded-full blur-3xl opacity-50 group-hover:scale-150 transition-transform duration-700"></div>
+                  {/* Links Card */}
+                  <div className="bg-white/70 backdrop-blur-sm border-2 border-rose-accent/20 p-8 rounded-3xl relative group hover:border-rose-accent/40 transition-all shadow-lg hover:shadow-xl">
+                    <div className="absolute top-4 right-4 text-3xl opacity-20">✨</div>
 
-                    <h4 className="text-gray-800 font-bold mb-6 flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-rose-accent"></span>
-                      Explore More
-                    </h4>
+                    <h4 className="text-rose-accent text-sm font-bold mb-6 uppercase tracking-wide border-b-2 border-rose-accent/20 pb-3">Quick Links</h4>
                     <ul className="space-y-4">
                       <li>
-                        <button onClick={(e) => handleFooterLink(e, 'about')} className="flex items-center gap-3 w-full text-left group/link p-2 -mx-2 hover:bg-white/50 rounded-xl transition-all">
-                          <span className="w-8 h-8 rounded-full bg-rose-50 text-rose-accent flex items-center justify-center text-xs group-hover/link:bg-rose-accent group-hover/link:text-white transition-all">01</span>
-                          <span className="text-gray-600 font-medium group-hover/link:text-rose-accent transition-colors">Our Manifesto</span>
-                          <span className="ml-auto text-rose-200 group-hover/link:text-rose-accent">→</span>
+                        <button onClick={(e) => handleFooterLink(e, 'about')} className="flex items-center gap-3 w-full text-left group/link hover:bg-rose-50 p-3 -mx-3 rounded-xl transition-all">
+                          <span className="text-rose-accent/50 group-hover/link:text-rose-accent text-sm transition-colors">💖</span>
+                          <span className="text-gray-700 font-semibold group-hover/link:text-rose-accent transition-colors">About Us</span>
+                          <span className="ml-auto opacity-0 group-hover/link:opacity-100 text-rose-accent text-xs">→</span>
                         </button>
                       </li>
                       <li>
-                        <button onClick={(e) => handleFooterLink(e, 'privacy')} className="flex items-center gap-3 w-full text-left group/link p-2 -mx-2 hover:bg-white/50 rounded-xl transition-all">
-                          <span className="w-8 h-8 rounded-full bg-rose-50 text-rose-accent flex items-center justify-center text-xs group-hover/link:bg-rose-accent group-hover/link:text-white transition-all">02</span>
-                          <span className="text-gray-600 font-medium group-hover/link:text-rose-accent transition-colors">Your Privacy</span>
-                          <span className="ml-auto text-rose-200 group-hover/link:text-rose-accent">→</span>
+                        <button onClick={(e) => handleFooterLink(e, 'privacy')} className="flex items-center gap-3 w-full text-left group/link hover:bg-rose-50 p-3 -mx-3 rounded-xl transition-all">
+                          <span className="text-rose-accent/50 group-hover/link:text-rose-accent text-sm transition-colors">🔒</span>
+                          <span className="text-gray-700 font-semibold group-hover/link:text-rose-accent transition-colors">Privacy Policy</span>
+                          <span className="ml-auto opacity-0 group-hover/link:opacity-100 text-rose-accent text-xs">→</span>
                         </button>
                       </li>
                       <li>
-                        <button onClick={(e) => handleFooterLink(e, 'terms')} className="flex items-center gap-3 w-full text-left group/link p-2 -mx-2 hover:bg-white/50 rounded-xl transition-all">
-                          <span className="w-8 h-8 rounded-full bg-rose-50 text-rose-accent flex items-center justify-center text-xs group-hover/link:bg-rose-accent group-hover/link:text-white transition-all">03</span>
-                          <span className="text-gray-600 font-medium group-hover/link:text-rose-accent transition-colors">Terms of Service</span>
-                          <span className="ml-auto text-rose-200 group-hover/link:text-rose-accent">→</span>
+                        <button onClick={(e) => handleFooterLink(e, 'terms')} className="flex items-center gap-3 w-full text-left group/link hover:bg-rose-50 p-3 -mx-3 rounded-xl transition-all">
+                          <span className="text-rose-accent/50 group-hover/link:text-rose-accent text-sm transition-colors">📋</span>
+                          <span className="text-gray-700 font-semibold group-hover/link:text-rose-accent transition-colors">Terms of Service</span>
+                          <span className="ml-auto opacity-0 group-hover/link:opacity-100 text-rose-accent text-xs">→</span>
                         </button>
                       </li>
                     </ul>
@@ -453,22 +510,20 @@ const App: React.FC = () => {
               </div>
 
               {/* Footer Status Bar */}
-              <div className="border-t border-rose-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-gray-500">
-                <div className="flex flex-wrap gap-8">
+              <div className="border-t-2 border-rose-accent/10 pt-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 text-sm text-gray-600">
+                <div className="flex flex-wrap gap-x-8 gap-y-4">
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>System Online</span>
+                    <span className="text-rose-accent">✨</span>
+                    <span className="font-medium">Made with love</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span>✨ Made with love for your downtime</span>
+                    <span className="text-lavender-accent">💖</span>
+                    <span className="font-medium">For your wellbeing</span>
                   </div>
                 </div>
-                <div className="text-center md:text-right">
-                  <div className="flex items-center justify-center md:justify-end gap-2">
-                    <span>VacationMax © 2025</span>
-                    <span className="text-rose-300">|</span>
-                    <span className="text-rose-accent">Authorized Personnel Only 💖</span>
-                  </div>
+                <div className="text-left md:text-right">
+                  <p className="font-semibold text-gray-700">VacationMax © 2025</p>
+                  <p className="text-rose-accent/70 mt-1 text-xs">Your time, optimized ✨</p>
                 </div>
               </div>
             </div>

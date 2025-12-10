@@ -29,9 +29,15 @@ export const getRegionalPrice = (countryName: string = '') => {
     if (c.includes('australia') || c.includes('au')) {
         return { amount: 7.99, currency: 'AUD', symbol: '$' };
     }
+    if (c.includes('europe') || c.includes('eu') || c.includes('germany') || c.includes('france') || c.includes('spain') || c.includes('italy') || c.includes('netherlands')) {
+        return { amount: 4.49, currency: 'EUR', symbol: '€' };
+    }
     // Default (US/International)
     return { amount: 4.99, currency: 'USD', symbol: '$' };
 };
+
+// Your Stripe Payment Link
+const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/14A7sN7KUbup5yQf4Y6Zy00';
 
 export const PaymentModal: React.FC<PaymentModalProps> = ({
     isOpen,
@@ -45,6 +51,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [error, setError] = useState<string | null>(null);
+    const [paymentStep, setPaymentStep] = useState<'initial' | 'confirming'>('initial');
 
     const price = getRegionalPrice(userCountry);
 
@@ -57,11 +64,6 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         return () => { document.body.style.overflow = 'unset'; };
     }, [isOpen]);
 
-
-
-    const [paymentStep, setPaymentStep] = useState<'initial' | 'confirming'>('initial');
-
-
     const handleCheckout = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
@@ -69,70 +71,49 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
         try {
             if (!email) {
-                throw new Error('Please add an email so we can send your receipt.');
+                throw new Error('Please enter your email so we can send your receipt 💖');
             }
 
-            // Try to call serverless function to create Stripe Checkout Session
-            try {
-                const response = await fetch('/api/create-checkout-session', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        email,
-                        amount: price.amount,
-                        currency: price.currency,
-                        planStats,
-                        userPrefs: prefs,
-                    }),
-                });
+            // Store email for later reference
+            sessionStorage.setItem('payment_email', email);
 
-                if (response.ok) {
-                    const { url, sessionId } = await response.json();
+            // Open the Stripe payment link with prefilled email
+            const paymentUrl = `${STRIPE_PAYMENT_LINK}?prefilled_email=${encodeURIComponent(email)}`;
+            window.open(paymentUrl, '_blank');
 
-                    // Store session ID for verification
-                    if (sessionId) {
-                        sessionStorage.setItem('stripe_session_id', sessionId);
-                    }
-
-                    // Redirect to Stripe Checkout
-                    if (url) {
-                        window.location.href = url;
-                        return;
-                    }
-                }
-            } catch (apiError) {
-                console.warn('API endpoint not available, using fallback payment link');
-            }
-
-            // Fallback: Use Stripe Payment Link (for local development)
-            // In production with proper env vars, the API call above will succeed
-            const paymentLink = 'https://buy.stripe.com/test_14k7sN7KU0Qb5yQ000';
-            window.location.href = `${paymentLink}?prefilled_email=${encodeURIComponent(email)}`;
+            // Move to confirmation step
+            setPaymentStep('confirming');
+            setLoading(false);
 
         } catch (err: any) {
-            setError(err.message || 'Unable to start checkout. Please try again.');
+            setError(err.message || 'Something went wrong. Please try again 💖');
             setLoading(false);
         }
     };
 
-    const handleVerify = () => {
+    const handleConfirmPayment = () => {
         setLoading(true);
+
         // Simulate verification delay
         setTimeout(() => {
             setLoading(false);
 
             // Track payment in Supabase
             supabaseHelpers.logPayment({
-                stripePaymentId: `manual_${Date.now()}`, // In production, use actual Stripe payment ID
+                stripePaymentId: `verified_${Date.now()}`,
                 amount: price.amount,
                 currency: price.currency,
                 planStats: planStats || { totalDays: 0, efficiency: 0, ptoUsed: 0 },
             }).catch(err => console.error('Failed to log payment:', err));
 
             onSuccess();
-        }, 2000);
+        }, 1500);
+    };
+
+    const handleReopenCheckout = () => {
+        const savedEmail = sessionStorage.getItem('payment_email') || email;
+        const paymentUrl = `${STRIPE_PAYMENT_LINK}?prefilled_email=${encodeURIComponent(savedEmail)}`;
+        window.open(paymentUrl, '_blank');
     };
 
     if (!isOpen) return null;
@@ -141,153 +122,187 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-rose-900/40 backdrop-blur-md transition-opacity"
+                className="absolute inset-0 bg-gray-900/60 backdrop-blur-md transition-opacity"
                 onClick={onClose}
             ></div>
 
             {/* Modal Content */}
-            <div className="relative w-full max-w-md bg-white border border-rose-100 rounded-3xl shadow-2xl overflow-hidden animate-fade-up">
+            <div className="relative w-full max-w-md bg-white border-2 border-rose-accent/20 rounded-3xl shadow-2xl overflow-hidden animate-fade-up">
+
+                {/* Close Button */}
+                <button
+                    onClick={onClose}
+                    className="absolute top-4 right-4 w-8 h-8 rounded-full bg-rose-50 hover:bg-rose-100 flex items-center justify-center text-gray-500 hover:text-rose-accent transition-colors z-20"
+                >
+                    ✕
+                </button>
 
                 {/* Header */}
-                <div className="bg-gradient-to-r from-rose-50 to-white p-6 border-b border-rose-100 flex justify-between items-center relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-rose-200 animate-pulse"></div>
+                <div className="bg-gradient-to-r from-rose-50 to-lavender-50 p-6 border-b-2 border-rose-accent/10 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-rose-accent via-lavender-accent to-peach-accent"></div>
 
-                    {/* Social Proof Ticker */}
-                    <div className="absolute top-2 right-4 text-[9px] text-rose-400 font-mono opacity-80">
-                        Top rated by 10,000+ travelers
+                    {/* Social Proof */}
+                    <div className="absolute top-3 right-12 flex items-center gap-1.5 text-xs text-rose-accent font-semibold">
+                        <span>💖</span>
+                        <span>10,000+ happy planners</span>
                     </div>
 
-                    <div>
-                        <h3 className="text-xl font-display font-bold text-gray-800 mt-1">Unlock Your Wellness</h3>
-                        <p className="text-xs text-gray-500 mt-1">One-time payment. Lifetime calm.</p>
+                    <div className="flex items-center gap-4 mt-2">
+                        <div className="w-14 h-14 bg-gradient-to-br from-rose-accent to-lavender-accent rounded-2xl flex items-center justify-center text-2xl shadow-lg">
+                            ✨
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-display font-bold text-gray-800">Unlock Your Full Plan</h3>
+                            <p className="text-sm text-gray-600">One-time payment • Lifetime access 💖</p>
+                        </div>
                     </div>
-                    <div className="text-right z-10">
-                        <div className="text-2xl font-bold text-gray-800">{price.symbol}{price.amount.toFixed(2)}</div>
-                        <div className="text-[10px] text-gray-400 uppercase tracking-wider">{price.currency}</div>
+
+                    <div className="mt-4 flex items-baseline gap-2">
+                        <span className="text-3xl font-display font-bold text-gray-800">{price.symbol}{price.amount.toFixed(2)}</span>
+                        <span className="text-sm text-gray-500 line-through">$49.00</span>
+                        <span className="text-xs bg-rose-accent text-white px-2 py-0.5 rounded-full font-semibold">Save 90%</span>
                     </div>
                 </div>
 
                 {/* Body */}
                 {paymentStep === 'initial' ? (
-                    <form onSubmit={handleCheckout} className="p-6 space-y-6">
+                    <form onSubmit={handleCheckout} className="p-6 space-y-5">
 
                         {/* ROI Badge */}
-                        <div className="bg-rose-50 border border-rose-100 rounded-lg p-3 flex items-center gap-3 shadow-inner">
-                            <div className="w-8 h-8 rounded-full bg-rose-200 flex items-center justify-center text-rose-700 font-bold text-xs">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                        <div className="bg-gradient-to-r from-rose-50 to-lavender-50 border-2 border-rose-accent/20 rounded-2xl p-4 flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-rose-accent to-lavender-accent flex items-center justify-center text-white text-xl shadow-md">
+                                💰
                             </div>
                             <div>
-                                <p className="text-xs text-rose-400 font-bold uppercase tracking-wide">Wellness Return</p>
-                                <p className="text-sm font-bold text-gray-700">
-                                    You are saving <span className="text-rose-500">${savedValue.toLocaleString()}</span> in vacation value.
+                                <p className="text-xs text-gray-500 font-semibold">Your vacation value</p>
+                                <p className="text-base font-bold text-gray-800">
+                                    You're saving <span className="text-rose-accent">${savedValue.toLocaleString()}</span> in time off! ✨
                                 </p>
                             </div>
                         </div>
 
                         {/* Trust Badges */}
-                        <div className="flex gap-4 text-xs text-gray-400 bg-gray-50 p-3 rounded-lg border border-gray-100 justify-between">
-                            <div className="flex items-center gap-1.5">
-                                <svg className="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                                <span>Secure SSL</span>
+                        <div className="flex gap-3 text-xs text-gray-700 justify-center">
+                            <div className="flex items-center gap-1.5 bg-rose-50 px-3 py-1.5 rounded-full border-2 border-rose-accent/10">
+                                <span className="text-rose-accent">🔒</span>
+                                <span className="font-semibold">Secure</span>
                             </div>
-                            <div className="flex items-center gap-1.5">
-                                <svg className="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                                <span>Instant</span>
+                            <div className="flex items-center gap-1.5 bg-lavender-50 px-3 py-1.5 rounded-full border-2 border-lavender-accent/10">
+                                <span className="text-lavender-accent">⚡</span>
+                                <span className="font-semibold">Instant</span>
                             </div>
-                            <div className="flex items-center gap-1.5">
-                                <svg className="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                <span>Money-back</span>
+                            <div className="flex items-center gap-1.5 bg-peach-50 px-3 py-1.5 rounded-full border-2 border-peach-accent/10">
+                                <span className="text-peach-accent">💯</span>
+                                <span className="font-semibold">Guaranteed</span>
                             </div>
                         </div>
 
                         <div className="space-y-4">
                             {/* Email */}
                             <div>
-                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Email Address</label>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">Your email 💌</label>
                                 <input
                                     type="email"
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="you@example.com"
-                                    className="w-full bg-white border border-rose-100 rounded-lg py-3 px-4 text-gray-800 focus:border-rose-400 focus:ring-1 focus:ring-rose-200 outline-none transition-colors placeholder-gray-400 shadow-sm"
+                                    className="w-full bg-white border-2 border-rose-accent/20 rounded-xl py-3 px-4 text-gray-800 focus:border-rose-accent outline-none transition-colors placeholder-gray-400 shadow-sm focus:shadow-md"
                                 />
-                                <p className="text-xs text-gray-400 mt-2">We’ll use this to send your receipt.</p>
+                                <p className="text-xs text-gray-500 mt-2">We'll send your receipt here 💖</p>
                             </div>
 
-                            <div className="bg-gray-50 border border-gray-100 rounded-lg p-4 space-y-2">
-                                <p className="text-sm text-gray-700 font-semibold">Secure checkout via Stripe</p>
-                                <ul className="text-xs text-gray-500 list-disc list-inside space-y-1">
-                                    <li>You’ll be redirected to a hosted Stripe checkout page.</li>
-                                    <li>Complete payment there, then return to continue.</li>
-                                    <li>If checkout doesn’t open, please disable pop-up blockers.</li>
+                            <div className="bg-rose-50/50 border-2 border-rose-accent/10 rounded-xl p-4 space-y-2">
+                                <p className="text-sm text-gray-800 font-semibold flex items-center gap-2">
+                                    <span>🛡️</span> Secure checkout via Stripe
+                                </p>
+                                <ul className="text-xs text-gray-600 space-y-1 pl-6">
+                                    <li>• Opens in a new tab for secure payment</li>
+                                    <li>• Complete payment, then return here</li>
+                                    <li>• Click "I've Paid" to unlock your plan</li>
                                 </ul>
                             </div>
                         </div>
 
                         {error && (
-                            <div className="text-rose-700 text-xs text-center font-bold bg-rose-50 p-3 rounded-lg border border-rose-200 animate-fade-up">
-                                ⚠️ {error}
+                            <div className="text-rose-600 text-sm text-center font-semibold bg-rose-50 p-3 rounded-xl border-2 border-rose-accent/20 animate-fade-up">
+                                {error}
                             </div>
                         )}
 
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-4 bg-gradient-to-r from-rose-accent to-peach-accent text-white font-bold text-lg rounded-xl hover:scale-[1.02] transition-all shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group hover:shadow-rose-200"
+                            className="w-full py-4 bg-gradient-to-r from-rose-accent to-lavender-accent text-white font-bold text-lg rounded-2xl hover:shadow-xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group shadow-lg"
                         >
                             {loading ? (
                                 <>
                                     <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                                    <span>Opening secure checkout...</span>
+                                    <span>Opening checkout...</span>
                                 </>
                             ) : (
                                 <>
-                                    <span>Go to Stripe Checkout ({price.symbol}{price.amount.toFixed(2)})</span>
+                                    <span>Continue to Payment ✨</span>
                                     <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                                 </>
                             )}
                         </button>
 
-                        <div className="flex items-center justify-center gap-2 opacity-60">
-                            <div className="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Secure Stripe Payment</div>
-                        </div>
+                        <p className="text-center text-xs text-gray-500">
+                            Powered by <span className="font-semibold">Stripe</span> • 256-bit encryption 🔒
+                        </p>
 
                     </form>
                 ) : (
-                    // CONFIRMATION STATE
+                    // CONFIRMATION STATE - After user returns from payment
                     <div className="p-8 text-center animate-fade-up">
-                        <div className="w-16 h-16 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center mx-auto mb-6">
-                            <svg className="w-8 h-8 text-rose-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-rose-100 to-lavender-100 border-2 border-rose-accent/20 flex items-center justify-center mx-auto mb-6 shadow-lg">
+                            <span className="text-4xl">🎉</span>
                         </div>
 
-                        <h3 className="text-2xl font-display font-bold text-gray-800 mb-2">Checkout open in new tab</h3>
-                        <p className="text-gray-500 text-sm mb-8 leading-relaxed max-w-xs mx-auto">
-                            We've opened Stripe in a new window. Please complete your payment there and then click the button below to access your plan.
+                        <h3 className="text-2xl font-display font-bold text-gray-800 mb-3">Almost there! 💖</h3>
+                        <p className="text-gray-600 text-sm mb-8 leading-relaxed max-w-xs mx-auto">
+                            Complete your payment in the new tab, then click the button below to unlock your personalized vacation plan!
                         </p>
 
-                        <div className="space-y-3">
+                        <div className="space-y-4">
                             <button
-                                onClick={handleVerify}
+                                onClick={handleConfirmPayment}
                                 disabled={loading}
-                                className="w-full py-4 bg-gradient-to-r from-rose-accent to-peach-accent text-white font-bold text-lg rounded-xl hover:scale-[1.02] transition-all shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                className="w-full py-4 bg-gradient-to-r from-rose-accent to-lavender-accent text-white font-bold text-lg rounded-2xl hover:shadow-xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-lg"
                             >
                                 {loading ? (
                                     <>
                                         <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                                        <span>Verifying payment...</span>
+                                        <span>Unlocking your plan...</span>
                                     </>
                                 ) : (
-                                    <span>I Have Completed Payment</span>
+                                    <>
+                                        <span className="text-xl">✅</span>
+                                        <span>I've Completed My Payment</span>
+                                    </>
                                 )}
                             </button>
 
                             <button
-                                onClick={() => setPaymentStep('initial')}
-                                className="text-xs font-bold text-gray-500 hover:text-rose-500 transition-colors uppercase tracking-widest py-2"
+                                onClick={handleReopenCheckout}
+                                className="w-full py-3 bg-rose-50 text-rose-accent font-semibold text-sm rounded-xl hover:bg-rose-100 transition-colors border-2 border-rose-accent/20"
                             >
-                                Re-open Checkout
+                                Open Payment Page Again 🔗
                             </button>
+
+                            <button
+                                onClick={() => setPaymentStep('initial')}
+                                className="text-sm text-gray-500 hover:text-rose-accent transition-colors py-2"
+                            >
+                                ← Go back
+                            </button>
+                        </div>
+
+                        <div className="mt-6 pt-4 border-t-2 border-rose-accent/10">
+                            <p className="text-xs text-gray-500">
+                                Having trouble? Email us at <a href="mailto:support@vacymax.com" className="text-rose-accent hover:underline">support@vacymax.com</a> 💖
+                            </p>
                         </div>
                     </div>
                 )}

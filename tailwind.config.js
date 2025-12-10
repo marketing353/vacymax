@@ -13,18 +13,31 @@ export default {
                 display: ['"Playfair Display"', 'serif'],
             },
             colors: {
-                'rose-accent': '#E11D48',
-                'rose-50': '#FFF1F2',
-                'rose-100': '#FFE4E6',
-                'rose-200': '#FECDD3',
-                'lavender-accent': '#8B5CF6',
-                'lavender-50': '#F5F3FF',
-                'lavender-100': '#EDE9FE',
-                'peach-accent': '#F97316',
-                'light-100': '#FDFCF8', // Warm Cream
-                'light-200': '#F7F5F0',
-                'light-300': '#EBE5DA',
-                'dark-text': '#4A3B3B', // Soft Brown-Black
+                rose: {
+                    accent: '#ff6b9d',
+                    light: '#fce7f3',
+                    DEFAULT: '#ff6b9d'
+                },
+                lavender: {
+                    accent: '#c084fc',
+                    light: '#e9d5ff',
+                    DEFAULT: '#c084fc'
+                },
+                peach: {
+                    accent: '#fbbf24',
+                    light: '#fef3c7',
+                    DEFAULT: '#fbbf24'
+                },
+                brand: {
+                    rose: '#ff6b9d',
+                    lavender: '#c084fc',
+                    peach: '#fbbf24'
+                },
+                light: {
+                    100: '#fef3f8',
+                    200: '#fef9f3',
+                    300: '#f3f4ff'
+                }
             },
             animation: {
                 'shimmer': 'shimmer 2.5s linear infinite',
