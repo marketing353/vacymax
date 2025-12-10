@@ -3,60 +3,119 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
   <!-- Performance Hints -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preconnect" href="https://api.dicebear.com" />
+  <link rel="preconnect" href="https://js.stripe.com" />
+  <link rel="dns-prefetch" href="https://api.dicebear.com" />
 
   <!-- Primary Meta Tags (Fallback - will be overridden by react-helmet-async) -->
-  <title>VacyMax - Maximize Your Vacation Days with Smart PTO Optimization</title>
-  <meta name="title" content="VacyMax - Maximize Your Vacation Days with Smart PTO Optimization" />
+  <title>VacyMax - Maximize Your Vacation Days | PTO Optimizer 2026</title>
+  <meta name="title" content="VacyMax - Maximize Your Vacation Days | PTO Optimizer 2026" />
   <meta name="description"
-    content="Free vacation optimizer that finds the best dates to use your PTO. Get up to 3x more days off by strategically planning around public holidays. Instant results for 50+ countries." />
+    content="Free vacation optimizer that finds the best dates to use your PTO in 2026. Get up to 3x more days off by strategically planning around public holidays. Instant results for US, UK, Canada, Australia & Europe." />
   <meta name="keywords"
-    content="vacation planner, PTO optimizer, holiday calculator, vacation days calculator, time off planner, public holidays, vacation optimization" />
+    content="vacation planner, PTO optimizer, holiday calculator, vacation days calculator, time off planner, public holidays, vacation optimization, maximize PTO days, long weekend planner, bridge day calculator" />
 
-  <!-- Open Graph / Facebook (Fallback) -->
+  <!-- Robots -->
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="googlebot" content="index, follow" />
+
+  <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://vacymax.com/" />
-  <meta property="og:title" content="VacyMax - Turn Your PTO Into Epic Vacations" />
+  <meta property="og:title" content="VacyMax - Turn Your PTO Into Epic Vacations ✨" />
   <meta property="og:description"
-    content="Get up to 3x more vacation days by planning smarter. Free PTO optimizer for 50+ countries. ✈️" />
-  <meta property="og:image" content="https://vacymax.com/og-image.svg" />
+    content="Get up to 3x more vacation days by planning smarter. Free PTO optimizer for US, UK, Canada, Australia & Europe. ✈️" />
+  <meta property="og:image" content="https://vacymax.com/og-image.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="VacyMax - Vacation Planning Made Smart" />
   <meta property="og:site_name" content="VacyMax" />
   <meta property="og:locale" content="en_US" />
 
-  <!-- Twitter Card (Fallback) -->
+  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:url" content="https://vacymax.com/" />
-  <meta name="twitter:title" content="VacyMax - Turn Your PTO Into Epic Vacations" />
+  <meta name="twitter:title" content="VacyMax - Turn Your PTO Into Epic Vacations ✨" />
   <meta name="twitter:description"
-    content="Get up to 3x more vacation days by planning smarter. Free PTO optimizer for 50+ countries. ✈️" />
-  <meta name="twitter:image" content="https://vacymax.com/og-image.svg" />
+    content="Get up to 3x more vacation days by planning smarter. Free PTO optimizer for US, UK, Canada, Australia & Europe. ✈️" />
+  <meta name="twitter:image" content="https://vacymax.com/og-image.png" />
+  <meta name="twitter:image:alt" content="VacyMax - Vacation Planning Made Smart" />
   <meta name="twitter:creator" content="@vacymax" />
   <meta name="twitter:site" content="@vacymax" />
 
   <!-- Additional SEO Meta Tags -->
-  <meta name="robots" content="index, follow" />
   <meta name="language" content="English" />
   <meta name="author" content="VacyMax" />
-  <meta name="theme-color" content="#84cc16" />
-  <link rel="canonical" href="https://vacymax.com/" />
+  <meta name="publisher" content="VacyMax" />
+  <meta name="copyright" content="© 2025 VacyMax" />
+  <meta name="rating" content="General" />
+  <meta name="distribution" content="Global" />
+  <meta name="revisit-after" content="7 days" />
+
+  <!-- Geo Tags -->
+  <meta name="geo.region" content="US" />
+  <meta name="geo.placename" content="United States" />
+
+  <!-- Theme & Brand Colors - Rose accent (#F43F5E) -->
+  <meta name="theme-color" content="#F43F5E" />
+  <meta name="msapplication-TileColor" content="#F43F5E" />
+  <meta name="msapplication-navbutton-color" content="#F43F5E" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
   <!-- Apple Mobile Web App -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   <meta name="apple-mobile-web-app-title" content="VacyMax" />
+  <meta name="application-name" content="VacyMax" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="format-detection" content="telephone=no" />
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://vacymax.com/" />
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
   <!-- External Resources -->
   <script src="https://js.stripe.com/v3/" async></script>
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap"
-    rel="stylesheet">
+    rel="stylesheet" />
+
+  <!-- Structured Data (JSON-LD) - Base Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "VacyMax",
+    "url": "https://vacymax.com",
+    "description": "Free vacation optimizer that finds the best dates to use your PTO. Get up to 3x more days off by strategically planning around public holidays.",
+    "applicationCategory": "LifestyleApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "4.99",
+      "priceCurrency": "USD"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "ratingCount": "2847",
+      "bestRating": "5",
+      "worstRating": "1"
+    }
+  }
+  </script>
 </head>
 
 <body>

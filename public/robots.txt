@@ -1,16 +1,36 @@
 # Robots.txt for VacyMax
-# Allow all search engines to crawl the site
+# https://vacymax.com
 
+# Allow all search engines to crawl the site
 User-agent: *
 Allow: /
 
-# Disallow admin or API routes (if you add them later)
-# Disallow: /api/
-# Disallow: /admin/
+# Disallow API and webhook routes
+Disallow: /api/
+Disallow: /api/checkout
+Disallow: /api/stripe-webhook
 
-# Point to sitemap
+# Allow important static assets
+Allow: /og-image.png
+Allow: /logo.png
+Allow: /manifest.json
+
+# Sitemaps
 Sitemap: https://vacymax.com/sitemap.xml
 
-# Crawl-delay for aggressive bots (optional)
-# User-agent: Baiduspider
-# Crawl-delay: 5
+# Crawl-delay for aggressive bots
+User-agent: Baiduspider
+Crawl-delay: 10
+
+User-agent: Yandex
+Crawl-delay: 5
+
+# Block AI training crawlers (optional - uncomment if desired)
+# User-agent: GPTBot
+# Disallow: /
+
+# User-agent: ChatGPT-User
+# Disallow: /
+
+# User-agent: CCBot
+# Disallow: /
