@@ -1,13 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface ContentPageProps {
     title: string;
+    subtitle?: string;
     lastUpdated?: string;
     children: React.ReactNode;
     onBack: () => void;
 }
 
-const ContentPageLayout: React.FC<ContentPageProps> = ({ title, lastUpdated, children, onBack }) => {
+const ContentPageLayout: React.FC<ContentPageProps> = ({ title, subtitle, lastUpdated, children, onBack }) => {
+    // Scroll to top on mount
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-light-100 via-white to-light-200 text-gray-700 pt-32 pb-20 px-6 selection:bg-rose-accent selection:text-white">
             {/* Decorative Background */}

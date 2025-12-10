@@ -95,7 +95,7 @@ const LocationSelector = React.memo(({
                 {onCopyMine && (
                     <button
                         onClick={onCopyMine}
-                        className="text-[10px] font-bold bg-brand-violet/10 text-brand-violet hover:bg-brand-violet/20 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1"
+                        className="text-[10px] font-bold bg-lavender-50 text-lavender-accent hover:bg-lavender-100 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1 border border-lavender-100"
                     >
                         <span>Same as mine</span>
                         <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" /></svg>
@@ -103,7 +103,7 @@ const LocationSelector = React.memo(({
                 )}
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
                 {COUNTRIES.map((c) => (
                     <button
                         key={c.name}
@@ -117,22 +117,22 @@ const LocationSelector = React.memo(({
                         <span className={`text-xs font-bold ${countryValue === c.name ? 'text-gray-800' : 'text-gray-600'}`}>{c.code}</span>
 
                         {countryValue === c.name && (
-                            <div className={`absolute top-2 right-2 w-2 h-2 rounded-full ${activeBg}`}></div>
+                            <div className={`absolute top-2 right-2 w-1.5 h-1.5 rounded-full ${activeBg}`}></div>
                         )}
                     </button>
                 ))}
             </div>
 
-            <div className={`transition-all duration-500 ${countryValue ? 'opacity-100 translate-y-0' : 'opacity-20 translate-y-2 pointer-events-none'}`}>
-                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 pl-1">
+            <div className={`transition-all duration-500 ${countryValue ? 'opacity-100 translate-y-0' : 'opacity-30 translate-y-2 pointer-events-none'}`}>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 pl-1">
                     Specific State / Region (Optional)
                 </label>
                 <DebouncedInput
                     value={regionValue}
                     onChange={onRegionChange}
                     placeholder="e.g. California, Victoria..."
-                    isLime={isLime}
-                    className="text-sm py-2.5"
+                    isLime={isRose}
+                    className="text-sm py-2.5 bg-white"
                 />
             </div>
         </div>
@@ -283,6 +283,7 @@ export const Step1PTO: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, o
                                     onChange={(e) => handleBuddyPtoChange(e.target.value)}
                                     className="bg-transparent text-7xl font-display font-bold text-gray-800 focus:outline-none placeholder-gray-300 tracking-tighter w-full"
                                     placeholder="0"
+                                    style={{ color: '#4B5563' }} // Force dark text
                                 />
                                 <span className="text-xl font-bold text-gray-400 absolute right-0 bottom-4 pointer-events-none">Days</span>
                             </div>
@@ -381,11 +382,11 @@ export const Step3Strategy: React.FC<StepProps> = React.memo(({ prefs, updatePre
                         title={strat.title}
                         desc={strat.desc}
                         tag={strat.roi}
-                        accentColor={strat.id === OptimizationStrategy.LONG_WEEKENDS ? 'violet' : 'lime'}
+                        accentColor={strat.id === OptimizationStrategy.LONG_WEEKENDS ? 'violet' : 'lime'} // Mapped to Lavender/Rose in component
                         tooltipText={strat.tooltip}
                     >
                         {/* Decorative gradient overlay */}
-                        <div className={`absolute inset-0 bg-gradient-to-br ${strat.color} opacity-0 transition-opacity duration-500 ${prefs.strategy === strat.id ? 'opacity-100' : 'group-hover:opacity-20'}`}></div>
+                        <div className={`absolute inset-0 bg-gradient-to-br ${strat.color} opacity-0 transition-opacity duration-500 rounded-3xl ${prefs.strategy === strat.id ? 'opacity-100' : 'group-hover:opacity-20'}`}></div>
                     </SelectionCard>
                 ))}
             </div>
@@ -424,7 +425,7 @@ export const Step4Location: React.FC<StepProps> = React.memo(({ prefs, updatePre
             <div className="space-y-8 max-w-4xl mb-8 relative pr-1 pb-4">
                 {/* Connecting Line if buddy exists */}
                 {prefs.hasBuddy && (
-                    <div className="absolute left-6 top-10 bottom-10 w-0.5 border-l-2 border-dashed border-white/10 z-0 hidden md:block"></div>
+                    <div className="absolute left-6 top-10 bottom-10 w-0.5 border-l-2 border-dashed border-rose-200/50 z-0 hidden md:block"></div>
                 )}
 
                 {/* User Location */}
@@ -442,10 +443,10 @@ export const Step4Location: React.FC<StepProps> = React.memo(({ prefs, updatePre
                 {/* Buddy Location */}
                 {prefs.hasBuddy && (
                     <div className="animate-fade-up relative z-10">
-                        <div className="flex items-center gap-4 mb-2 opacity-50 pl-1">
-                            <div className="h-px flex-1 bg-white/10"></div>
-                            <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Matching Holidays With</div>
-                            <div className="h-px flex-1 bg-white/10"></div>
+                        <div className="flex items-center gap-4 mb-2 opacity-70 pl-1">
+                            <div className="h-px flex-1 bg-rose-100"></div>
+                            <div className="text-[10px] font-bold uppercase tracking-widest text-rose-300">Matching Holidays With</div>
+                            <div className="h-px flex-1 bg-rose-100"></div>
                         </div>
                         <LocationSelector
                             label="Buddy's Region"

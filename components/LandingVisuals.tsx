@@ -37,11 +37,11 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
             <div className="absolute -top-[20%] left-[20%] w-[500px] h-[500px] bg-rose-accent/10 rounded-full blur-[120px] pointer-events-none"></div>
             <div className="absolute bottom-0 right-[10%] w-[400px] h-[400px] bg-lavender-accent/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-            <div className="max-w-6xl mx-auto relative z-10 grid lg:grid-cols-2 gap-16 items-center">
+            <div className="max-w-7xl mx-auto relative z-10 grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
                 {/* Left Column: Copy */}
                 <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
                     className="text-left"
                 >
@@ -193,7 +193,7 @@ export const BurnCalculator = () => {
     const [salary, setSalary] = useState(85000);
     const [daysLeft, setDaysLeft] = useState(8);
 
-    // Calculation: (Salary / 260 working days) * Days Left
+    // Calculation used to be money, now framing it as "Self Care Debt"
     const dailyRate = salary / 260;
     const value = Math.round(dailyRate * daysLeft);
 

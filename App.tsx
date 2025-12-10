@@ -59,15 +59,13 @@ const SolverTerminal = ({ timeframe }: { timeframe: TimeframeType }) => {
 
   useEffect(() => {
     const sequence = [
-      'Scanning calendar...',
-      'Loading dates...',
-      'Adding public holidays...',
-      'Finding long weekends...',
-      'Connecting dates...',
-      'Looking for travel windows...',
-      'Extending your breaks...',
-      'Calculating best value...',
-      'Plan ready!'
+      'Checking your calendar... 📅',
+      'Loading dreamy destinations... ✈️',
+      'Adding long weekends... 🥂',
+      'Extending your breaks... 💆‍♀️',
+      'Finding the best dates... ✨',
+      'Maximizing your relaxation... 🛁',
+      'Your perfect plan is ready! 💖'
     ];
 
     let stepIndex = 0;
@@ -78,7 +76,7 @@ const SolverTerminal = ({ timeframe }: { timeframe: TimeframeType }) => {
       } else {
         clearInterval(interval);
       }
-    }, 300);
+    }, 600);
 
     return () => clearInterval(interval);
   }, []);
@@ -165,7 +163,7 @@ const App: React.FC = () => {
     setStep(5);
     setError(null);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 4000)); // Longer wait for effect
       const data = await generateVacationPlan(prefs);
       setResult(data);
 
@@ -308,6 +306,7 @@ const App: React.FC = () => {
         {view === 'region-au' && <RegionPage region="Australia" onBack={() => setView('landing')} />}
       </Suspense>
 
+      {/* --- LANDING PAGE --- */}
       {view === 'landing' && (
         <>
           <PainHero onCta={scrollToWizard} />
@@ -450,7 +449,7 @@ const App: React.FC = () => {
                      </div>
                 </div>
 
-            <div className="max-w-7xl mx-auto px-6 relative z-20 pt-8 pb-8">
+            <div className="max-w-7xl mx-auto px-6 relative z-20 pt-12 pb-8">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 mb-8 md:mb-16">
 
                 {/* Left: Brand Header */}

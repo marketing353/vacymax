@@ -80,7 +80,7 @@ interface SelectionCardProps {
     title: string;
     desc: string;
     tag?: string;
-    accentColor?: 'lime' | 'violet';
+    accentColor?: 'lime' | 'violet'; // Keeping prop names for compatibility but mapping to rose/lavender
     tooltipText?: string;
     children?: React.ReactNode;
 }
