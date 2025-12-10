@@ -10,6 +10,7 @@ import { supabaseHelpers } from './services/supabase';
 import { CelebrationOverlay, ProgressMilestone } from './components/Celebrations';
 // Eagerly load the results view to remove chunk-fetch failures when users finish the wizard.
 import { ResultsView } from './components/ResultsView';
+import { StrategyDemosPage } from './components/StrategyDemos';
 
 // Lazy load content pages
 const AboutPage = lazy(() => import('./components/ContentPages').then(module => ({ default: module.AboutPage })));
@@ -53,7 +54,7 @@ const initialPrefs: UserPreferences = {
   buddyRegion: '',
 };
 
-type ViewState = 'landing' | 'how-it-works' | 'results' | 'about' | 'algorithm' | 'privacy' | 'terms' | 'region-us' | 'region-uk' | 'region-ca' | 'region-au';
+type ViewState = 'landing' | 'how-it-works' | 'results' | 'about' | 'algorithm' | 'privacy' | 'terms' | 'region-us' | 'region-uk' | 'region-ca' | 'region-au' | 'strategy-demos';
 
 // --- Solver Terminal ---
 const SolverTerminal = ({ timeframe }: { timeframe: TimeframeType }) => {
@@ -322,6 +323,12 @@ const App: React.FC = () => {
           >
             How it Works
           </button>
+          <button
+            onClick={() => setView('strategy-demos')}
+            className="text-xs md:text-sm font-medium text-slate-500 hover:text-lavender-accent transition-colors hidden md:block"
+          >
+            Strategy Demos
+          </button>
 
           {/* New Reset Button */}
           {step > 0 && (
@@ -346,6 +353,20 @@ const App: React.FC = () => {
         <Suspense fallback={<LoadingFallback />}>
           <HowItWorks onBack={() => setView('landing')} onLaunch={scrollToWizard} />
         </Suspense>
+      )}
+
+      {view === 'strategy-demos' && (
+        <StrategyDemosPage
+          onBack={() => setView('landing')}
+          onSelectStrategy={(strategy) => {
+            updatePrefs('strategy', strategy);
+            setView('landing');
+            setTimeout(() => {
+              setStep(3);
+              scrollWizardIntoView();
+            }, 100);
+          }}
+        />
       )}
 
       <Suspense fallback={<LoadingFallback />}>
@@ -473,15 +494,22 @@ const App: React.FC = () => {
                         </button>
                       </li>
                       <li>
+                        <button onClick={(e) => handleFooterLink(e, 'strategy-demos')} className="flex items-center gap-3 w-full text-left group/link p-2 -mx-2 hover:bg-white/50 rounded-xl transition-all">
+                          <span className="w-8 h-8 rounded-full bg-lavender-50 text-lavender-accent flex items-center justify-center text-xs group-hover/link:bg-lavender-accent group-hover/link:text-white transition-all">02</span>
+                          <span className="text-gray-600 font-medium group-hover/link:text-lavender-accent transition-colors">Strategy Demos</span>
+                          <span className="ml-auto text-lavender-200 group-hover/link:text-lavender-accent">→</span>
+                        </button>
+                      </li>
+                      <li>
                         <button onClick={(e) => handleFooterLink(e, 'privacy')} className="flex items-center gap-3 w-full text-left group/link p-2 -mx-2 hover:bg-white/50 rounded-xl transition-all">
-                          <span className="w-8 h-8 rounded-full bg-rose-50 text-rose-accent flex items-center justify-center text-xs group-hover/link:bg-rose-accent group-hover/link:text-white transition-all">02</span>
+                          <span className="w-8 h-8 rounded-full bg-rose-50 text-rose-accent flex items-center justify-center text-xs group-hover/link:bg-rose-accent group-hover/link:text-white transition-all">03</span>
                           <span className="text-gray-600 font-medium group-hover/link:text-rose-accent transition-colors">Your Privacy</span>
                           <span className="ml-auto text-rose-200 group-hover/link:text-rose-accent">→</span>
                         </button>
                       </li>
                       <li>
                         <button onClick={(e) => handleFooterLink(e, 'terms')} className="flex items-center gap-3 w-full text-left group/link p-2 -mx-2 hover:bg-white/50 rounded-xl transition-all">
-                          <span className="w-8 h-8 rounded-full bg-rose-50 text-rose-accent flex items-center justify-center text-xs group-hover/link:bg-rose-accent group-hover/link:text-white transition-all">03</span>
+                          <span className="w-8 h-8 rounded-full bg-rose-50 text-rose-accent flex items-center justify-center text-xs group-hover/link:bg-rose-accent group-hover/link:text-white transition-all">04</span>
                           <span className="text-gray-600 font-medium group-hover/link:text-rose-accent transition-colors">Terms of Service</span>
                           <span className="ml-auto text-rose-200 group-hover/link:text-rose-accent">→</span>
                         </button>
