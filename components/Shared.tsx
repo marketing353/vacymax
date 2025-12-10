@@ -172,14 +172,20 @@ export const DebouncedInput = ({
     placeholder,
     className,
     isLime = true,
-    debounceMs = 400
+    debounceMs = 400,
+    type = "text",
+    pattern,
+    inputMode
 }: {
     value: string,
     onChange: (val: string) => void,
     placeholder: string,
     className?: string,
     isLime?: boolean,
-    debounceMs?: number
+    debounceMs?: number,
+    type?: string,
+    pattern?: string,
+    inputMode?: "search" | "text" | "none" | "tel" | "url" | "email" | "numeric" | "decimal"
 }) => {
     const [localValue, setLocalValue] = useState(value);
 
@@ -205,7 +211,9 @@ export const DebouncedInput = ({
 
     return (
         <input
-            type="text"
+            type={type}
+            pattern={pattern}
+            inputMode={inputMode}
             value={localValue}
             onChange={(e) => setLocalValue(e.target.value)}
             placeholder={placeholder}

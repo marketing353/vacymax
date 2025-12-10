@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { UserPreferences, OptimizationStrategy, TimeframeType } from '../types';
 import { StepHeader, NavButtons, SelectionCard, DebouncedInput } from './Shared';
+import { useHaptics } from '../hooks/useMobileUX';
 
 const TOTAL_STEPS = 4;
 
@@ -152,8 +153,8 @@ const normalizePtoValue = (rawValue: string) => {
 
 const PRESETS = [10, 15, 20, 25];
 
-
 export const Step1PTO: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, onNext }) => {
+    const { trigger } = useHaptics();
     const userDays = prefs.ptoDays;
     const buddyDays = prefs.buddyPtoDays || 0;
 
@@ -178,6 +179,16 @@ export const Step1PTO: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, o
         updatePrefs('buddyPtoDays', normalizePtoValue(valStr));
     };
 
+    const handlePresetClick = (val: string) => {
+        trigger('light');
+        handlePtoChange(val);
+    };
+
+    const handleToggleClick = () => {
+        trigger('medium');
+        updatePrefs('hasBuddy', !prefs.hasBuddy);
+    };
+
     const totals = React.useMemo(() => {
         const total = userDays + (prefs.hasBuddy ? buddyDays : 0);
         const safeTotal = Number.isFinite(total) ? total : 0;
@@ -192,9 +203,9 @@ export const Step1PTO: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, o
     const { totalDays, valueEstimate, potentialDays } = totals;
     const canProceed = totalDays > 0;
 
-    // Manual next button is still good for inputs
     const handleNextClick = () => {
         if (!canProceed) return;
+        trigger('success');
         onNext();
     };
 
@@ -214,7 +225,7 @@ export const Step1PTO: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, o
                 <div className="flex items-center gap-3 mb-8 bg-white/60 w-max px-4 py-2 rounded-full border border-rose-100 hover:border-rose-200 transition-colors shadow-sm">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">Planning with a partner?</span>
                     <button
-                        onClick={() => updatePrefs('hasBuddy', !prefs.hasBuddy)}
+                        onClick={handleToggleClick}
                         className={`group relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-accent focus-visible:ring-offset-2 ${prefs.hasBuddy ? 'bg-rose-accent' : 'bg-gray-300'}`}
                     >
                         <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${prefs.hasBuddy ? 'translate-x-4' : 'translate-x-0'}`} />
@@ -236,7 +247,7 @@ export const Step1PTO: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, o
                                 {PRESETS.map(preset => (
                                     <button
                                         key={preset}
-                                        onClick={() => handlePtoChange(preset.toString())}
+                                        onClick={() => handlePresetClick(preset.toString())}
                                         className={`text-[10px] font-bold px-2 py-1 rounded-lg border transition-all ${userDays === preset ? 'bg-rose-100 text-rose-600 border-rose-200' : 'bg-white text-gray-400 border-gray-100 hover:border-rose-100'}`}
                                     >
                                         {preset}
@@ -248,6 +259,8 @@ export const Step1PTO: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, o
                         <div className="relative flex items-baseline gap-2 mb-6">
                             <input
                                 type="number"
+                                inputMode="numeric"
+                                pattern="[0-9]*"
                                 min={0}
                                 max={60}
                                 value={localPto}
@@ -288,6 +301,8 @@ export const Step1PTO: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, o
                             <div className="relative flex items-baseline gap-2 mb-6">
                                 <input
                                     type="number"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
                                     min={0}
                                     max={60}
                                     value={localBuddyPto}
@@ -324,7 +339,7 @@ export const Step1PTO: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, o
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
 
             <NavButtons onNext={handleNextClick} nextDisabled={!canProceed} nextLabel="Confirm Balance" />
         </div >

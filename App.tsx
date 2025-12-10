@@ -3,6 +3,7 @@ import { OptimizationStrategy, TimeframeType, UserPreferences, OptimizationResul
 import { Step1PTO, Step2Timeframe, Step3Strategy, Step4Location } from './components/StepWizard';
 import { generateVacationPlan } from './services/vacationService';
 import { SEOHead } from './components/SEOHead';
+import { useSwipe } from './hooks/useMobileUX';
 import { PainHero, BurnCalculator, SolutionGrid, BattleTestedMarquee } from './components/LandingVisuals';
 import { TrustSection } from './components/TrustSection';
 import { supabaseHelpers } from './services/supabase';
@@ -184,6 +185,14 @@ const App: React.FC = () => {
   }, [isWizardTopInView, step]);
 
   const handleBack = useCallback(() => setStep((prev) => prev - 1), []);
+
+  // Mobile Swipe Handlers
+  const swipeHandlers = useSwipe({
+    onSwipeRight: () => {
+      if (step > 0 && step < 5) handleBack();
+    },
+    threshold: 60
+  });
 
   const handleGenerate = useCallback(async () => {
     setStep(5);
@@ -368,7 +377,7 @@ const App: React.FC = () => {
 
               {/* FIX: Removed 'overflow-hidden' and 'backdrop-blur' to fix mobile sticky buttons */}
               {/* FIX: Added z-[60] to ensure it sits ABOVE the bg-noise layer */}
-              <div className="relative z-[60] glass-panel rounded-[2rem] p-6 md:p-12 min-h-[600px] flex flex-col shadow-2xl">
+              <div {...swipeHandlers} className="relative z-[60] glass-panel rounded-[2rem] p-6 md:p-12 min-h-[600px] flex flex-col shadow-2xl touch-pan-y">
                 <div className="min-h-[52px] mb-4" aria-live="polite" aria-atomic="true">
                   <div
                     className={`bg-rose-100 text-rose-700 px-4 py-3 rounded-2xl text-sm border border-rose-200 text-center transition-all duration-300 ${error ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'}`}
