@@ -94,7 +94,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     const [paymentStep, setPaymentStep] = useState<'initial' | 'confirming'>('initial');
 
 
-    const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/9B6bJ33uE2XT1iAbSM6Zy02';
+    const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/5kQ3cx8OYbup3qIg926Zy03';
 
     const handleCheckout = (e: React.FormEvent) => {
         e.preventDefault();
