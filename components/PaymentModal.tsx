@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { UserPreferences } from '../types';
 import { supabaseHelpers } from '../services/supabase';
@@ -46,17 +46,48 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [error, setError] = useState<string | null>(null);
+    const modalRef = useRef<HTMLDivElement>(null);
+    const closeButtonRef = useRef<HTMLButtonElement>(null);
 
     const price = getRegionalPrice(userCountry);
 
+    // Handle Escape key and body scroll lock
     useEffect(() => {
-        if (isOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
+        if (!isOpen) return;
+
+        document.body.style.overflow = 'hidden';
+
+        // Focus the close button when modal opens for accessibility
+        closeButtonRef.current?.focus();
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                onClose();
+            }
+            // Focus trap: keep focus within modal
+            if (e.key === 'Tab' && modalRef.current) {
+                const focusableElements = modalRef.current.querySelectorAll<HTMLElement>(
+                    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                );
+                const firstElement = focusableElements[0];
+                const lastElement = focusableElements[focusableElements.length - 1];
+
+                if (e.shiftKey && document.activeElement === firstElement) {
+                    e.preventDefault();
+                    lastElement?.focus();
+                } else if (!e.shiftKey && document.activeElement === lastElement) {
+                    e.preventDefault();
+                    firstElement?.focus();
+                }
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+        return () => {
             document.body.style.overflow = 'unset';
-        }
-        return () => { document.body.style.overflow = 'unset'; };
-    }, [isOpen]);
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [isOpen, onClose]);
 
 
 
@@ -110,6 +141,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             // Fallback: Use Stripe Payment Link (for local development or direct link override)
             const paymentLink = 'https://buy.stripe.com/9B6bJ33uE2XT1iAbSM6Zy02';
             window.open(`${paymentLink}?prefilled_email=${encodeURIComponent(email)}`, '_blank');
+            setLoading(false);
             setPaymentStep('confirming');
 
         } catch (err) {
@@ -121,23 +153,37 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         }
     };
 
-    const handleVerify = () => {
+    const handleVerify = useCallback(async () => {
         setLoading(true);
-        // Simulate verification delay
-        setTimeout(() => {
+        setError(null);
+
+        try {
+            // Check if we have a stored session ID from Stripe Checkout
+            const storedSessionId = sessionStorage.getItem('stripe_session_id');
+
+            if (storedSessionId) {
+                // Verify the session with the server
+                const response = await fetch(`/api/verify-payment?session_id=${storedSessionId}`);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.paid) {
+                        sessionStorage.removeItem('stripe_session_id');
+                        onSuccess();
+                        return;
+                    }
+                }
+            }
+
+            // If no session ID or verification failed, show helpful message
+            setError('Payment not yet confirmed. Please complete checkout in the Stripe tab, or wait a moment and try again.');
+        } catch (err) {
+            console.error('Verification error:', err);
+            setError('Unable to verify payment. Please refresh the page after completing checkout.');
+        } finally {
             setLoading(false);
-
-            // Track payment in Supabase
-            supabaseHelpers.logPayment({
-                stripePaymentId: `manual_${Date.now()}`, // In production, use actual Stripe payment ID
-                amount: price.amount,
-                currency: price.currency,
-                planStats: planStats || { totalDays: 0, efficiency: 0, ptoUsed: 0 },
-            }).catch(err => console.error('Failed to log payment:', err));
-
-            onSuccess();
-        }, 2000);
-    };
+        }
+    }, [onSuccess]);
 
     if (!isOpen) return null;
 
@@ -154,11 +200,13 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             <div className="fixed inset-0 h-[100dvh] overflow-y-auto overscroll-contain pt-safe z-[110]">
                 <div className="flex min-h-full items-start justify-center p-4 pt-12 md:items-center md:pt-4">
                     <div
+                        ref={modalRef}
                         className="relative w-full max-w-md bg-white border border-rose-100 rounded-2xl md:rounded-3xl shadow-2xl animate-fade-up"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Close Button */}
                         <button
+                            ref={closeButtonRef}
                             onClick={onClose}
                             className="absolute top-3 right-3 z-20 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-rose-100 text-gray-400 hover:text-rose-500 transition-colors"
                             aria-label="Close modal"
