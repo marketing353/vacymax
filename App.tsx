@@ -180,27 +180,16 @@ const App: React.FC = () => {
     setDirection('next');
     setStep(nextStep);
 
-
-
-    // Auto-scroll on mobile (with header offset)
+    // Scroll to top on mobile
     if (window.innerWidth < 768) {
       setTimeout(() => {
-        if (!isWizardTopInView()) {
-          const element = wizardRef.current || document.getElementById('wizard-section');
-          if (element) {
-            const headerOffset = 80;
-            const elementPosition = element.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-            window.scrollTo({
-              top: offsetPosition,
-              behavior: "smooth"
-            });
-          }
-        }
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
       }, 100);
     }
-  }, [isWizardTopInView, step]);
+  }, [step]);
 
   const handleBack = useCallback(() => {
     setDirection('back');
