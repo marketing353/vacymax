@@ -7,7 +7,8 @@ import { useSwipe } from './hooks/useMobileUX';
 import { PainHero, BurnCalculator, SolutionGrid, BattleTestedMarquee } from './components/LandingVisuals';
 import { TrustSection } from './components/TrustSection';
 import { supabaseHelpers } from './services/supabase';
-import { CelebrationOverlay, ProgressMilestone } from './components/Celebrations';
+// import { CelebrationOverlay, ProgressMilestone } from './components/Celebrations'; // Removed
+import { MagicOrb, FloatingAffirmation } from './components/MagicEffects';
 // Eagerly load the results view to remove chunk-fetch failures when users finish the wizard.
 import { ResultsView } from './components/ResultsView';
 import { StrategyDemosPage } from './components/StrategyDemos';
@@ -62,13 +63,13 @@ const SolverTerminal = ({ timeframe }: { timeframe: TimeframeType }) => {
 
   useEffect(() => {
     const sequence = [
-      'Checking your calendar... 📅',
-      'Loading dreamy destinations... ✈️',
-      'Adding long weekends... 🥂',
-      'Extending your breaks... 💆‍♀️',
-      'Aligning your stars... ✨',
-      'Manifesting abundance... 🌟',
-      'Your perfect plan is ready! 💖'
+      'Aligning your schedule with your soul... ✨',
+      'Deleting toxic meetings... 🗑️',
+      'Prioritizing ME time... 💅',
+      'Maximizing long weekends... 🥂',
+      'Calculating optimal rest days... 🛌',
+      'Manifesting freedom... 🕊️',
+      'Your Freedom Era is ready! 💖'
     ];
 
     let stepIndex = 0;
@@ -309,7 +310,9 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-[100dvh] flex flex-col text-dark-text pb-12 overflow-x-hidden bg-light-100">
+    <div className="min-h-[100dvh] flex flex-col text-dark-text pb-12 overflow-x-hidden bg-light-100 relative">
+      <MagicOrb />
+      <FloatingAffirmation />
       <SEOHead view={view} prefs={prefs} result={result || undefined} country={prefs.country} />
 
       {/* Navigation */}

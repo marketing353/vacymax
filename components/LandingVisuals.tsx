@@ -50,13 +50,13 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
                     </div>
 
                     <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight text-dark-text leading-[1.1] mb-6">
-                        Don't just plan.<br />
+                        Claim Your Liberty.<br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-accent to-peach-accent italic">Design Your Era.</span>
                     </h1>
 
                     <p className="text-lg md:text-xl text-gray-600 max-w-xl leading-relaxed mb-10 border-l-4 border-rose-200 pl-6">
-                        You're the "planner friend" for everyone else. <strong className="text-rose-accent">This is for YOU.</strong><br />
-                        We turn your ordinary calendar into a <span className="text-rose-accent font-bold">Strategy of Leisure</span>. Turn 10 PTO days into 24 days of "me time". 🥂
+                        Stop asking for permission to live. <strong className="text-rose-accent">This is your time.</strong><br />
+                        We turn your calendar into a <span className="text-rose-accent font-bold">Declaration of Independence</span>. Turn 10 PTO days into 24 days of absolute freedom. 🥂
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center gap-6">
@@ -64,8 +64,8 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
                             onClick={onCta}
                             className="w-full sm:w-auto px-10 py-5 bg-gradient-to-r from-rose-accent to-peach-accent hover:shadow-lg hover:shadow-rose-accent/40 text-white font-bold text-lg rounded-full hover:scale-[1.02] transition-all flex items-center justify-center gap-3 group"
                         >
-                            Start Manifesting
-                            <span className="group-hover:translate-x-1 transition-transform">✨</span>
+                            Unlock My Freedom
+                            <span className="group-hover:translate-x-1 transition-transform">🕊️</span>
                         </button>
                     </div>
 
@@ -201,14 +201,14 @@ export const BurnCalculator = () => {
             <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-20 items-center relative z-10">
                 <div className="space-y-8">
                     <div className="inline-block px-4 py-1.5 bg-rose-100 rounded-lg text-rose-500 text-xs font-bold uppercase tracking-widest">
-                        ⚠️ Reality Check
+                        ⚠️ The Freedom Audit
                     </div>
                     <h2 className="text-5xl md:text-6xl font-display font-bold text-gray-900 leading-[1.1]">
-                        Are you skipping<br />
-                        <span className="text-rose-400 italic">your self-care?</span>
+                        Is your job <br />
+                        <span className="text-rose-400 italic">stealing your joy?</span>
                     </h2>
                     <p className="text-gray-500 text-lg leading-relaxed max-w-md">
-                        Unused PTO isn't a badge of honor, it's a donation to corporate. Reclaim your time and invest in your own happiness.
+                        Every day of unused PTO is a day of freedom you volunteered to give back. Reclaim your time, your youth, and your peace.
                     </p>
 
                     <div className="flex gap-8">
