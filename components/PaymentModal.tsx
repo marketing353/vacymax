@@ -141,7 +141,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[100]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div className="fixed inset-0 h-[100dvh] z-[100]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             {/* Backdrop */}
             <div
                 className="fixed inset-0 bg-rose-900/40 backdrop-blur-md"
@@ -149,8 +149,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             />
 
             {/* Scroll Container - Full screen with safe padding */}
-            <div className="fixed inset-0 overflow-y-auto overscroll-contain pt-safe z-[110]">
-                <div className="flex min-h-full items-start justify-center p-4 pt-24 md:items-center md:pt-4">
+            <div className="fixed inset-0 h-[100dvh] overflow-y-auto overscroll-contain pt-safe z-[110]">
+                <div className="flex min-h-full items-start justify-center p-4 pt-12 md:items-center md:pt-4">
                     <div
                         className="relative w-full max-w-md bg-white border border-rose-100 rounded-2xl md:rounded-3xl shadow-2xl animate-fade-up"
                         onClick={(e) => e.stopPropagation()}

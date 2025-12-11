@@ -38,7 +38,7 @@ export const downloadICS = (blocks: VacationBlock[]): boolean => {
     }
 
     try {
-        let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//VacationMax//PTO Optimizer//EN\nCALSCALE:GREGORIAN\n";
+        let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//DoubleMyHolidays//PTO Optimizer//EN\nCALSCALE:GREGORIAN\n";
 
         blocks.forEach(block => {
             // Validate block data
@@ -65,7 +65,7 @@ export const downloadICS = (blocks: VacationBlock[]): boolean => {
             icsContent += `DTEND;VALUE=DATE:${end}\n`;
             icsContent += `SUMMARY:Vacation: ${safeDescription}\n`;
             icsContent += `DESCRIPTION:Smart Bridge Plan. Holidays used: ${safeHolidayNames}\n`;
-            icsContent += `UID:${block.id || Math.random().toString(36).substr(2, 9)}@vacationmax.app\n`;
+            icsContent += `UID:${block.id || Math.random().toString(36).substr(2, 9)}@doublemyholidays.app\n`;
             icsContent += "END:VEVENT\n";
         });
 

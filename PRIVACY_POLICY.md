@@ -7,7 +7,7 @@
 
 ## 1. Introduction
 
-Welcome to **VacationMax** ("we," "our," or "us"). We respect your privacy and are committed to protecting your personal data. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our vacation optimization service available at [your-domain.com] (the "Service").
+Welcome to **DoubleMyHolidays** ("we," "our," or "us"). We respect your privacy and are committed to protecting your personal data. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our vacation optimization service available at [your-domain.com] (the "Service").
 
 This policy complies with the **General Data Protection Regulation (GDPR)**, the **California Consumer Privacy Act (CCPA)**, and other applicable data protection laws.
 
@@ -19,7 +19,7 @@ This policy complies with the **General Data Protection Regulation (GDPR)**, the
 
 ### 2.1 Information You Provide Directly
 
-When you use VacationMax, we collect the following information:
+When you use DoubleMyHolidays, we collect the following information:
 
 - **Email Address**: Collected during payment checkout to send purchase receipts and communicate about your account
 - **Payment Information**: Processed securely through Stripe (see Section 5.3)
@@ -28,7 +28,7 @@ When you use VacationMax, we collect the following information:
 
 ### 2.2 Sensitive Financial Data (NOT STORED)
 
-**IMPORTANT**: Your **salary information** is processed **entirely client-side** in your browser and is **NEVER transmitted to our servers, stored in our database, or accessible to VacationMax**. 
+**IMPORTANT**: Your **salary information** is processed **entirely client-side** in your browser and is **NEVER transmitted to our servers, stored in our database, or accessible to DoubleMyHolidays**. 
 
 This data is used solely for:
 - Calculating the monetary value of optimized vacation time
@@ -249,7 +249,7 @@ We may request additional information to verify your identity before processing 
 
 ## 10. International Data Transfers
 
-VacationMax is operated from the **United States**. If you access our Service from outside the US, your data may be transferred to, stored, and processed in the United States.
+DoubleMyHolidays is operated from the **United States**. If you access our Service from outside the US, your data may be transferred to, stored, and processed in the United States.
 
 ### 10.1 EU Data Transfers
 
@@ -265,7 +265,7 @@ By using our Service, you consent to the transfer of your data to the United Sta
 
 ## 11. Children's Privacy
 
-VacationMax is **not intended for children under 16 years of age**. We do not knowingly collect personal information from children.
+DoubleMyHolidays is **not intended for children under 16 years of age**. We do not knowingly collect personal information from children.
 
 If you are a parent or guardian and believe your child has provided us with personal data, please contact us immediately at privacy@[your-domain].com. We will delete such information promptly.
 
@@ -328,7 +328,7 @@ In the event of a data breach that affects your personal information:
 
 ### 15.1 Data Controller
 
-**VacationMax**  
+**DoubleMyHolidays**  
 [Your Company Legal Name]  
 [Your Business Address]  
 Email: privacy@[your-domain].com  
@@ -389,7 +389,7 @@ The vacation optimization algorithm is a **tool** that provides recommendations,
 
 ## 18. Your California "Do Not Track" Rights
 
-VacationMax does not currently respond to "Do Not Track" (DNT) browser signals. We honor opt-out requests made directly to us.
+DoubleMyHolidays does not currently respond to "Do Not Track" (DNT) browser signals. We honor opt-out requests made directly to us.
 
 Third-party analytics providers (PostHog) may collect data across websites. Refer to their privacy policies for DNT compliance.
 
@@ -405,7 +405,7 @@ For legally binding terms, please review our **Terms of Service**.
 
 ## 20. Acknowledgment
 
-By using VacationMax, you acknowledge that you have read and understood this Privacy Policy and agree to its terms.
+By using DoubleMyHolidays, you acknowledge that you have read and understood this Privacy Policy and agree to its terms.
 
 If you do not agree with this policy, please discontinue use of the Service immediately.
 
@@ -416,4 +416,4 @@ If you do not agree with this policy, please discontinue use of the Service imme
 
 ---
 
-© 2025 VacationMax. All rights reserved.
+© 2025 DoubleMyHolidays. All rights reserved.

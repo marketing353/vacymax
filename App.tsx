@@ -8,7 +8,6 @@ import { PainHero, BurnCalculator, SolutionGrid, BattleTestedMarquee } from './c
 import { TrustSection } from './components/TrustSection';
 import { supabaseHelpers } from './services/supabase';
 // import { CelebrationOverlay, ProgressMilestone } from './components/Celebrations'; // Removed
-import { MagicOrb, FloatingAffirmation } from './components/MagicEffects';
 // Eagerly load the results view to remove chunk-fetch failures when users finish the wizard.
 import { ResultsView } from './components/ResultsView';
 import { StrategyDemosPage } from './components/StrategyDemos';
@@ -301,10 +300,7 @@ const App: React.FC = () => {
   return (
     <div className="min-h-[100dvh] flex flex-col text-dark-text pb-12 overflow-x-hidden bg-light-100 relative">
       {/* Desktop-only magic effects - Disabled per user feedback */}
-      {/* <div className="hidden md:block">
-        <MagicOrb />
-        <FloatingAffirmation />
-      </div> */}
+
       <SEOHead view={view} prefs={prefs} result={result || undefined} country={prefs.country} />
 
       {/* Navigation */}
@@ -627,7 +623,7 @@ const App: React.FC = () => {
             </div>
             <div className="text-center md:text-right">
               <div className="flex items-center justify-center md:justify-end gap-2">
-                <span>VacationMax © 2025</span>
+                <span>DoubleMyHolidays © 2025</span>
                 <span className="text-rose-300">|</span>
                 <span className="text-rose-accent">Authorized Personnel Only 💖</span>
               </div>

@@ -22,16 +22,16 @@ export default async function handler(req, res) {
       amount: Math.round(amount * 100), // Stripe expects amounts in cents (e.g. $10.00 = 1000)
       currency: currency || 'usd',
       receipt_email: email,
-      
+
       // THE "NO-DATABASE" MAGIC:
       // We store all essential order info right here in the transaction.
       metadata: {
         ...metadata,
         order_id: `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-        product: 'VacationMax Lifetime Plan',
+        product: 'DoubleMyHolidays Lifetime Plan',
         environment: process.env.NODE_ENV || 'development'
       },
-      
+
       // Enable modern payment methods (Apple Pay, Google Pay, Cards)
       automatic_payment_methods: {
         enabled: true,
