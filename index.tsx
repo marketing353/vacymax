@@ -16,6 +16,11 @@ interface ErrorBoundaryState {
 // Production-grade Error Boundary to prevent white screen of death
 class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   public state: ErrorBoundaryState = { hasError: false, error: null };
+  public props!: Readonly<ErrorBoundaryProps>;
+
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+  }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     return { hasError: true, error };
@@ -53,7 +58,8 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
       );
     }
 
-    return this.props.children;
+    const { children } = this.props;
+    return children || null;
   }
 }
 
