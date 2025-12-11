@@ -30,7 +30,7 @@ export const getRegionalPrice = (countryName: string = '') => {
         return { amount: 7.99, currency: 'AUD', symbol: '$' };
     }
     // Default (US/International)
-    return { amount: 2.99, currency: 'USD', symbol: '$' };
+    return { amount: 1.99, currency: 'USD', symbol: '$' };
 };
 
 export const PaymentModal: React.FC<PaymentModalProps> = ({
@@ -107,7 +107,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             }
 
             // Fallback: Use Stripe Payment Link (for local development or direct link override)
-            const paymentLink = 'https://buy.stripe.com/00w7sN3uE561f9qcWQ6Zy01';
+            const paymentLink = 'https://buy.stripe.com/9B6bJ33uE2XT1iAbSM6Zy02';
             window.open(`${paymentLink}?prefilled_email=${encodeURIComponent(email)}`, '_blank');
             setPaymentStep('confirming');
 
