@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { UserPreferences } from '../types';
 import { supabaseHelpers } from '../services/supabase';
 
@@ -140,7 +141,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
     if (!isOpen) return null;
 
-    return (
+    // Use portal to render modal at document body level to escape stacking contexts
+    return createPortal(
         <div className="fixed inset-0 h-[100dvh] z-[100]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             {/* Backdrop */}
             <div
@@ -305,6 +307,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     </div>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
