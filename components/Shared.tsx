@@ -165,7 +165,7 @@ export const SelectionCard: React.FC<SelectionCardProps> = ({
                     <div className="flex items-center gap-2">
                         {tooltipText && (
                             <div
-                                className="relative group/info"
+                                className={`relative group/info ${showTooltip ? 'z-[200]' : 'z-10'}`}
                                 onClick={handleTooltipClick}
                                 onMouseEnter={handleTooltipMouseEnter}
                                 onMouseLeave={handleTooltipMouseLeave}
@@ -174,7 +174,7 @@ export const SelectionCard: React.FC<SelectionCardProps> = ({
                                     ?
                                 </div>
                                 {showTooltip && (
-                                    <div className="absolute bottom-full right-[-8px] mb-3 w-[260px] max-w-[80vw] bg-white border border-rose-100 p-4 rounded-xl shadow-[0_10px_40px_-5px_rgba(0,0,0,0.1)] z-50 text-left animate-fade-up pointer-events-none">
+                                    <div className="absolute bottom-full right-0 mb-3 w-[260px] max-w-[80vw] bg-white border border-rose-100 p-4 rounded-xl shadow-[0_10px_40px_-5px_rgba(0,0,0,0.15)] z-[200] text-left animate-fade-up pointer-events-none">
                                         <p className="text-xs text-gray-600 leading-relaxed font-medium">
                                             {tooltipText}
                                         </p>
