@@ -321,7 +321,7 @@ const App: React.FC = () => {
             onClick={() => setView('strategy-demos')}
             className="text-xs md:text-sm font-medium text-slate-500 hover:text-lavender-accent transition-colors hidden md:block"
           >
-            Strategy Demos
+            Vacation Styles
           </button>
 
           {/* Create User/Restart logic links for Desktop */}
@@ -384,7 +384,7 @@ const App: React.FC = () => {
             onClick={() => { setView('strategy-demos'); setIsMobileMenuOpen(false); }}
             className="text-2xl font-display font-bold text-gray-800 hover:text-rose-accent transition-colors py-2 border-b border-gray-100"
           >
-            Strategy Demos
+            Vacation Styles
           </button>
           {step > 0 && (
             <button
@@ -584,7 +584,7 @@ const App: React.FC = () => {
                   <li>
                     <button onClick={(e) => handleFooterLink(e, 'strategy-demos')} className="flex items-center gap-3 w-full text-left group/link p-2 -mx-2 hover:bg-white/50 rounded-xl transition-all">
                       <span className="w-8 h-8 rounded-full bg-lavender-50 text-lavender-accent flex items-center justify-center text-xs group-hover/link:bg-lavender-accent group-hover/link:text-white transition-all">02</span>
-                      <span className="text-gray-600 font-medium group-hover/link:text-lavender-accent transition-colors">Strategy Demos</span>
+                      <span className="text-gray-600 font-medium group-hover/link:text-lavender-accent transition-colors">Vacation Styles</span>
                       <span className="ml-auto text-lavender-200 group-hover/link:text-lavender-accent">→</span>
                     </button>
                   </li>
