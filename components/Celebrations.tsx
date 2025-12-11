@@ -1,55 +1,6 @@
+
+
 import React, { useEffect, useState } from 'react';
-
-interface ConfettiProps {
-    active: boolean;
-    duration?: number;
-}
-
-export const Confetti: React.FC<ConfettiProps> = ({ active, duration = 3000 }) => {
-    const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number; color: string; rotation: number; delay: number }>>([]);
-
-    useEffect(() => {
-        if (active) {
-            const colors = ['#F43F5E', '#FB923C', '#A78BFA', '#EC4899', '#F472B6', '#FBBF24'];
-            const newParticles = Array.from({ length: 50 }, (_, i) => ({
-                id: i,
-                x: Math.random() * 100,
-                y: -10,
-                color: colors[Math.floor(Math.random() * colors.length)],
-                rotation: Math.random() * 360,
-                delay: Math.random() * 300
-            }));
-            setParticles(newParticles);
-
-            const timer = setTimeout(() => {
-                setParticles([]);
-            }, duration);
-
-            return () => clearTimeout(timer);
-        }
-    }, [active, duration]);
-
-    if (!active && particles.length === 0) return null;
-
-    return (
-        <div className="fixed inset-0 pointer-events-none z-[9999] overflow-hidden">
-            {particles.map((particle) => (
-                <div
-                    key={particle.id}
-                    className="absolute w-3 h-3 animate-confetti"
-                    style={{
-                        left: `${particle.x}%`,
-                        top: `${particle.y}%`,
-                        backgroundColor: particle.color,
-                        transform: `rotate(${particle.rotation}deg)`,
-                        animationDelay: `${particle.delay}ms`,
-                        animationDuration: `${2000 + Math.random() * 1000}ms`
-                    }}
-                />
-            ))}
-        </div>
-    );
-};
 
 interface CelebrationOverlayProps {
     show: boolean;
@@ -75,7 +26,7 @@ export const CelebrationOverlay: React.FC<CelebrationOverlayProps> = ({
 
     return (
         <>
-            {/* <Confetti active={show} /> */}
+            {/* Confetti Removed */}
             <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-rose-500/20 backdrop-blur-sm animate-fade-in">
                 <div className="text-center space-y-4 animate-scale-in px-6">
                     <div className="text-7xl mb-4 animate-bounce">✨</div>

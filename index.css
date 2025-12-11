@@ -156,22 +156,7 @@ input[type=range]::-webkit-slider-runnable-track {
    BEHAVIORAL UX ANIMATIONS 
    ======================================== */
 
-/* Confetti Animation */
-@keyframes confetti {
-  0% {
-    transform: translateY(-10vh) rotate(0deg);
-    opacity: 1;
-  }
-
-  100% {
-    transform: translateY(100vh) rotate(720deg);
-    opacity: 0;
-  }
-}
-
-.animate-confetti {
-  animation: confetti 3s ease-out forwards;
-}
+/* Confetti Animation Removed */
 
 /* Celebration Overlay Animations */
 @keyframes fadeIn {
