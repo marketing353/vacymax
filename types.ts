@@ -1,9 +1,9 @@
 export enum OptimizationStrategy {
-  BALANCED = 'Balanced Mix',
-  LONG_WEEKENDS = 'Long Weekends',
-  MINI_BREAKS = 'Mini Breaks',
-  WEEK_LONG = 'Week-long Breaks',
-  EXTENDED = 'Extended Vacations',
+  BALANCED = 'The "CEO" Schedule',
+  LONG_WEEKENDS = 'The Socialite',
+  MINI_BREAKS = 'The Wellness Era',
+  WEEK_LONG = 'The Weekender',
+  EXTENDED = 'The Jetsetter',
 }
 
 export enum TimeframeType {

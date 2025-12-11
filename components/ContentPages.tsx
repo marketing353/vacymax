@@ -208,3 +208,5 @@ export const RegionPage = ({ region, onBack }: { region: string, onBack: () => v
         </p>
     </ContentPageLayout>
 );
+
+// StrategiesPage removed in favor of StrategyDemosPage

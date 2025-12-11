@@ -586,14 +586,14 @@ const TripCard: React.FC<{ block: VacationBlock, index: number, textColor: strin
     </div>
 
     <h5 className="font-bold text-gray-800 mb-1">{block.description}</h5>
-    <p className="text-xs text-gray-500 mb-3">
-      {formatDate(block.startDate)} — {formatDate(block.endDate)}
+    <p className="text-xs text-gray-400 mb-3 font-medium uppercase tracking-wide">
+      Approx. Duration: {block.totalDaysOff} Days
     </p>
 
     <div className="flex flex-wrap gap-2 mb-3">
       {block.publicHolidaysUsed.map((h, i) => (
         <span key={i} className="text-[10px] bg-lavender-50 text-lavender-600 border border-lavender-100 px-2 py-1 rounded font-medium">
-          {h.name}
+          Public Holiday
         </span>
       ))}
     </div>
@@ -697,6 +697,7 @@ export const StrategyDemo: React.FC<StrategyDemoProps> = ({ strategy, onBack, on
             isLocked={false}
             timelineStartDate="2025-01-01"
             targetYear={2025}
+            hideDates={true}
           />
         </div>
 

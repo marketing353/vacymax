@@ -100,7 +100,7 @@ export const DistributionChart: React.FC<{ pto: number, free: number }> = ({ pto
 type DayStatus = { type: 'pto' | 'holiday' | 'weekend' | 'locked', name?: string, blockId?: string, isStart?: boolean };
 type DayStatusMap = Map<string, DayStatus>; // Key: YYYY-MM-DD
 
-export const MonthGrid: React.FC<{ year: number, month: number, statusMap: DayStatusMap, holidaysList: { day: number, name: string }[] }> = React.memo(({ year, month, statusMap, holidaysList }) => {
+export const MonthGrid: React.FC<{ year: number, month: number, statusMap: DayStatusMap, holidaysList: { day: number, name: string }[], hideDates?: boolean }> = React.memo(({ year, month, statusMap, holidaysList, hideDates }) => {
     const [activeDay, setActiveDay] = useState<number | null>(null);
 
     const date = new Date(Date.UTC(year, month, 1));
@@ -148,7 +148,7 @@ export const MonthGrid: React.FC<{ year: number, month: number, statusMap: DaySt
                                 <div className="absolute -top-1 -right-1 w-2 h-2 bg-white rounded-full shadow-sm z-20 ring-1 ring-gray-200"></div>
                             )}
 
-                            {status && !['locked', 'weekend'].includes(status.type) && isHovered && (
+                            {status && !['locked', 'weekend'].includes(status.type) && isHovered && !hideDates && (
                                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-[140px] pointer-events-none z-[200] animate-in fade-in zoom-in-95 duration-200">
                                     <div className="bg-white text-gray-800 text-[10px] font-bold px-3 py-1.5 rounded-lg border border-rose-100 shadow-xl whitespace-normal text-center relative">
                                         {status.name}
@@ -166,7 +166,7 @@ export const MonthGrid: React.FC<{ year: number, month: number, statusMap: DaySt
                     {holidaysList.slice(0, 2).map((h, i) => (
                         <div key={i} className="flex items-start gap-1 text-[9px] text-gray-400 leading-tight">
                             <div className="w-1.5 h-1.5 rounded-full bg-lavender-accent mt-0.5 flex-shrink-0"></div>
-                            <span>{h.name}</span>
+                            <span>{hideDates ? 'Public Holiday' : h.name}</span>
                         </div>
                     ))}
                 </div>
@@ -175,7 +175,7 @@ export const MonthGrid: React.FC<{ year: number, month: number, statusMap: DaySt
     )
 });
 
-export const YearTimeline: React.FC<{ blocks: VacationBlock[], isLocked: boolean, timelineStartDate?: string, targetYear: number, viewMode?: 'joint' | 'solo' }> = ({ blocks, isLocked, timelineStartDate, targetYear, viewMode }) => {
+export const YearTimeline: React.FC<{ blocks: VacationBlock[], isLocked: boolean, timelineStartDate?: string, targetYear: number, viewMode?: 'joint' | 'solo', hideDates?: boolean }> = ({ blocks, isLocked, timelineStartDate, targetYear, viewMode, hideDates }) => {
     // Determine the start date object. Use UTC.
     const start = timelineStartDate
         ? new Date(timelineStartDate)
@@ -246,7 +246,9 @@ export const YearTimeline: React.FC<{ blocks: VacationBlock[], isLocked: boolean
                     <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
                         <span className="text-rose-accent text-xl">🗓</span> Year at a Glance
                     </h3>
-                    <p className="text-xs text-gray-500 font-mono mt-1 uppercase tracking-wider">Your Visual Plan ({startYear} - {months[11].year})</p>
+                    <p className="text-xs text-gray-500 font-mono mt-1 uppercase tracking-wider">
+                        {hideDates ? 'Sample Distribution (Dates vary by region)' : `Your Visual Plan (${startYear} - ${months[11].year})`}
+                    </p>
                 </div>
 
                 <div className="flex flex-wrap gap-4 md:gap-6 text-[10px] font-bold uppercase tracking-wider bg-white px-4 py-2 rounded-full border border-rose-50 shadow-sm">
@@ -270,6 +272,7 @@ export const YearTimeline: React.FC<{ blocks: VacationBlock[], isLocked: boolean
                             month={m.month}
                             statusMap={globalStatusMap}
                             holidaysList={monthHolidays[`${m.year}-${m.month}`] || []}
+                            hideDates={hideDates}
                         />
                     ))}
                 </div>

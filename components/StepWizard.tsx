@@ -20,35 +20,35 @@ const COUNTRIES = [
 const STRATEGIES = [
     {
         id: OptimizationStrategy.BALANCED,
-        title: 'The Balance ✨',
-        desc: 'A mix of long trips and quick reset breaks.',
+        title: 'The "CEO" Schedule ✨',
+        desc: 'Strategic power moves. Maximum ROI.',
         roi: 'Most Popular',
         color: 'from-rose-500/10 to-peach-500/10',
-        tooltip: "The Algorithm aims for a healthy mix: 1-2 week-long vacations plus several optimized long weekends. Best efficiency for 10-20 PTO days."
+        tooltip: "The ultimate power move. We identify the highest-value opportunities to create a schedule that balances restoration with ambition."
     },
     {
         id: OptimizationStrategy.LONG_WEEKENDS,
-        title: 'Frequent Bliss 🥂',
-        desc: 'Lots of 3-4 day weekends. No burnout ever.',
+        title: 'The Socialite 🥂',
+        desc: 'Maximizing events & weekend trips.',
         roi: 'Stress Free',
         color: 'from-lavender-500/10 to-indigo-500/10',
-        tooltip: "Maximizes trip frequency. The engine prioritizes turning 1 PTO day into 3-4 days off multiple times a year. Great for preventing burnout."
+        tooltip: "Never miss a moment. We optimize your calendar for frequency, ensuring you're always the one with plans."
     },
     {
         id: OptimizationStrategy.EXTENDED,
-        title: 'Wanderlust ✈️',
-        desc: 'Focus on long, 2+ week adventures.',
+        title: 'The Jetsetter ✈️',
+        desc: 'Long-haul flights & deep exploration.',
         roi: 'Traveler',
         color: 'from-amber-500/10 to-orange-500/10',
-        tooltip: "Quality over quantity. We hoard your PTO to build massive 10+ day blocks for international travel, ignoring shorter opportunities."
+        tooltip: "Pack your bags. We prioritize finding the longest continuous blocks of time to facilitate international travel and deep resets."
     },
     {
         id: OptimizationStrategy.MINI_BREAKS,
-        title: 'Regular Resets 🧘‍♀️',
-        desc: 'A week off every other month.',
+        title: 'The Wellness Era 🧘‍♀️',
+        desc: 'Consistent self-care intervals.',
         roi: 'Healthy',
         color: 'from-emerald-500/10 to-teal-500/10',
-        tooltip: "Consistency is key. The plan attempts to space your time off evenly throughout the year (e.g., a break every ~60 days)."
+        tooltip: "Sustainable living. We structure your year with rhythm and routine, ensuring you never go too long without a recharge."
     },
 ];
 
