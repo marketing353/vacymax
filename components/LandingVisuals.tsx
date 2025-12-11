@@ -24,17 +24,17 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
     };
 
     return (
-        <div className="relative pt-32 pb-20 px-4 md:px-12 overflow-hidden bg-light-100 min-h-[90vh] flex flex-col justify-center">
+        <div className="relative pt-24 md:pt-32 pb-16 md:pb-20 px-4 md:px-12 overflow-hidden bg-light-100 min-h-[auto] md:min-h-[90vh] flex flex-col justify-center">
             {/* Dynamic Background */}
             <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-rose-50 via-light-100 to-light-100 z-0"></div>
 
-            {/* Ambient Glows */}
-            <div className="absolute -top-[10%] left-[10%] w-[500px] h-[500px] bg-rose-200/20 rounded-full blur-[100px] pointer-events-none animate-float"></div>
-            <div className="absolute top-[20%] right-[10%] w-[300px] h-[300px] bg-lavender-200/20 rounded-full blur-[80px] pointer-events-none animate-pulse-slow"></div>
+            {/* Ambient Glows - Desktop Only */}
+            <div className="hidden md:block absolute -top-[10%] left-[10%] w-[500px] h-[500px] bg-rose-200/20 rounded-full blur-[100px] pointer-events-none animate-float"></div>
+            <div className="hidden md:block absolute top-[20%] right-[10%] w-[300px] h-[300px] bg-lavender-200/20 rounded-full blur-[80px] pointer-events-none animate-pulse-slow"></div>
 
-            {/* Decorative Stickers */}
-            <div className="absolute top-24 left-10 text-4xl opacity-20 rotate-12 animate-float pointer-events-none">✨</div>
-            <div className="absolute bottom-20 right-20 text-6xl opacity-10 -rotate-12 animate-float pointer-events-none">🌸</div>
+            {/* Decorative Stickers - Desktop Only */}
+            <div className="hidden md:block absolute top-24 left-10 text-4xl opacity-20 rotate-12 animate-float pointer-events-none">✨</div>
+            <div className="hidden md:block absolute bottom-20 right-20 text-6xl opacity-10 -rotate-12 animate-float pointer-events-none">🌸</div>
 
             <div className="max-w-7xl mx-auto relative z-10 grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
                 {/* Left Column: Copy */}
@@ -69,20 +69,20 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
                         </button>
                     </div>
 
-                    <div className="mt-12 pt-8 border-t border-rose-100 flex items-center gap-6">
-                        <div className="flex -space-x-4">
-                            {[1, 2, 3, 4].map(i => (
-                                <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-rose-100 flex items-center justify-center text-xs shadow-sm overflow-hidden ring-2 ring-rose-50">
+                    {/* Social Proof - Simplified on mobile */}
+                    <div className="mt-8 md:mt-12 pt-6 md:pt-8 border-t border-rose-100 flex items-center gap-4 md:gap-6">
+                        <div className="flex -space-x-3 md:-space-x-4">
+                            {[1, 2, 3].map(i => (
+                                <div key={i} className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-white bg-rose-100 flex items-center justify-center text-xs shadow-sm overflow-hidden ring-2 ring-rose-50">
                                     <img src={`https://api.dicebear.com/9.x/micah/svg?seed=${i + 40}&backgroundColor=ffe4e6`} className="w-full h-full object-cover" alt={`VacyMax user ${i} avatar`} loading="lazy" />
                                 </div>
                             ))}
                         </div>
                         <div className="text-sm">
-                            <div className="flex text-rose-400 mb-0.5 text-[12px] gap-0.5">
+                            <div className="flex text-rose-400 mb-0.5 text-[10px] md:text-[12px] gap-0.5">
                                 <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
                             </div>
-                            <p className="text-gray-800 font-bold">14,000+ Girls Planning</p>
-                            <p className="text-gray-500 text-xs">Join the wellness era</p>
+                            <p className="text-gray-800 font-bold text-sm md:text-base">14,000+ Planning</p>
                         </div>
                     </div>
                 </motion.div>
@@ -195,28 +195,28 @@ export const BurnCalculator = () => {
     const loss = Math.round(dailyRate * daysLeft);
 
     return (
-        <div className="w-full bg-white py-32 relative overflow-hidden">
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#fce7f3_1px,transparent_1px),linear-gradient(to_bottom,#fce7f3_1px,transparent_1px)] bg-[size:40px_40px] opacity-50"></div>
+        <div className="w-full bg-white py-16 md:py-32 relative overflow-hidden">
+            <div className="hidden md:block absolute inset-0 bg-[linear-gradient(to_right,#fce7f3_1px,transparent_1px),linear-gradient(to_bottom,#fce7f3_1px,transparent_1px)] bg-[size:40px_40px] opacity-50"></div>
 
-            <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-20 items-center relative z-10">
-                <div className="space-y-8">
-                    <div className="inline-block px-4 py-1.5 bg-rose-100 rounded-lg text-rose-500 text-xs font-bold uppercase tracking-widest">
+            <div className="max-w-6xl mx-auto px-4 md:px-6 grid lg:grid-cols-2 gap-10 md:gap-20 items-center relative z-10">
+                <div className="space-y-6 md:space-y-8">
+                    <div className="inline-block px-3 md:px-4 py-1 md:py-1.5 bg-rose-100 rounded-lg text-rose-500 text-[10px] md:text-xs font-bold uppercase tracking-widest">
                         ⚠️ The Freedom Audit
                     </div>
-                    <h2 className="text-5xl md:text-6xl font-display font-bold text-gray-900 leading-[1.1]">
+                    <h2 className="text-3xl sm:text-4xl md:text-6xl font-display font-bold text-gray-900 leading-[1.1]">
                         Is your job <br />
                         <span className="text-rose-400 italic">stealing your joy?</span>
                     </h2>
-                    <p className="text-gray-500 text-lg leading-relaxed max-w-md">
-                        Every day of unused PTO is a day of freedom you volunteered to give back. Reclaim your time, your youth, and your peace.
+                    <p className="text-gray-500 text-base md:text-lg leading-relaxed max-w-md">
+                        Every unused PTO day is freedom given back. Reclaim your time.
                     </p>
 
-                    <div className="flex gap-8">
+                    <div className="flex flex-wrap gap-4 md:gap-8">
                         <div>
-                            <p className="text-4xl font-bold text-gray-800">{Math.round((260 - daysLeft) / 260 * 100)}%</p>
-                            <p className="text-xs text-gray-400 uppercase tracking-widest mt-1">Life Spent Working</p>
+                            <p className="text-2xl md:text-4xl font-bold text-gray-800">{Math.round((260 - daysLeft) / 260 * 100)}%</p>
+                            <p className="text-[10px] md:text-xs text-gray-400 uppercase tracking-widest mt-1">Life Working</p>
                         </div>
-                        <div className="h-12 w-px bg-gray-200"></div>
+                        <div className="h-12 w-px bg-gray-200 hidden md:block"></div>
                         <div>
                             <p className="text-4xl font-bold text-rose-500">-${loss.toLocaleString()}</p>
                             <p className="text-xs text-gray-400 uppercase tracking-widest mt-1">Value Lost</p>
