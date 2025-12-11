@@ -179,16 +179,13 @@ const App: React.FC = () => {
     setDirection('next');
     setStep(nextStep);
 
-    // Scroll to top on mobile
+    // Scroll to wizard top on mobile to keep focus
     if (window.innerWidth < 768) {
       setTimeout(() => {
-        window.scrollTo({
-          top: 0,
-          behavior: "smooth"
-        });
+        scrollWizardIntoView();
       }, 100);
     }
-  }, [step]);
+  }, [step, scrollWizardIntoView]);
 
   const handleBack = useCallback(() => {
     setDirection('back');
