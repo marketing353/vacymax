@@ -50,13 +50,13 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
                     </div>
 
                     <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight text-dark-text leading-[1.1] mb-6">
-                        Claim Your Liberty.<br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-accent to-peach-accent italic">Design Your Era.</span>
+                        We Double Your<br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-accent to-peach-accent italic">Vacation Days.</span>
                     </h1>
 
                     <p className="text-lg md:text-xl text-gray-600 max-w-xl leading-relaxed mb-10 border-l-4 border-rose-200 pl-6">
-                        Stop asking for permission to live. <strong className="text-rose-accent">This is your time.</strong><br />
-                        We turn your calendar into a <span className="text-rose-accent font-bold">Declaration of Independence</span>. Turn 10 PTO days into 24 days of absolute freedom. 🥂
+                        Stop wasting your paid time off. <strong className="text-rose-accent">Our algorithm finds the "Bridge Days"</strong> that connect public holidays to weekends.<br />
+                        Turn <span className="font-bold underline decoration-rose-300 decoration-2">10 days of PTO</span> into <span className="font-bold underline decoration-emerald-300 decoration-2">24+ days of freedom</span>. Instantly. 🥂
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center gap-6">
