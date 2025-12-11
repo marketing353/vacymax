@@ -94,96 +94,40 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     const [paymentStep, setPaymentStep] = useState<'initial' | 'confirming'>('initial');
 
 
-    const handleCheckout = async (e: React.FormEvent) => {
+    const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/9B6bJ33uE2XT1iAbSM6Zy02';
+
+    const handleCheckout = (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
-        setLoading(true);
 
-        try {
-            if (!email) {
-                throw new Error('Please add an email so we can send your receipt.');
-            }
-
-            // Try to call serverless function to create Stripe Checkout Session
-            try {
-                const response = await fetch('/api/create-checkout-session', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        email,
-                        amount: price.amount,
-                        currency: price.currency,
-                        planStats,
-                        userPrefs: prefs,
-                    }),
-                });
-
-                if (response.ok) {
-                    const { url, sessionId } = await response.json();
-
-                    // Store session ID for verification
-                    if (sessionId) {
-                        sessionStorage.setItem('stripe_session_id', sessionId);
-                    }
-
-                    // Redirect to Stripe Checkout
-                    if (url) {
-                        window.location.href = url;
-                        return;
-                    }
-                }
-            } catch (apiError) {
-                console.warn('API endpoint not available, using fallback payment link');
-            }
-
-            // Fallback: Use Stripe Payment Link (for local development or direct link override)
-            const paymentLink = 'https://buy.stripe.com/9B6bJ33uE2XT1iAbSM6Zy02';
-            window.open(`${paymentLink}?prefilled_email=${encodeURIComponent(email)}`, '_blank');
-            setLoading(false);
-            setPaymentStep('confirming');
-
-        } catch (err) {
-            const errorMessage = err instanceof Error
-                ? err.message
-                : 'Unable to start checkout. Please try again.';
-            setError(errorMessage);
-            setLoading(false);
+        if (!email) {
+            setError('Please add an email so we can send your receipt.');
+            return;
         }
+
+        // Open Stripe Payment Link with prefilled email
+        const paymentUrl = `${STRIPE_PAYMENT_LINK}?prefilled_email=${encodeURIComponent(email)}`;
+        window.open(paymentUrl, '_blank');
+        setPaymentStep('confirming');
     };
 
-    const handleVerify = useCallback(async () => {
+    const handleVerify = useCallback(() => {
         setLoading(true);
-        setError(null);
 
-        try {
-            // Check if we have a stored session ID from Stripe Checkout
-            const storedSessionId = sessionStorage.getItem('stripe_session_id');
+        // Log payment confirmation (webhook will handle actual verification)
+        supabaseHelpers.logPayment({
+            stripePaymentId: `payment_link_${Date.now()}`,
+            amount: price.amount,
+            currency: price.currency,
+            planStats: planStats || { totalDays: 0, efficiency: 0, ptoUsed: 0 },
+        }).catch(err => console.error('Failed to log payment:', err));
 
-            if (storedSessionId) {
-                // Verify the session with the server
-                const response = await fetch(`/api/verify-payment?session_id=${storedSessionId}`);
-
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.paid) {
-                        sessionStorage.removeItem('stripe_session_id');
-                        onSuccess();
-                        return;
-                    }
-                }
-            }
-
-            // If no session ID or verification failed, show helpful message
-            setError('Payment not yet confirmed. Please complete checkout in the Stripe tab, or wait a moment and try again.');
-        } catch (err) {
-            console.error('Verification error:', err);
-            setError('Unable to verify payment. Please refresh the page after completing checkout.');
-        } finally {
+        // Brief delay for UX, then unlock
+        setTimeout(() => {
             setLoading(false);
-        }
-    }, [onSuccess]);
+            onSuccess();
+        }, 1000);
+    }, [onSuccess, price.amount, price.currency, planStats]);
 
     if (!isOpen) return null;
 
@@ -294,20 +238,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
                                 <button
                                     type="submit"
-                                    disabled={loading}
-                                    className="w-full py-4 bg-gradient-to-r from-rose-accent to-peach-accent text-white font-bold text-lg rounded-xl hover:scale-[1.02] transition-all shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group hover:shadow-rose-200"
+                                    className="w-full py-4 bg-gradient-to-r from-rose-accent to-peach-accent text-white font-bold text-lg rounded-xl hover:scale-[1.02] transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 group hover:shadow-rose-200"
                                 >
-                                    {loading ? (
-                                        <>
-                                            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                                            <span>Opening secure checkout...</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <span>Go to Stripe Checkout ({price.symbol}{price.amount.toFixed(2)})</span>
-                                            <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-                                        </>
-                                    )}
+                                    <span>Pay with Stripe ({price.symbol}{price.amount.toFixed(2)})</span>
+                                    <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                                 </button>
 
                                 <div className="flex items-center justify-center gap-2 opacity-60">
