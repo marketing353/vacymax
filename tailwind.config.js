@@ -27,23 +27,48 @@ export default {
                 'dark-text': '#4A3B3B', // Soft Brown-Black
             },
             animation: {
-                'shimmer': 'shimmer 2.5s linear infinite',
-                'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                'float': 'float 6s ease-in-out infinite',
-                'fade-up': 'fadeUp 0.8s ease-out forwards',
+                'shimmer': 'shimmer 3s ease-in-out infinite',
+                'pulse-slow': 'pulse 5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                'float': 'float 8s ease-in-out infinite',
+                'fade-up': 'fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                'fade-in': 'fadeIn 0.3s ease-out forwards',
+                'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                'scale-in': 'scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
             },
             keyframes: {
                 shimmer: {
+                    '0%': { transform: 'translateX(-100%)' },
                     '100%': { transform: 'translateX(100%)' },
                 },
                 float: {
                     '0%, 100%': { transform: 'translateY(0)' },
-                    '50%': { transform: 'translateY(-10px)' },
+                    '50%': { transform: 'translateY(-6px)' },
                 },
                 fadeUp: {
-                    '0%': { opacity: '0', transform: 'translateY(20px)' },
+                    '0%': { opacity: '0', transform: 'translateY(12px)' },
                     '100%': { opacity: '1', transform: 'translateY(0)' },
+                },
+                fadeIn: {
+                    '0%': { opacity: '0' },
+                    '100%': { opacity: '1' },
+                },
+                slideUp: {
+                    '0%': { opacity: '0', transform: 'translateY(8px)' },
+                    '100%': { opacity: '1', transform: 'translateY(0)' },
+                },
+                scaleIn: {
+                    '0%': { opacity: '0', transform: 'scale(0.95)' },
+                    '100%': { opacity: '1', transform: 'scale(1)' },
                 }
+            },
+            transitionTimingFunction: {
+                'smooth': 'cubic-bezier(0.16, 1, 0.3, 1)',
+                'bounce': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+            },
+            transitionDuration: {
+                '250': '250ms',
+                '350': '350ms',
+                '400': '400ms',
             }
         }
     },
