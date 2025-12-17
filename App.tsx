@@ -103,12 +103,11 @@ const LoadingFallback = () => (
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('landing');
   const [step, setStep] = useState<number>(0);
-  // Initialize with empty defaults, will be populated after mount
-  // Use string literals to avoid TDZ errors with enums
+  // Initialize with defaults
   const [prefs, setPrefs] = useState<UserPreferences>({
     ptoDays: 15,
-    timeframe: 'Calendar Year 2026' as TimeframeType,
-    strategy: 'The "CEO" Schedule' as OptimizationStrategy,
+    timeframe: TimeframeType.CALENDAR_2026,
+    strategy: OptimizationStrategy.BALANCED,
     country: '',
     region: '',
     hasBuddy: false,
@@ -387,13 +386,13 @@ const App: React.FC = () => {
     // Inline year detection
     const now = new Date();
     const detectedYear = (now.getFullYear() === 2025 && now.getMonth() < 3)
-      ? ('Calendar Year 2025' as TimeframeType)
-      : ('Calendar Year 2026' as TimeframeType);
+      ? TimeframeType.CALENDAR_2025
+      : TimeframeType.CALENDAR_2026;
 
     setPrefs({
       ptoDays: detectedPTO,
       timeframe: detectedYear,
-      strategy: 'The "CEO" Schedule' as OptimizationStrategy,
+      strategy: OptimizationStrategy.BALANCED,
       country: detectedCountry,
       region: '',
       hasBuddy: false,
@@ -441,8 +440,8 @@ const App: React.FC = () => {
       // Inline year detection
       const now = new Date();
       const detectedYear = (now.getFullYear() === 2025 && now.getMonth() < 3)
-        ? ('Calendar Year 2025' as TimeframeType)
-        : ('Calendar Year 2026' as TimeframeType);
+        ? TimeframeType.CALENDAR_2025
+        : TimeframeType.CALENDAR_2026;
 
       setPrefs(prev => ({
         ...prev,

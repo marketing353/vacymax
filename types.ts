@@ -1,16 +1,21 @@
-export enum OptimizationStrategy {
-  BALANCED = 'The "CEO" Schedule',
-  LONG_WEEKENDS = 'The Socialite',
-  MINI_BREAKS = 'The Wellness Era',
-  WEEK_LONG = 'The Weekender',
-  EXTENDED = 'The Jetsetter',
-}
+// Replace enums with const objects to avoid TDZ errors
+export const OptimizationStrategy = {
+  BALANCED: 'The "CEO" Schedule',
+  LONG_WEEKENDS: 'The Socialite',
+  MINI_BREAKS: 'The Wellness Era',
+  WEEK_LONG: 'The Weekender',
+  EXTENDED: 'The Jetsetter',
+} as const;
 
-export enum TimeframeType {
-  CALENDAR_2025 = 'Calendar Year 2025',
-  CALENDAR_2026 = 'Calendar Year 2026',
-  ROLLING_12 = 'Next 12 Months',
-}
+export type OptimizationStrategy = typeof OptimizationStrategy[keyof typeof OptimizationStrategy];
+
+export const TimeframeType = {
+  CALENDAR_2025: 'Calendar Year 2025',
+  CALENDAR_2026: 'Calendar Year 2026',
+  ROLLING_12: 'Next 12 Months',
+} as const;
+
+export type TimeframeType = typeof TimeframeType[keyof typeof TimeframeType];
 
 export interface UserPreferences {
   ptoDays: number;
