@@ -118,6 +118,7 @@ const App: React.FC = () => {
   const [prefs, setPrefs] = useState<UserPreferences>(initialPrefs);
   const [result, setResult] = useState<OptimizationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [progressMessage, setProgressMessage] = useState<string | null>(null);
   const [isLocked, setIsLocked] = useState(true);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -143,6 +144,7 @@ const App: React.FC = () => {
   const { showIOSPrompt, dismissIOSPrompt } = useIOSInstallPrompt();
   const isOnline = useOnlineStatus();
   const [showInstallBanner, setShowInstallBanner] = useState(false);
+  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Show install banner after user has engaged (scrolled or completed step 1)
   useEffect(() => {
@@ -192,9 +194,43 @@ const App: React.FC = () => {
     setPrefs((prev) => ({ ...prev, [key]: value }));
   }, []);
 
+  const validationMap = React.useMemo(
+    () => ({
+      1: {
+        isValid: totalPto > 0,
+        helperText: totalPto > 0 ? '' : 'Add at least 1 PTO day so we can optimize your calendar.',
+      },
+      2: {
+        isValid: Boolean(prefs.timeframe),
+        helperText: prefs.timeframe
+          ? ''
+          : 'Choose a timeframe so we can align your holidays.',
+      },
+      3: {
+        isValid: Boolean(prefs.strategy),
+        helperText: prefs.strategy ? '' : 'Pick your energy for the year to continue.',
+      },
+      4: {
+        isValid: Boolean(prefs.country && (!prefs.hasBuddy || prefs.buddyCountry)),
+        helperText: prefs.hasBuddy
+          ? 'Select a country for you and your buddy to generate the plan.'
+          : 'Pick your country so we can fetch the right public holidays.',
+      },
+    }),
+    [prefs.buddyCountry, prefs.hasBuddy, prefs.strategy, prefs.timeframe, prefs.country, totalPto]
+  );
+
   const handleNext = useCallback(() => {
+    const validationState = validationMap[step as keyof typeof validationMap];
+    if (validationState && !validationState.isValid) {
+      setError(validationState.helperText);
+      scrollWizardIntoView();
+      return;
+    }
+
     const nextStep = step + 1;
     setDirection('next');
+    setError(null);
     setStep(nextStep);
 
     // Scroll to wizard top on mobile to keep focus
@@ -203,12 +239,39 @@ const App: React.FC = () => {
         scrollWizardIntoView();
       }, 100);
     }
-  }, [step, scrollWizardIntoView]);
+  }, [step, scrollWizardIntoView, validationMap]);
 
   const handleBack = useCallback(() => {
     setDirection('back');
     setStep((prev) => prev - 1);
   }, []);
+
+  useEffect(() => () => clearProgressMessage(), [clearProgressMessage]);
+
+  const clearProgressMessage = useCallback(() => {
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+    setProgressMessage(null);
+  }, []);
+
+  const startProgressLoop = useCallback(() => {
+    const messages = [
+      'Aligning your PTO with public holidays...',
+      'Scanning for the juiciest long weekends...',
+      'Balancing travel vibes with recharge time...'
+    ];
+
+    clearProgressMessage();
+    let index = 0;
+    setProgressMessage(messages[index]);
+
+    progressIntervalRef.current = setInterval(() => {
+      index = (index + 1) % messages.length;
+      setProgressMessage(messages[index]);
+    }, 700);
+  }, [clearProgressMessage]);
 
   // Mobile Swipe Handlers
   const swipeHandlers = useSwipe({
@@ -259,9 +322,11 @@ const App: React.FC = () => {
 
     setStep(5);
     setError(null);
+    startProgressLoop();
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 4000)); // Longer wait for effect
       const data = await generateVacationPlan(prefs);
+      clearProgressMessage();
       setResult(data);
 
       // Track plan generation in Supabase
@@ -280,7 +345,8 @@ const App: React.FC = () => {
       }, 500);
     } catch (err) {
       console.error(err);
-      setError("We couldn't generate a plan. Please check your inputs.");
+      clearProgressMessage();
+      setError('Plan generation failed. Check your connection and inputs, then try again.');
       setStep(4);
     }
   }, [prefs, validateReadyState]);
@@ -778,12 +844,20 @@ const App: React.FC = () => {
               <div {...swipeHandlers} className="relative z-[60] bg-white/95 dark:bg-dark-100/95 border border-rose-100 dark:border-dark-border rounded-[1.75rem] p-6 md:p-10 flex flex-col shadow-xl touch-pan-y">
 
                 <div className="min-h-[52px] mb-4" aria-live="polite" aria-atomic="true">
-                  <div
-                    className={`bg-rose-100 text-rose-700 px-4 py-3 rounded-2xl text-sm border border-rose-200 text-center transition-all duration-300 ${error ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'}`}
-                    role={error ? 'alert' : undefined}
-                  >
-                    {error || ' '}
-                  </div>
+                  {error ? (
+                    <div
+                      className="bg-rose-100 text-rose-700 px-4 py-3 rounded-2xl text-sm border border-rose-200 text-center transition-all duration-300"
+                      role="alert"
+                    >
+                      {error}
+                    </div>
+                  ) : progressMessage ? (
+                    <div className="bg-white text-rose-accent px-4 py-3 rounded-2xl text-sm border border-rose-100 text-center transition-all duration-300 shadow-sm">
+                      {progressMessage}
+                    </div>
+                  ) : (
+                    <div className="px-4 py-3" aria-hidden="true">&nbsp;</div>
+                  )}
                 </div>
 
                 {step === 0 && (
@@ -803,10 +877,45 @@ const App: React.FC = () => {
                   </div>
                 )}
 
-                {step === 1 && <Step1PTO prefs={prefs} updatePrefs={updatePrefs} onNext={handleNext} direction={direction} />}
-                {step === 2 && <Step2Timeframe prefs={prefs} updatePrefs={updatePrefs} onNext={handleNext} onBack={handleBack} direction={direction} />}
-                {step === 3 && <Step3Strategy prefs={prefs} updatePrefs={updatePrefs} onNext={handleNext} onBack={handleBack} direction={direction} />}
-                {step === 4 && <Step4Location prefs={prefs} updatePrefs={updatePrefs} onNext={handleGenerate} onBack={handleBack} direction={direction} />}
+                {step === 1 && (
+                  <Step1PTO
+                    prefs={prefs}
+                    updatePrefs={updatePrefs}
+                    onNext={handleNext}
+                    direction={direction}
+                    validationState={validationMap[1]}
+                  />
+                )}
+                {step === 2 && (
+                  <Step2Timeframe
+                    prefs={prefs}
+                    updatePrefs={updatePrefs}
+                    onNext={handleNext}
+                    onBack={handleBack}
+                    direction={direction}
+                    validationState={validationMap[2]}
+                  />
+                )}
+                {step === 3 && (
+                  <Step3Strategy
+                    prefs={prefs}
+                    updatePrefs={updatePrefs}
+                    onNext={handleNext}
+                    onBack={handleBack}
+                    direction={direction}
+                    validationState={validationMap[3]}
+                  />
+                )}
+                {step === 4 && (
+                  <Step4Location
+                    prefs={prefs}
+                    updatePrefs={updatePrefs}
+                    onNext={handleGenerate}
+                    onBack={handleBack}
+                    direction={direction}
+                    validationState={validationMap[4]}
+                  />
+                )}
                 {step === 5 && <SolverTerminal timeframe={prefs.timeframe} />}
               </div>
             </div>
