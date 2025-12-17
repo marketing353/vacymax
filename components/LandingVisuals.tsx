@@ -24,7 +24,7 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
     };
 
     return (
-        <div className="relative pt-24 md:pt-32 pb-16 md:pb-20 px-4 md:px-12 safe-px overflow-hidden bg-light-100 min-h-[auto] md:min-h-[90vh] flex flex-col justify-center">
+        <div className="relative pt-20 md:pt-32 pb-14 md:pb-20 px-3 sm:px-4 md:px-12 safe-px overflow-hidden bg-light-100 min-h-[auto] md:min-h-[90vh] flex flex-col justify-center">
             {/* Dynamic Background */}
             <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-rose-50 via-light-100 to-light-100 z-0"></div>
 
@@ -36,7 +36,7 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
             <div className="hidden md:block absolute top-24 left-10 text-4xl opacity-20 rotate-12 animate-float pointer-events-none">✨</div>
             <div className="hidden md:block absolute bottom-20 right-20 text-6xl opacity-10 -rotate-12 animate-float pointer-events-none">🌸</div>
 
-            <div className="max-w-screen-lg lg:max-w-screen-xl w-full mx-auto relative z-10 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center overflow-hidden px-1 gap-y-12">
+            <div className="max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl w-full mx-auto relative z-10 grid lg:grid-cols-2 gap-8 lg:gap-16 items-center overflow-hidden px-1 gap-y-10">
                 {/* Left Column: Copy */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -49,7 +49,7 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
                         The Journey to Freedom 🕊️
                     </div>
 
-                    <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight text-gray-800 leading-[1.1] mb-4 md:mb-6 text-balance hero-title">
+                    <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight text-gray-800 leading-[1.05] mb-4 md:mb-6 text-balance hero-title">
                         We Double Your<br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-accent to-peach-accent italic">Holidays.</span>
                     </h1>
@@ -129,10 +129,10 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.8, delay: 0.2 }}
-                    className="relative max-w-xl mx-auto w-full lg:ml-auto"
+                    className="relative max-w-lg sm:max-w-xl mx-auto w-full lg:ml-auto"
                 >
                     <div className="absolute inset-0 bg-gradient-to-tr from-rose-100 to-lavender-100 rounded-[2.5rem] blur-3xl -z-10 transform rotate-3"></div>
-                    <div className="glass-panel rounded-[2.5rem] p-6 sm:p-8 md:p-12 border border-white/60 relative overflow-hidden min-h-[420px] sm:min-h-[460px] md:min-h-[500px] flex flex-col shadow-xl bg-white/60 backdrop-blur-xl">
+                    <div className="glass-panel rounded-[2.5rem] p-5 sm:p-8 md:p-12 border border-white/60 relative overflow-hidden min-h-[420px] sm:min-h-[460px] md:min-h-[500px] flex flex-col shadow-xl bg-white/60 backdrop-blur-xl">
 
                         {/* Decorative UI Header */}
                         <div className="flex justify-between items-center mb-8 border-b border-rose-100 pb-6">
