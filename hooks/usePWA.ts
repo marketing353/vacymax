@@ -9,9 +9,10 @@ export function usePWAInstall() {
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
   const [isInstallable, setIsInstallable] = useState(false);
+  const isBrowser = typeof window !== 'undefined' && typeof navigator !== 'undefined';
 
   useEffect(() => {
-    if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+    if (!isBrowser) {
       return;
     }
 
@@ -46,7 +47,7 @@ export function usePWAInstall() {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
       window.removeEventListener('appinstalled', handleAppInstalled);
     };
-  }, []);
+  }, [isBrowser]);
 
   const promptInstall = useCallback(async () => {
     if (!installPrompt) return false;
@@ -78,9 +79,10 @@ export function usePWAInstall() {
 // Check if user is on iOS (for custom install instructions)
 export function useIOSInstallPrompt() {
   const [showIOSPrompt, setShowIOSPrompt] = useState(false);
+  const isBrowser = typeof window !== 'undefined' && typeof navigator !== 'undefined';
 
   useEffect(() => {
-    if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+    if (!isBrowser) {
       return;
     }
 
@@ -92,18 +94,22 @@ export function useIOSInstallPrompt() {
     // Show iOS install prompt if on iOS Safari and not already installed
     if (isIOS && isSafari && !isInStandaloneMode) {
       // Check if user has dismissed the prompt before
-      const dismissed = localStorage.getItem('dmh-ios-prompt-dismissed');
+      const dismissed = typeof localStorage !== 'undefined'
+        ? localStorage.getItem('dmh-ios-prompt-dismissed')
+        : null;
       if (!dismissed) {
         // Delay showing the prompt
         const timer = setTimeout(() => setShowIOSPrompt(true), 5000);
         return () => clearTimeout(timer);
       }
     }
-  }, []);
+  }, [isBrowser]);
 
   const dismissIOSPrompt = useCallback(() => {
     setShowIOSPrompt(false);
-    localStorage.setItem('dmh-ios-prompt-dismissed', 'true');
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('dmh-ios-prompt-dismissed', 'true');
+    }
   }, []);
 
   return {
@@ -114,11 +120,16 @@ export function useIOSInstallPrompt() {
 
 // Online/offline status hook
 export function useOnlineStatus() {
+  const isBrowser = typeof window !== 'undefined' && typeof navigator !== 'undefined';
   const [isOnline, setIsOnline] = useState(
-    typeof navigator !== 'undefined' ? navigator.onLine : true
+    isBrowser ? navigator.onLine : true
   );
 
   useEffect(() => {
+    if (!isBrowser) {
+      return;
+    }
+
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
 
@@ -129,7 +140,7 @@ export function useOnlineStatus() {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, []);
+  }, [isBrowser]);
 
   return isOnline;
 }
