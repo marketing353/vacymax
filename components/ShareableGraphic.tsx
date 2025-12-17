@@ -25,16 +25,74 @@ export const ShareableGraphic: React.FC<ShareableGraphicProps> = ({ result, onCl
             const { default: html2canvas } = await import('html2canvas').catch(() => ({ default: null }));
 
             if (html2canvas) {
-                const canvas = await html2canvas(cardRef.current, {
-                    backgroundColor: null,
-                    scale: 2,
-                    useCORS: true,
+                // Detect mobile for optimized settings
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+                // Create a clone of the element to modify for better rendering
+                const originalElement = cardRef.current;
+                const clone = originalElement.cloneNode(true) as HTMLElement;
+
+                // Apply fixes for mobile rendering issues
+                clone.style.position = 'fixed';
+                clone.style.left = '-9999px';
+                clone.style.top = '0';
+                clone.style.width = `${originalElement.offsetWidth}px`;
+                clone.style.height = `${originalElement.offsetHeight}px`;
+
+                // Remove blur effects that cause issues on mobile
+                const blurElements = clone.querySelectorAll('[class*="blur"]');
+                blurElements.forEach((el) => {
+                    (el as HTMLElement).style.filter = 'none';
+                    (el as HTMLElement).style.backdropFilter = 'none';
+                    (el as HTMLElement).style.webkitBackdropFilter = 'none';
                 });
 
-                const link = document.createElement('a');
-                link.download = 'my-vacation-plan.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
+                document.body.appendChild(clone);
+
+                const canvas = await html2canvas(clone, {
+                    backgroundColor: '#F43F5E', // Solid rose color as fallback for gradient
+                    scale: isMobile ? 1.5 : 2, // Lower scale on mobile for better performance
+                    useCORS: true,
+                    allowTaint: true,
+                    logging: false,
+                    // iOS-specific fixes
+                    ...(isIOS && {
+                        windowWidth: originalElement.offsetWidth,
+                        windowHeight: originalElement.offsetHeight,
+                    }),
+                });
+
+                // Remove the clone
+                document.body.removeChild(clone);
+
+                // For iOS Safari, use a different download approach
+                if (isIOS) {
+                    // On iOS, open the image in a new tab for users to save
+                    const imageData = canvas.toDataURL('image/png');
+                    const newWindow = window.open();
+                    if (newWindow) {
+                        newWindow.document.write(`
+                            <html>
+                            <head><title>Save Your Vacation Plan</title></head>
+                            <body style="margin:0;display:flex;flex-direction:column;align-items:center;background:#f5f5f5;padding:20px;">
+                                <p style="font-family:system-ui;color:#333;margin-bottom:16px;text-align:center;">Press and hold the image, then tap "Save Image"</p>
+                                <img src="${imageData}" style="max-width:100%;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.1);"/>
+                            </body>
+                            </html>
+                        `);
+                        newWindow.document.close();
+                    } else {
+                        // If popup blocked, copy to clipboard
+                        throw new Error('Popup blocked');
+                    }
+                } else {
+                    // Standard download for other browsers
+                    const link = document.createElement('a');
+                    link.download = 'my-vacation-plan.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                }
             } else {
                 // Fallback: Copy text to clipboard
                 const text = `I'm getting ${result.totalDaysOff} days off with only ${result.totalPtoUsed} PTO days (+${efficiency}% efficiency)! Plan your perfect year at doublemyholidays.com`;
@@ -46,9 +104,14 @@ export const ShareableGraphic: React.FC<ShareableGraphicProps> = ({ result, onCl
             console.error('Failed to generate image:', error);
             // Fallback to text copy
             const text = `I'm getting ${result.totalDaysOff} days off with only ${result.totalPtoUsed} PTO days (+${efficiency}% efficiency)! Plan your perfect year at doublemyholidays.com`;
-            await navigator.clipboard.writeText(text);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
+            try {
+                await navigator.clipboard.writeText(text);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            } catch {
+                // If clipboard fails too, show alert
+                alert('Unable to download. Please take a screenshot instead!');
+            }
         } finally {
             setIsGenerating(false);
         }
