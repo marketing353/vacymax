@@ -4,7 +4,7 @@ import { Step1PTO, Step3Strategy } from './components/StepWizard';
 import { generateVacationPlan } from './services/vacationService';
 import { SEOHead } from './components/SEOHead';
 import { useSwipe, useHaptics } from './hooks/useMobileUX';
-import { useWizardProgress, useSavedPlans, useDarkMode } from './hooks/useLocalStorage';
+import { useWizardProgress, useSavedPlans } from './hooks/useLocalStorage';
 import { usePWAInstall, useIOSInstallPrompt, useOnlineStatus } from './hooks/usePWA';
 import { PainHero, BurnCalculator, SolutionGrid, BattleTestedMarquee } from './components/LandingVisuals';
 import { TrustSection } from './components/TrustSection';
@@ -134,7 +134,6 @@ const App: React.FC = () => {
   // localStorage hooks
   const { saveProgress, loadProgress, clearProgress } = useWizardProgress(prefs);
   const { savedPlans, savePlan } = useSavedPlans();
-  const { isDark, toggleDarkMode } = useDarkMode();
   const { trigger: triggerHaptic } = useHaptics();
 
   const totalPto = prefs.ptoDays + (prefs.hasBuddy ? prefs.buddyPtoDays : 0);
@@ -234,8 +233,6 @@ const App: React.FC = () => {
     setStep((prev) => prev - 1);
   }, []);
 
-  useEffect(() => () => clearProgressMessage(), [clearProgressMessage]);
-
   const clearProgressMessage = useCallback(() => {
     if (progressIntervalRef.current) {
       clearInterval(progressIntervalRef.current);
@@ -243,6 +240,8 @@ const App: React.FC = () => {
     }
     setProgressMessage(null);
   }, []);
+
+  useEffect(() => () => clearProgressMessage(), [clearProgressMessage]);
 
   const startProgressLoop = useCallback(() => {
     const messages = [
@@ -564,23 +563,6 @@ const App: React.FC = () => {
             Vacation Styles
           </button>
 
-          {/* Dark Mode Toggle */}
-          <button
-            onClick={toggleDarkMode}
-            className="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-rose-50 dark:hover:bg-dark-surface transition-colors hidden md:flex items-center justify-center"
-            aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-          >
-            {isDark ? (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-            ) : (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-              </svg>
-            )}
-          </button>
-
           {/* Create User/Restart logic links for Desktop */}
           {step > 0 && (
             <button
@@ -642,27 +624,6 @@ const App: React.FC = () => {
             className="text-2xl font-display font-bold text-gray-800 dark:text-gray-100 hover:text-rose-accent transition-colors py-2 border-b border-gray-100 dark:border-dark-border"
           >
             Vacation Styles
-          </button>
-          {/* Dark Mode Toggle - Mobile */}
-          <button
-            onClick={() => { toggleDarkMode(); }}
-            className="text-2xl font-display font-bold text-gray-800 dark:text-gray-100 hover:text-rose-accent transition-colors py-2 border-b border-gray-100 dark:border-dark-border flex items-center justify-center gap-3"
-          >
-            {isDark ? (
-              <>
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-                Light Mode
-              </>
-            ) : (
-              <>
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                </svg>
-                Dark Mode
-              </>
-            )}
           </button>
           {step > 0 && (
             <button
@@ -984,6 +945,32 @@ const App: React.FC = () => {
           )}
 
         </>
+      )}
+
+      {/* Mobile quick action bar for thumb-friendly access */}
+      {view !== 'results' && (
+        <div
+          className="fixed md:hidden inset-x-3 bottom-3 z-[95] pointer-events-none"
+          style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 6px)' }}
+        >
+          <div className="bg-white/95 border border-rose-100 shadow-2xl rounded-2xl px-4 py-3 flex items-center gap-3 pointer-events-auto">
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-rose-accent flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-rose-accent animate-pulse"></span>
+                Quick Access
+              </p>
+              <p className="text-sm font-semibold text-gray-800 truncate">
+                {step === 0 ? 'Start planning in under a minute' : step < 3 ? `Continue step ${clampedStep} of 2` : 'Generating your plan...'}
+              </p>
+            </div>
+            <button
+              onClick={handleMobileCta}
+              className="px-4 py-2 bg-gradient-to-r from-rose-accent to-peach-accent text-white font-bold text-sm rounded-xl shadow-lg active:scale-95 transition-all"
+            >
+              {step === 0 ? 'Start' : 'Resume'}
+            </button>
+          </div>
+        </div>
       )}
 
       {view === 'results' && result && (
