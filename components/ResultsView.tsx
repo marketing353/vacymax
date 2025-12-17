@@ -151,8 +151,6 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ result, onReset, onUnl
 
     const price = useMemo(() => getRegionalPrice(userCountry), [userCountry]);
 
-    const efficiencyLabel = isInfiniteEfficiency ? 'Infinite efficiency' : `+${((multiplier - 1) * 100).toFixed(0)}%`;
-
     useEffect(() => {
         const handleResize = () => setIsMobile(typeof window !== 'undefined' && window.innerWidth < 768);
         handleResize();
@@ -201,6 +199,8 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ result, onReset, onUnl
     }, [viewMode, hasBuddy, result.totalPtoUsed, result.totalPtoUsedBuddy, result.totalDaysOff, result.totalFreeDays]);
 
     const { displayedPtoUsed, displayedFreeDays, multiplier, isInfiniteEfficiency, planStats } = stats;
+
+    const efficiencyLabel = isInfiniteEfficiency ? 'Infinite efficiency' : `+${((multiplier - 1) * 100).toFixed(0)}%`;
 
     const handleUnlockClick = useCallback(() => setShowPaymentModal(true), []);
     const handleClosePaymentModal = useCallback(() => setShowPaymentModal(false), []);
