@@ -11,6 +11,10 @@ export function usePWAInstall() {
   const [isInstallable, setIsInstallable] = useState(false);
 
   useEffect(() => {
+    if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+      return;
+    }
+
     // Check if already installed
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setIsInstalled(true);
@@ -76,6 +80,10 @@ export function useIOSInstallPrompt() {
   const [showIOSPrompt, setShowIOSPrompt] = useState(false);
 
   useEffect(() => {
+    if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+      return;
+    }
+
     // Detect iOS Safari
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
     const isInStandaloneMode = (navigator as any).standalone === true;
@@ -84,7 +92,9 @@ export function useIOSInstallPrompt() {
     // Show iOS install prompt if on iOS Safari and not already installed
     if (isIOS && isSafari && !isInStandaloneMode) {
       // Check if user has dismissed the prompt before
-      const dismissed = localStorage.getItem('dmh-ios-prompt-dismissed');
+      const dismissed = typeof localStorage !== 'undefined'
+        ? localStorage.getItem('dmh-ios-prompt-dismissed')
+        : null;
       if (!dismissed) {
         // Delay showing the prompt
         const timer = setTimeout(() => setShowIOSPrompt(true), 5000);
@@ -95,7 +105,9 @@ export function useIOSInstallPrompt() {
 
   const dismissIOSPrompt = useCallback(() => {
     setShowIOSPrompt(false);
-    localStorage.setItem('dmh-ios-prompt-dismissed', 'true');
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('dmh-ios-prompt-dismissed', 'true');
+    }
   }, []);
 
   return {
@@ -106,11 +118,19 @@ export function useIOSInstallPrompt() {
 
 // Online/offline status hook
 export function useOnlineStatus() {
-  const [isOnline, setIsOnline] = useState(
-    typeof navigator !== 'undefined' ? navigator.onLine : true
-  );
+  const [isOnline, setIsOnline] = useState(() => {
+    // Check browser environment inline to avoid TDZ issues
+    if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+      return true;
+    }
+    return navigator.onLine;
+  });
 
   useEffect(() => {
+    if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+      return;
+    }
+
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
 

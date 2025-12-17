@@ -3,7 +3,7 @@ import { OptimizationStrategy, TimeframeType, UserPreferences, OptimizationResul
 import { Step1PTO, Step2Timeframe, Step3Strategy, Step4Location } from './components/StepWizard';
 import { generateVacationPlan } from './services/vacationService';
 import { SEOHead } from './components/SEOHead';
-import { useSwipe } from './hooks/useMobileUX';
+import { useSwipe, useHaptics } from './hooks/useMobileUX';
 import { useWizardProgress, useSavedPlans, useDarkMode } from './hooks/useLocalStorage';
 import { usePWAInstall, useIOSInstallPrompt, useOnlineStatus } from './hooks/usePWA';
 import { PainHero, BurnCalculator, SolutionGrid, BattleTestedMarquee } from './components/LandingVisuals';
@@ -118,10 +118,15 @@ const App: React.FC = () => {
   const [prefs, setPrefs] = useState<UserPreferences>(initialPrefs);
   const [result, setResult] = useState<OptimizationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [progressMessage, setProgressMessage] = useState<string | null>(null);
   const [isLocked, setIsLocked] = useState(true);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showResumeBanner, setShowResumeBanner] = useState(false);
+
+  const stepLabels = ['PTO days', 'Timeframe', 'Style', 'Location'];
+  const clampedStep = Math.min(Math.max(step, 1), 4);
+  const stepProgress = step === 0 ? 0 : (clampedStep / 4) * 100;
 
   // Behavioral UX states
   const [direction, setDirection] = useState<'next' | 'back'>('next');
@@ -130,12 +135,16 @@ const App: React.FC = () => {
   const { saveProgress, loadProgress, clearProgress } = useWizardProgress(initialPrefs);
   const { savedPlans, savePlan } = useSavedPlans();
   const { isDark, toggleDarkMode } = useDarkMode();
+  const { trigger: triggerHaptic } = useHaptics();
+
+  const totalPto = prefs.ptoDays + (prefs.hasBuddy ? prefs.buddyPtoDays : 0);
 
   // PWA hooks
   const { isInstallable, promptInstall } = usePWAInstall();
   const { showIOSPrompt, dismissIOSPrompt } = useIOSInstallPrompt();
   const isOnline = useOnlineStatus();
   const [showInstallBanner, setShowInstallBanner] = useState(false);
+  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Show install banner after user has engaged (scrolled or completed step 1)
   useEffect(() => {
@@ -150,17 +159,6 @@ const App: React.FC = () => {
   const scrollWizardIntoView = useCallback(() => {
     const element = wizardRef.current || document.getElementById('wizard-section');
     element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, []);
-
-  const isWizardTopInView = useCallback(() => {
-    const node = wizardRef.current;
-    if (!node) return false;
-
-    const rect = node.getBoundingClientRect();
-    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-
-    // Treat the wizard as visible when its top is within a comfortable viewport buffer.
-    return rect.top > -120 && rect.top < viewportHeight * 0.6;
   }, []);
 
   // Close mobile menu when view changes
@@ -196,9 +194,43 @@ const App: React.FC = () => {
     setPrefs((prev) => ({ ...prev, [key]: value }));
   }, []);
 
+  const validationMap = React.useMemo(
+    () => ({
+      1: {
+        isValid: totalPto > 0,
+        helperText: totalPto > 0 ? '' : 'Add at least 1 PTO day so we can optimize your calendar.',
+      },
+      2: {
+        isValid: Boolean(prefs.timeframe),
+        helperText: prefs.timeframe
+          ? ''
+          : 'Choose a timeframe so we can align your holidays.',
+      },
+      3: {
+        isValid: Boolean(prefs.strategy),
+        helperText: prefs.strategy ? '' : 'Pick your energy for the year to continue.',
+      },
+      4: {
+        isValid: Boolean(prefs.country && (!prefs.hasBuddy || prefs.buddyCountry)),
+        helperText: prefs.hasBuddy
+          ? 'Select a country for you and your buddy to generate the plan.'
+          : 'Pick your country so we can fetch the right public holidays.',
+      },
+    }),
+    [prefs.buddyCountry, prefs.hasBuddy, prefs.strategy, prefs.timeframe, prefs.country, totalPto]
+  );
+
   const handleNext = useCallback(() => {
+    const validationState = validationMap[step as keyof typeof validationMap];
+    if (validationState && !validationState.isValid) {
+      setError(validationState.helperText);
+      scrollWizardIntoView();
+      return;
+    }
+
     const nextStep = step + 1;
     setDirection('next');
+    setError(null);
     setStep(nextStep);
 
     // Scroll to wizard top on mobile to keep focus
@@ -207,12 +239,39 @@ const App: React.FC = () => {
         scrollWizardIntoView();
       }, 100);
     }
-  }, [step, scrollWizardIntoView]);
+  }, [step, scrollWizardIntoView, validationMap]);
 
   const handleBack = useCallback(() => {
     setDirection('back');
     setStep((prev) => prev - 1);
   }, []);
+
+  useEffect(() => () => clearProgressMessage(), [clearProgressMessage]);
+
+  const clearProgressMessage = useCallback(() => {
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+    setProgressMessage(null);
+  }, []);
+
+  const startProgressLoop = useCallback(() => {
+    const messages = [
+      'Aligning your PTO with public holidays...',
+      'Scanning for the juiciest long weekends...',
+      'Balancing travel vibes with recharge time...'
+    ];
+
+    clearProgressMessage();
+    let index = 0;
+    setProgressMessage(messages[index]);
+
+    progressIntervalRef.current = setInterval(() => {
+      index = (index + 1) % messages.length;
+      setProgressMessage(messages[index]);
+    }, 700);
+  }, [clearProgressMessage]);
 
   // Mobile Swipe Handlers
   const swipeHandlers = useSwipe({
@@ -222,12 +281,52 @@ const App: React.FC = () => {
     threshold: 60
   });
 
+  const handleMobileCta = useCallback(() => {
+    triggerHaptic('medium');
+    if (view !== 'landing') {
+      setView('landing');
+    }
+    setStep((prev) => (prev === 0 ? 1 : prev));
+    setTimeout(() => {
+      scrollWizardIntoView();
+    }, 80);
+  }, [scrollWizardIntoView, triggerHaptic, view]);
+
+  const validateReadyState = useCallback(() => {
+    if (!isOnline) {
+      setError('You appear to be offline. Reconnect to generate a new plan.');
+      scrollWizardIntoView();
+      return false;
+    }
+
+    if (prefs.ptoDays <= 0) {
+      setError('Add at least 1 PTO day so we can optimize your calendar.');
+      setStep((prev) => Math.max(prev, 1));
+      scrollWizardIntoView();
+      return false;
+    }
+
+    if (!prefs.country) {
+      setError('Pick your country so we can fetch the right public holidays.');
+      setStep((prev) => Math.max(prev, 4));
+      scrollWizardIntoView();
+      return false;
+    }
+
+    setError(null);
+    return true;
+  }, [isOnline, prefs.country, prefs.ptoDays, scrollWizardIntoView]);
+
   const handleGenerate = useCallback(async () => {
+    if (!validateReadyState()) return;
+
     setStep(5);
     setError(null);
+    startProgressLoop();
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 4000)); // Longer wait for effect
       const data = await generateVacationPlan(prefs);
+      clearProgressMessage();
       setResult(data);
 
       // Track plan generation in Supabase
@@ -239,8 +338,6 @@ const App: React.FC = () => {
         strategy: prefs.strategy,
       }).catch(err => console.error('Failed to log plan:', err));
 
-
-
       setTimeout(() => {
         setStep(6);
         setView('results');
@@ -248,10 +345,11 @@ const App: React.FC = () => {
       }, 500);
     } catch (err) {
       console.error(err);
-      setError("We couldn't generate a plan. Please check your inputs.");
+      clearProgressMessage();
+      setError('Plan generation failed. Check your connection and inputs, then try again.');
       setStep(4);
     }
-  }, [prefs]);
+  }, [prefs, validateReadyState]);
 
   const handlePaymentSuccess = useCallback(() => {
     setIsLocked(false);
@@ -651,6 +749,8 @@ const App: React.FC = () => {
           <SolutionGrid />
           <TrustSection />
 
+            {/* Mobile quick CTA removed to declutter the flow */}
+
           {/* Saved Plans Section */}
           {savedPlans.length > 0 && (
             <div className="w-full bg-gradient-to-br from-lavender-50 to-rose-50 dark:from-dark-200 dark:to-dark-100 py-16 px-4">
@@ -712,23 +812,52 @@ const App: React.FC = () => {
           )}
 
           {/* THE WIZARD */}
-          <div id="wizard-section" ref={wizardRef} className="w-full bg-gradient-to-br from-light-100 via-light-200 to-light-300 py-24 px-4 scroll-mt-24 relative z-[55]">
+          <div id="wizard-section" ref={wizardRef} className="w-full bg-gradient-to-br from-light-100 via-light-200 to-light-300 py-14 md:py-24 px-4 scroll-mt-24 relative z-[55]">
             <div className="max-w-4xl mx-auto">
-              <div className="text-center mb-12">
-                <h2 className="text-4xl md:text-5xl font-display font-bold bg-gradient-to-r from-rose-accent via-lavender-accent to-peach-accent bg-clip-text text-transparent mb-3">Let's Plan Your Perfect Year ✨</h2>
-                <p className="text-gray-600 text-lg">Build your optimized schedule in 60 seconds.</p>
+              <div className="text-center mb-10 md:mb-12">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold bg-gradient-to-r from-rose-accent via-lavender-accent to-peach-accent bg-clip-text text-transparent mb-3">Let's Plan Your Perfect Year ✨</h2>
+                <p className="text-gray-600 text-base sm:text-lg">Build your optimized schedule in 60 seconds.</p>
               </div>
 
-              {/* FIX: Removed 'overflow-hidden' and 'backdrop-blur' to fix mobile sticky buttons */}
-              {/* FIX: Added z-[60] to ensure it sits ABOVE the bg-noise layer */}
-              <div {...swipeHandlers} className="relative z-[60] glass-panel rounded-[2rem] p-6 md:p-12 min-h-[600px] flex flex-col shadow-2xl touch-pan-y">
-                <div className="min-h-[52px] mb-4" aria-live="polite" aria-atomic="true">
-                  <div
-                    className={`bg-rose-100 text-rose-700 px-4 py-3 rounded-2xl text-sm border border-rose-200 text-center transition-all duration-300 ${error ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'}`}
-                    role={error ? 'alert' : undefined}
-                  >
-                    {error || ' '}
+              <div className="bg-white/80 dark:bg-dark-100/80 rounded-3xl border border-rose-100 dark:border-dark-border shadow-md p-4 md:p-6 mb-6">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-bold uppercase tracking-[0.18em] text-rose-accent">Step {step === 0 ? 1 : clampedStep} / 4</span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">{step === 0 ? 'Tell us your days off' : stepLabels[clampedStep - 1]}</span>
                   </div>
+                  <button
+                    onClick={handleReset}
+                    className="text-xs font-semibold text-gray-500 hover:text-rose-accent hidden md:inline-flex"
+                  >
+                    Start over
+                  </button>
+                </div>
+                <div className="mt-3 h-2 bg-rose-50 dark:bg-dark-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-rose-accent to-peach-accent rounded-full transition-all duration-300"
+                    style={{ width: `${Math.max(stepProgress, 8)}%` }}
+                  />
+                </div>
+                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">{totalPto > 0 ? `${totalPto} PTO days ready` : 'Tap next to start in under a minute.'}</p>
+              </div>
+
+              <div {...swipeHandlers} className="relative z-[60] bg-white/95 dark:bg-dark-100/95 border border-rose-100 dark:border-dark-border rounded-[1.75rem] p-6 md:p-10 flex flex-col shadow-xl touch-pan-y">
+
+                <div className="min-h-[52px] mb-4" aria-live="polite" aria-atomic="true">
+                  {error ? (
+                    <div
+                      className="bg-rose-100 text-rose-700 px-4 py-3 rounded-2xl text-sm border border-rose-200 text-center transition-all duration-300"
+                      role="alert"
+                    >
+                      {error}
+                    </div>
+                  ) : progressMessage ? (
+                    <div className="bg-white text-rose-accent px-4 py-3 rounded-2xl text-sm border border-rose-100 text-center transition-all duration-300 shadow-sm">
+                      {progressMessage}
+                    </div>
+                  ) : (
+                    <div className="px-4 py-3" aria-hidden="true">&nbsp;</div>
+                  )}
                 </div>
 
                 {step === 0 && (
@@ -748,10 +877,45 @@ const App: React.FC = () => {
                   </div>
                 )}
 
-                {step === 1 && <Step1PTO prefs={prefs} updatePrefs={updatePrefs} onNext={handleNext} direction={direction} />}
-                {step === 2 && <Step2Timeframe prefs={prefs} updatePrefs={updatePrefs} onNext={handleNext} onBack={handleBack} direction={direction} />}
-                {step === 3 && <Step3Strategy prefs={prefs} updatePrefs={updatePrefs} onNext={handleNext} onBack={handleBack} direction={direction} />}
-                {step === 4 && <Step4Location prefs={prefs} updatePrefs={updatePrefs} onNext={handleGenerate} onBack={handleBack} direction={direction} />}
+                {step === 1 && (
+                  <Step1PTO
+                    prefs={prefs}
+                    updatePrefs={updatePrefs}
+                    onNext={handleNext}
+                    direction={direction}
+                    validationState={validationMap[1]}
+                  />
+                )}
+                {step === 2 && (
+                  <Step2Timeframe
+                    prefs={prefs}
+                    updatePrefs={updatePrefs}
+                    onNext={handleNext}
+                    onBack={handleBack}
+                    direction={direction}
+                    validationState={validationMap[2]}
+                  />
+                )}
+                {step === 3 && (
+                  <Step3Strategy
+                    prefs={prefs}
+                    updatePrefs={updatePrefs}
+                    onNext={handleNext}
+                    onBack={handleBack}
+                    direction={direction}
+                    validationState={validationMap[3]}
+                  />
+                )}
+                {step === 4 && (
+                  <Step4Location
+                    prefs={prefs}
+                    updatePrefs={updatePrefs}
+                    onNext={handleGenerate}
+                    onBack={handleBack}
+                    direction={direction}
+                    validationState={validationMap[4]}
+                  />
+                )}
                 {step === 5 && <SolverTerminal timeframe={prefs.timeframe} />}
               </div>
             </div>

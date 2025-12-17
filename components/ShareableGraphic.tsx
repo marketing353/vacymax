@@ -134,6 +134,9 @@ export const ShareableGraphic: React.FC<ShareableGraphicProps> = ({ result, onCl
     const handleDownload = useCallback(async () => {
         setIsGenerating(true);
 
+        let clonedCard: HTMLDivElement | null = null;
+        let captureShell: HTMLDivElement | null = null;
+
         try {
             const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
@@ -193,6 +196,9 @@ export const ShareableGraphic: React.FC<ShareableGraphicProps> = ({ result, onCl
                 alert('Unable to download. Please take a screenshot instead!');
             }
         } finally {
+            if (captureShell?.parentNode) {
+                captureShell.parentNode.removeChild(captureShell);
+            }
             setIsGenerating(false);
         }
     }, [result, efficiency, drawGraphicToCanvas]);

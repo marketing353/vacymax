@@ -113,29 +113,54 @@ export const SelectionCard: React.FC<SelectionCardProps> = ({
 
     const [showTooltip, setShowTooltip] = useState(false);
     const [tooltipClickedOpen, setTooltipClickedOpen] = useState(false);
+    const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        setIsTouchDevice(hasTouch);
+    }, []);
+
+    const closeTooltip = () => {
+        setShowTooltip(false);
+        setTooltipClickedOpen(false);
+    };
+
+    const openTooltip = () => {
+        setShowTooltip(true);
+        setTooltipClickedOpen(true);
+    };
 
     const handleTooltipClick = (e: React.MouseEvent) => {
         e.stopPropagation();
         if (showTooltip && tooltipClickedOpen) {
-            // Close if clicking again after click-open
-            setShowTooltip(false);
-            setTooltipClickedOpen(false);
+            closeTooltip();
         } else {
-            // Open via click
-            setShowTooltip(true);
-            setTooltipClickedOpen(true);
+            openTooltip();
+        }
+    };
+
+    const handleTooltipTouch = (e: React.TouchEvent) => {
+        if (!isTouchDevice) return;
+        e.stopPropagation();
+        e.preventDefault();
+
+        if (showTooltip && tooltipClickedOpen) {
+            closeTooltip();
+        } else {
+            openTooltip();
         }
     };
 
     const handleTooltipMouseEnter = () => {
-        if (!tooltipClickedOpen) {
+        if (isTouchDevice || !tooltipClickedOpen) {
             setShowTooltip(true);
         }
     };
 
     const handleTooltipMouseLeave = () => {
         // Only close on mouse leave if not opened via click
-        if (!tooltipClickedOpen) {
+        if (!isTouchDevice && !tooltipClickedOpen) {
             setShowTooltip(false);
         }
     };
@@ -167,6 +192,7 @@ export const SelectionCard: React.FC<SelectionCardProps> = ({
                             <div
                                 className={`relative group/info ${showTooltip ? 'z-[200]' : 'z-10'}`}
                                 onClick={handleTooltipClick}
+                                onTouchStart={handleTooltipTouch}
                                 onMouseEnter={handleTooltipMouseEnter}
                                 onMouseLeave={handleTooltipMouseLeave}
                             >

@@ -67,6 +67,43 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
                             Unlock My Freedom
                             <span className="group-hover:translate-x-1 transition-transform">🕊️</span>
                         </button>
+                        <div className="flex sm:hidden items-center gap-3 px-4 py-3 rounded-full bg-white/80 border border-rose-100 shadow-sm">
+                            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.14em] text-rose-accent">
+                                <span className="w-2 h-2 rounded-full bg-lavender-accent animate-pulse"></span>
+                                1-Min Wizard
+                            </div>
+                            <span className="text-gray-500 text-xs">Optimized for one-thumb use</span>
+                        </div>
+                    </div>
+
+                    {/* Mobile highlight cards */}
+                    <div className="mt-5 -mx-2 flex sm:hidden items-stretch gap-3 overflow-x-auto px-2 pb-2" aria-label="Mobile comforts">
+                        {[{
+                            title: 'Swipe friendly',
+                            desc: 'Tap or swipe through 4 steps',
+                            icon: '📲'
+                        }, {
+                            title: 'Lightweight',
+                            desc: '<30s to unlock first plan',
+                            icon: '⚡'
+                        }, {
+                            title: 'Save & resume',
+                            desc: 'We auto-save your progress',
+                            icon: '💾'
+                        }].map((item) => (
+                            <div
+                                key={item.title}
+                                className="min-w-[220px] flex-1 bg-white/80 border border-rose-100 rounded-2xl px-4 py-3 shadow-sm backdrop-blur-md"
+                            >
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="w-9 h-9 rounded-xl bg-rose-50 flex items-center justify-center text-lg">
+                                        {item.icon}
+                                    </div>
+                                    <p className="text-sm font-bold text-gray-800">{item.title}</p>
+                                </div>
+                                <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
+                            </div>
+                        ))}
                     </div>
 
                     {/* Social Proof - Simplified on mobile */}
@@ -92,10 +129,10 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.8, delay: 0.2 }}
-                    className="relative"
+                    className="relative max-w-xl mx-auto w-full lg:ml-auto"
                 >
                     <div className="absolute inset-0 bg-gradient-to-tr from-rose-100 to-lavender-100 rounded-[2.5rem] blur-3xl -z-10 transform rotate-3"></div>
-                    <div className="glass-panel rounded-[2.5rem] p-8 md:p-12 border border-white/60 relative overflow-hidden min-h-[500px] flex flex-col shadow-xl bg-white/60 backdrop-blur-xl">
+                    <div className="glass-panel rounded-[2.5rem] p-6 sm:p-8 md:p-12 border border-white/60 relative overflow-hidden min-h-[420px] sm:min-h-[460px] md:min-h-[500px] flex flex-col shadow-xl bg-white/60 backdrop-blur-xl">
 
                         {/* Decorative UI Header */}
                         <div className="flex justify-between items-center mb-8 border-b border-rose-100 pb-6">
@@ -201,15 +238,16 @@ export const BurnCalculator = () => {
             <div className="max-w-6xl mx-auto px-4 md:px-6 grid lg:grid-cols-2 gap-10 md:gap-20 items-center relative z-10">
                 <div className="space-y-6 md:space-y-8">
                     <div className="inline-block px-3 md:px-4 py-1 md:py-1.5 bg-rose-100 rounded-lg text-rose-500 text-[10px] md:text-xs font-bold uppercase tracking-widest">
-                        ⚠️ The Freedom Audit
+                        ✨ Optional Snapshot
                     </div>
                     <h2 className="text-3xl sm:text-4xl md:text-6xl font-display font-bold text-gray-900 leading-[1.1]">
-                        Is your job <br />
-                        <span className="text-rose-400 italic">stealing your joy?</span>
+                        See how far <br />
+                        <span className="text-rose-400 italic">your days can stretch.</span>
                     </h2>
                     <p className="text-gray-500 text-base md:text-lg leading-relaxed max-w-md">
-                        Every unused PTO day is freedom given back. Reclaim your time.
+                        A calm, optional check-in to visualize the value of the PTO you still have left.
                     </p>
+                    <p className="text-gray-400 text-sm">This step is optional—hop back to the planner whenever you want.</p>
 
                     <div className="flex flex-wrap gap-4 md:gap-8">
                         <div>
@@ -239,6 +277,7 @@ export const BurnCalculator = () => {
                                 value={salary}
                                 onChange={(e) => setSalary(Number(e.target.value))}
                                 className="w-full h-2 bg-rose-100 rounded-lg appearance-none cursor-pointer accent-rose-500"
+                                aria-label="Annual salary"
                             />
                         </div>
 
@@ -254,6 +293,7 @@ export const BurnCalculator = () => {
                                 value={daysLeft}
                                 onChange={(e) => setDaysLeft(Number(e.target.value))}
                                 className="w-full h-2 bg-rose-100 rounded-lg appearance-none cursor-pointer accent-rose-500"
+                                aria-label="Unused vacation days"
                             />
                         </div>
 
@@ -269,11 +309,17 @@ export const BurnCalculator = () => {
                                 onClick={() => document.getElementById('wizard-section')?.scrollIntoView({ behavior: 'smooth' })}
                                 className="w-full py-5 bg-gradient-to-r from-rose-accent to-peach-accent text-white text-lg rounded-xl transition-all font-bold flex items-center justify-center gap-2 hover:shadow-lg hover:-translate-y-1"
                             >
-                                Reclaim My Worth
+                                Preview my extra days
                             </button>
                             <p className="text-center mt-4 text-[10px] text-gray-400 uppercase tracking-widest">
                                 <span className="inline-block w-2 h-2 bg-rose-400 rounded-full mr-2 animate-pulse"></span> Prioritize yourself
                             </p>
+                            <button
+                                onClick={() => document.getElementById('wizard-section')?.scrollIntoView({ behavior: 'smooth' })}
+                                className="mt-3 w-full text-sm text-rose-500 font-bold underline underline-offset-4"
+                            >
+                                Skip to the planner
+                            </button>
                         </div>
                     </div>
                 </div>
