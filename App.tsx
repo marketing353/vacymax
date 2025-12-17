@@ -234,8 +234,6 @@ const App: React.FC = () => {
     setStep((prev) => prev - 1);
   }, []);
 
-  useEffect(() => () => clearProgressMessage(), [clearProgressMessage]);
-
   const clearProgressMessage = useCallback(() => {
     if (progressIntervalRef.current) {
       clearInterval(progressIntervalRef.current);
@@ -243,6 +241,8 @@ const App: React.FC = () => {
     }
     setProgressMessage(null);
   }, []);
+
+  useEffect(() => () => clearProgressMessage(), [clearProgressMessage]);
 
   const startProgressLoop = useCallback(() => {
     const messages = [
