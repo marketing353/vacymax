@@ -358,8 +358,8 @@ interface StrategyMeta {
 }
 
 const STRATEGY_META: Record<string, StrategyMeta> = {
-  ['The "CEO" Schedule']: {
-    id: 'The "CEO" Schedule' as OptimizationStrategy,
+  [OptimizationStrategy.BALANCED]: {
+    id: OptimizationStrategy.BALANCED,
     title: 'The Balance',
     emoji: '✨',
     tagline: 'A mix of long trips and quick reset breaks',
@@ -394,8 +394,8 @@ const STRATEGY_META: Record<string, StrategyMeta> = {
     tripCount: 6,
     avgTripLength: 7.2
   },
-  ['The Socialite']: {
-    id: 'The Socialite' as OptimizationStrategy,
+  [OptimizationStrategy.LONG_WEEKENDS]: {
+    id: OptimizationStrategy.LONG_WEEKENDS,
     title: 'Frequent Bliss',
     emoji: '🥂',
     tagline: 'Lots of 3-4 day weekends. No burnout ever.',
@@ -430,8 +430,8 @@ const STRATEGY_META: Record<string, StrategyMeta> = {
     tripCount: 12,
     avgTripLength: 4.1
   },
-  ['The Jetsetter']: {
-    id: 'The Jetsetter' as OptimizationStrategy,
+  [OptimizationStrategy.EXTENDED]: {
+    id: OptimizationStrategy.EXTENDED,
     title: 'Wanderlust',
     emoji: '✈️',
     tagline: 'Focus on long, 2+ week adventures',
@@ -466,8 +466,8 @@ const STRATEGY_META: Record<string, StrategyMeta> = {
     tripCount: 2,
     avgTripLength: 16.5
   },
-  ['The Wellness Era']: {
-    id: 'The Wellness Era' as OptimizationStrategy,
+  [OptimizationStrategy.MINI_BREAKS]: {
+    id: OptimizationStrategy.MINI_BREAKS,
     title: 'Regular Resets',
     emoji: '🧘‍♀️',
     tagline: 'A week off every other month',
@@ -777,10 +777,10 @@ interface DemoIndexProps {
 
 export const DemoIndex: React.FC<DemoIndexProps> = ({ onSelectDemo, onBack }) => {
   const strategies = [
-    'The "CEO" Schedule' as OptimizationStrategy,
-    'The Socialite' as OptimizationStrategy,
-    'The Jetsetter' as OptimizationStrategy,
-    'The Wellness Era' as OptimizationStrategy
+    OptimizationStrategy.BALANCED,
+    OptimizationStrategy.LONG_WEEKENDS,
+    OptimizationStrategy.EXTENDED,
+    OptimizationStrategy.MINI_BREAKS
   ];
 
   return (
