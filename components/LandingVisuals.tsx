@@ -36,7 +36,7 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
             <div className="hidden md:block absolute top-24 left-10 text-4xl opacity-20 rotate-12 animate-float pointer-events-none">✨</div>
             <div className="hidden md:block absolute bottom-20 right-20 text-6xl opacity-10 -rotate-12 animate-float pointer-events-none">🌸</div>
 
-            <div className="max-w-screen-xl w-full mx-auto relative z-10 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center overflow-hidden px-1">
+            <div className="max-w-screen-lg lg:max-w-screen-xl w-full mx-auto relative z-10 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center overflow-hidden px-1 gap-y-12">
                 {/* Left Column: Copy */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -49,17 +49,17 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
                         The Journey to Freedom 🕊️
                     </div>
 
-                    <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight text-gray-800 leading-[1.1] mb-4 md:mb-6">
+                    <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight text-gray-800 leading-[1.1] mb-4 md:mb-6 text-balance hero-title">
                         We Double Your<br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-accent to-peach-accent italic">Holidays.</span>
                     </h1>
 
-                    <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-xl leading-relaxed mb-8 md:mb-10 border-l-4 border-rose-200 pl-4 md:pl-6">
+                    <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-xl leading-relaxed mb-8 md:mb-10 border-l-4 border-rose-200 pl-4 md:pl-6 text-balance hero-subtitle">
                         Stop wasting your paid time off. <strong className="text-rose-accent">Our algorithm finds the "Bridge Days"</strong> that connect public holidays to weekends.<br className="hidden sm:block" />
                         Turn <span className="font-bold underline decoration-rose-300 decoration-2">10 days of PTO</span> into <span className="font-bold underline decoration-emerald-300 decoration-2">24+ days of freedom</span>. Instantly. 🥂
                     </p>
 
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6 hero-cta-stack w-full">
                         <button
                             onClick={onCta}
                             className="w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 bg-gradient-to-r from-rose-accent to-peach-accent hover:shadow-lg hover:shadow-rose-accent/40 text-white font-bold text-base sm:text-lg rounded-full hover:scale-[1.02] transition-all flex items-center justify-center gap-3 group active:scale-95 min-h-[56px]"
