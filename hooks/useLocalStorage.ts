@@ -4,7 +4,6 @@ import { UserPreferences, OptimizationResult } from '../types';
 const STORAGE_KEYS = {
   WIZARD_PROGRESS: 'dmh-wizard-progress',
   SAVED_PLANS: 'dmh-saved-plans',
-  DARK_MODE: 'dmh-dark-mode',
   UNLOCKED_SESSIONS: 'dmh-unlocked',
 } as const;
 
@@ -144,79 +143,6 @@ export function useSavedPlans() {
     deletePlan,
     clearAllPlans,
   };
-}
-
-// --- Dark Mode ---
-export function useDarkMode() {
-  const [isDark, setIsDark] = useState(() => {
-    // Check browser environment inline to avoid TDZ issues
-    if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
-      return false;
-    }
-
-    // Check localStorage first
-    try {
-      const saved = localStorage.getItem(STORAGE_KEYS.DARK_MODE);
-      if (saved !== null) {
-        return saved === 'true';
-      }
-    } catch (e) {
-      // Ignore
-    }
-    // Fall back to system preference
-    if (window.matchMedia) {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    return false;
-  });
-
-  // Apply dark mode class to document
-  useEffect(() => {
-    if (typeof window === 'undefined' || typeof document === 'undefined') return;
-
-    const root = document.documentElement;
-    if (isDark) {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
-    try {
-      if (typeof localStorage !== 'undefined') {
-        localStorage.setItem(STORAGE_KEYS.DARK_MODE, String(isDark));
-      }
-    } catch (e) {
-      // Ignore
-    }
-  }, [isDark]);
-
-  // Listen for system preference changes
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) return;
-
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = (e: MediaQueryListEvent) => {
-      // Only auto-switch if user hasn't set a preference
-      try {
-        if (typeof localStorage !== 'undefined') {
-          const saved = localStorage.getItem(STORAGE_KEYS.DARK_MODE);
-          if (saved === null) {
-            setIsDark(e.matches);
-          }
-        }
-      } catch {
-        // Ignore localStorage errors
-      }
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
-
-  const toggleDarkMode = useCallback(() => {
-    setIsDark(prev => !prev);
-  }, []);
-
-  return { isDark, toggleDarkMode };
 }
 
 // --- Unlocked Sessions (remember payment) ---
