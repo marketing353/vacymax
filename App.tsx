@@ -3,7 +3,7 @@ import { OptimizationStrategy, TimeframeType, UserPreferences, OptimizationResul
 import { Step1PTO, Step2Timeframe, Step3Strategy, Step4Location } from './components/StepWizard';
 import { generateVacationPlan } from './services/vacationService';
 import { SEOHead } from './components/SEOHead';
-import { useSwipe } from './hooks/useMobileUX';
+import { useSwipe, useHaptics } from './hooks/useMobileUX';
 import { useWizardProgress, useSavedPlans, useDarkMode } from './hooks/useLocalStorage';
 import { usePWAInstall, useIOSInstallPrompt, useOnlineStatus } from './hooks/usePWA';
 import { PainHero, BurnCalculator, SolutionGrid, BattleTestedMarquee } from './components/LandingVisuals';
@@ -122,6 +122,7 @@ const App: React.FC = () => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showResumeBanner, setShowResumeBanner] = useState(false);
+  const [showMobileCta, setShowMobileCta] = useState(false);
 
   // Behavioral UX states
   const [direction, setDirection] = useState<'next' | 'back'>('next');
@@ -130,6 +131,7 @@ const App: React.FC = () => {
   const { saveProgress, loadProgress, clearProgress } = useWizardProgress(initialPrefs);
   const { savedPlans, savePlan } = useSavedPlans();
   const { isDark, toggleDarkMode } = useDarkMode();
+  const { trigger: triggerHaptic } = useHaptics();
 
   // PWA hooks
   const { isInstallable, promptInstall } = usePWAInstall();
@@ -222,6 +224,17 @@ const App: React.FC = () => {
     threshold: 60
   });
 
+  const handleMobileCta = useCallback(() => {
+    triggerHaptic('medium');
+    if (view !== 'landing') {
+      setView('landing');
+    }
+    setStep((prev) => (prev === 0 ? 1 : prev));
+    setTimeout(() => {
+      scrollWizardIntoView();
+    }, 80);
+  }, [scrollWizardIntoView, triggerHaptic, view]);
+
   const handleGenerate = useCallback(async () => {
     setStep(5);
     setError(null);
@@ -294,6 +307,27 @@ const App: React.FC = () => {
       saveProgress(step, prefs);
     }
   }, [step, prefs, view, saveProgress]);
+
+  // Mobile CTA visibility based on wizard position
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (window.innerWidth >= 768 || view !== 'landing') {
+        setShowMobileCta(false);
+        return;
+      }
+
+      setShowMobileCta(!isWizardTopInView());
+    };
+
+    handleVisibility();
+    window.addEventListener('scroll', handleVisibility, { passive: true });
+    window.addEventListener('resize', handleVisibility);
+
+    return () => {
+      window.removeEventListener('scroll', handleVisibility);
+      window.removeEventListener('resize', handleVisibility);
+    };
+  }, [isWizardTopInView, view, step]);
 
   // Resume saved progress
   const handleResumeProgress = useCallback(() => {
@@ -650,6 +684,31 @@ const App: React.FC = () => {
           <BurnCalculator />
           <SolutionGrid />
           <TrustSection />
+
+          {showMobileCta && !isMobileMenuOpen && (
+            <div className="fixed bottom-0 left-0 right-0 z-[70] px-4 pb-3 md:hidden pointer-events-none">
+              <div className="max-w-4xl mx-auto">
+                <div className="bg-white/95 dark:bg-dark-100/95 border border-rose-100 dark:border-dark-border shadow-2xl rounded-[26px] p-4 flex items-center gap-3 safe-pb pointer-events-auto">
+                  <div className="flex-1 text-left">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-rose-accent flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-rose-accent animate-pulse" />
+                      Quick access
+                    </p>
+                    <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">
+                      {step === 0 ? 'Start your plan in one tap' : `Continue step ${Math.min(step, 4)} of 4`}
+                    </p>
+                    <p className="text-[12px] text-gray-500 dark:text-gray-400">Swipe left/right to navigate, or tap below.</p>
+                  </div>
+                  <button
+                    onClick={handleMobileCta}
+                    className="px-4 py-3 bg-gradient-to-r from-rose-accent to-peach-accent text-white font-bold rounded-2xl shadow-lg shadow-rose-accent/25 active:scale-95 transition-transform text-sm whitespace-nowrap"
+                  >
+                    {step === 0 ? 'Start now' : 'Resume'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Saved Plans Section */}
           {savedPlans.length > 0 && (
