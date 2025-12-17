@@ -20,21 +20,60 @@ export const ShareableGraphic: React.FC<ShareableGraphicProps> = ({ result, onCl
 
         setIsGenerating(true);
 
+        let clonedCard: HTMLDivElement | null = null;
+
         try {
             // Use html2canvas if available, otherwise use a simple approach
             const { default: html2canvas } = await import('html2canvas').catch(() => ({ default: null }));
 
             if (html2canvas) {
-                const canvas = await html2canvas(cardRef.current, {
-                    backgroundColor: null,
-                    scale: 2,
+                const cardNode = cardRef.current;
+                const rect = cardNode.getBoundingClientRect();
+                const width = Math.ceil(rect.width);
+                const height = Math.ceil(rect.height);
+                const pixelRatio = Math.min(window.devicePixelRatio || 2, 3);
+
+                // Clone the card to a fixed, on-screen position so mobile captures don't crop the edges
+                clonedCard = cardNode.cloneNode(true) as HTMLDivElement;
+                Object.assign(clonedCard.style, {
+                    position: 'fixed',
+                    top: '0',
+                    left: '0',
+                    width: `${width}px`,
+                    height: `${height}px`,
+                    pointerEvents: 'none',
+                    opacity: '0',
+                    zIndex: '-1',
+                    transform: 'translateZ(0)',
+                });
+                document.body.appendChild(clonedCard);
+
+                // Allow fonts/gradients to settle for mobile captures
+                await document.fonts.ready.catch(() => Promise.resolve());
+                await new Promise((resolve) => requestAnimationFrame(resolve));
+
+                const canvas = await html2canvas(clonedCard, {
+                    backgroundColor: '#fdf2f8',
+                    scale: pixelRatio,
+                    width,
+                    height,
+                    scrollX: 0,
+                    scrollY: 0,
                     useCORS: true,
                 });
 
+                const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png', 1));
+
+                if (!blob) {
+                    throw new Error('Unable to create image blob');
+                }
+
+                const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.download = 'my-vacation-plan.png';
-                link.href = canvas.toDataURL('image/png');
+                link.href = url;
                 link.click();
+                URL.revokeObjectURL(url);
             } else {
                 // Fallback: Copy text to clipboard
                 const text = `I'm getting ${result.totalDaysOff} days off with only ${result.totalPtoUsed} PTO days (+${efficiency}% efficiency)! Plan your perfect year at doublemyholidays.com`;
@@ -50,6 +89,9 @@ export const ShareableGraphic: React.FC<ShareableGraphicProps> = ({ result, onCl
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
         } finally {
+            if (clonedCard?.parentNode) {
+                clonedCard.parentNode.removeChild(clonedCard);
+            }
             setIsGenerating(false);
         }
     }, [result, efficiency]);
