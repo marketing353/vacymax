@@ -130,7 +130,6 @@ const App: React.FC = () => {
   const stepProgress = step === 0 ? 0 : (clampedStep / 4) * 100;
   const stepStatusLabel = step === 0 ? 'Ready when you are' : stepLabels[clampedStep - 1];
   const mobileStepSummary = step === 0 ? 'Start your plan in one tap' : `${stepStatusLabel} • ${clampedStep}/4`;
-  const mobileStepHint = step === 0 ? 'Swipe or tap to begin' : 'Swipe to change steps or tap to edit';
   const mobileProgressWidth = Math.max(stepProgress, step === 0 ? 12 : 20);
 
   // Behavioral UX states
@@ -726,32 +725,30 @@ const App: React.FC = () => {
             {showMobileCta && !isMobileMenuOpen && (
               <div className="fixed bottom-0 left-0 right-0 z-[70] px-4 pb-3 md:hidden pointer-events-none">
                 <div className="max-w-4xl mx-auto">
-                  <div className="bg-white/95 dark:bg-dark-100/95 border border-rose-100 dark:border-dark-border shadow-2xl rounded-[26px] p-4 flex items-center gap-3 safe-pb pointer-events-auto transition-transform duration-300 will-change-transform">
+                  <div className="bg-white/95 dark:bg-dark-100/95 border border-rose-100 dark:border-dark-border shadow-2xl rounded-[22px] p-3 flex items-center gap-3 safe-pb pointer-events-auto transition-transform duration-300 will-change-transform">
                     <div className="flex-1 text-left space-y-1" aria-live="polite" aria-atomic="true">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-rose-accent flex items-center gap-1">
+                      <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.12em] text-rose-accent">
                         <span className={`w-1.5 h-1.5 rounded-full ${isWizardVisible ? 'bg-lavender-accent' : 'bg-rose-accent animate-pulse'}`} />
-                        {isWizardVisible ? 'Wizard in view' : 'Quick access'}
-                      </p>
-                      <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{mobileStepSummary}</p>
-                      <p className="text-[12px] text-gray-500 dark:text-gray-400">{mobileStepHint}</p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <div className="flex-1 h-2 bg-rose-50 dark:bg-dark-200 rounded-full overflow-hidden">
+                        {isWizardVisible ? 'Wizard ready' : 'Quick jump'}
+                        {step > 0 && <span className="text-gray-400">•</span>}
+                        {step > 0 && <span className="text-gray-500 dark:text-gray-400">{`Step ${clampedStep}/4`}</span>}
+                      </div>
+                      <p className="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate">{mobileStepSummary}</p>
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 h-1.5 bg-rose-50 dark:bg-dark-200 rounded-full overflow-hidden">
                           <div
                             className="h-full bg-gradient-to-r from-rose-accent to-peach-accent rounded-full transition-all duration-500"
                             style={{ width: `${mobileProgressWidth}%` }}
                           />
                         </div>
-                        {step > 0 && (
-                          <span className="text-[11px] font-semibold text-gray-600 dark:text-gray-300 whitespace-nowrap">{`Step ${clampedStep}/4`}</span>
-                        )}
+                        <button
+                          onClick={handleMobileCta}
+                          className="px-3 py-2 bg-gradient-to-r from-rose-accent to-peach-accent text-white font-bold rounded-xl shadow-md shadow-rose-accent/20 active:scale-95 transition-transform text-xs whitespace-nowrap"
+                        >
+                          {step === 0 ? 'Start' : 'Resume'}
+                        </button>
                       </div>
                     </div>
-                    <button
-                      onClick={handleMobileCta}
-                      className="px-4 py-3 bg-gradient-to-r from-rose-accent to-peach-accent text-white font-bold rounded-2xl shadow-lg shadow-rose-accent/25 active:scale-95 transition-transform text-sm whitespace-nowrap"
-                    >
-                      {step === 0 ? 'Start now' : 'Resume'}
-                    </button>
                   </div>
                 </div>
               </div>
@@ -828,28 +825,31 @@ const App: React.FC = () => {
               {/* FIX: Removed 'overflow-hidden' and 'backdrop-blur' to fix mobile sticky buttons */}
               {/* FIX: Added z-[60] to ensure it sits ABOVE the bg-noise layer */}
               <div {...swipeHandlers} className="relative z-[60] glass-panel rounded-[2rem] p-6 md:p-12 min-h-[600px] flex flex-col shadow-2xl touch-pan-y">
-                <div className="md:hidden sticky -top-4 -mx-4 px-4 pb-3 z-[62]">
-                  <div className="bg-white/95 dark:bg-dark-100/95 border border-rose-100 dark:border-dark-border rounded-2xl shadow-xl p-3 flex items-center gap-3">
+                <div className="md:hidden sticky -top-4 -mx-4 px-4 pb-2 z-[62]">
+                  <div className="bg-white/95 dark:bg-dark-100/95 border border-rose-100 dark:border-dark-border rounded-2xl shadow-md p-3 flex items-center gap-3">
                     <div className="flex-1 space-y-1" aria-live="polite" aria-atomic="true">
-                      <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-rose-accent">
-                        <span className="w-1.5 h-1.5 rounded-full bg-rose-accent animate-pulse" />
-                        {step === 0 ? 'Wizard ready' : `Step ${clampedStep} of 4`}
-                      </div>
+                      <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-[0.14em] text-rose-accent">
                         <div className="flex items-center gap-2">
-                          <div className="flex-1 h-2 bg-rose-50 dark:bg-dark-200 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-gradient-to-r from-rose-accent to-peach-accent rounded-full transition-all duration-500"
-                              style={{ width: `${Math.max(mobileProgressWidth, step === 0 ? 8 : 16)}%` }}
-                            />
-                          </div>
-                          <span className="text-xs font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">{stepStatusLabel}</span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-rose-accent animate-pulse" />
+                          {step === 0 ? 'Wizard' : `Step ${clampedStep} of 4`}
+                        </div>
+                        <span className="text-[10px] text-gray-500 dark:text-gray-400 font-semibold">{stepStatusLabel}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 h-1.5 bg-rose-50 dark:bg-dark-200 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-rose-accent to-peach-accent rounded-full transition-all duration-500"
+                            style={{ width: `${Math.max(mobileProgressWidth, step === 0 ? 8 : 16)}%` }}
+                          />
                         </div>
                       </div>
-                      <button
+                    </div>
+                    <button
                       onClick={scrollWizardIntoView}
-                      className="px-3 py-2 text-xs font-semibold bg-rose-50 dark:bg-dark-200 text-rose-accent rounded-xl border border-rose-100 dark:border-dark-border active:scale-95 transition"
+                      className="p-2 text-xs font-semibold bg-rose-50 dark:bg-dark-200 text-rose-accent rounded-xl border border-rose-100 dark:border-dark-border active:scale-95 transition"
+                      aria-label="Back to wizard"
                     >
-                      Refocus
+                      ↑
                     </button>
                   </div>
                 </div>

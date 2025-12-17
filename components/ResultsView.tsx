@@ -234,7 +234,6 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ result, onReset, onUnl
     }
 
     const mobilePrimaryLabel = isLocked ? 'Unlock full plan' : isSaved ? 'Saved to device' : 'Save plan';
-    const mobileSecondaryLabel = isLocked ? 'Preview & share' : 'Share card';
 
     return (
         <div className="w-full max-w-6xl mx-auto space-y-6 md:space-y-8 pb-32">
@@ -259,27 +258,30 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ result, onReset, onUnl
             {/* Mobile bottom action rail for iPhone-friendly reachability */}
             {isMobile && (
                 <div className="md:hidden fixed bottom-0 left-0 right-0 z-[85] px-3 pb-[calc(env(safe-area-inset-bottom,0px)+12px)] pointer-events-none">
-                    <div className="max-w-xl mx-auto bg-white/95 dark:bg-dark-surface/95 border border-rose-100 dark:border-dark-border shadow-[0_20px_40px_rgba(0,0,0,0.12)] rounded-[24px] px-4 py-3 flex items-center gap-3 backdrop-blur-xl pointer-events-auto">
-                        <div className="flex-1 min-w-0">
+                    <div className="max-w-xl mx-auto bg-white/95 dark:bg-dark-surface/95 border border-rose-100 dark:border-dark-border shadow-[0_18px_32px_rgba(0,0,0,0.1)] rounded-[20px] px-4 py-3 flex items-center gap-3 backdrop-blur-xl pointer-events-auto">
+                        <div className="flex-1 min-w-0 space-y-0.5">
                             <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-rose-accent flex items-center gap-1">
                                 <span className="w-1.5 h-1.5 rounded-full bg-rose-accent animate-pulse"></span>
-                                {isLocked ? `Unlock ${hiddenCount} trips` : 'Ready to share'}
+                                {isLocked ? `Unlock ${hiddenCount} trips` : 'Keep handy'}
                             </p>
                             <p className="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate">{result.planName || 'Optimal Schedule'}</p>
-                            <p className="text-[12px] text-gray-500 dark:text-gray-400 truncate">{result.totalDaysOff} days off • {efficiencyLabel}</p>
+                            <p className="text-[11px] text-gray-500 dark:text-gray-400 truncate">{result.totalDaysOff} days off • {efficiencyLabel}</p>
                         </div>
-                        <div className="flex flex-col gap-2 w-[128px]">
+                        <div className="flex items-center gap-2">
                             <button
                                 onClick={isLocked ? handleUnlockClick : handleSavePlan}
-                                className={`w-full px-3 py-2 rounded-xl text-[13px] font-semibold shadow-md active:scale-95 transition-all ${isLocked ? 'bg-gradient-to-r from-rose-accent to-peach-accent text-white' : 'bg-rose-50 text-rose-accent border border-rose-100'}`}
+                                className={`px-3 py-2 rounded-xl text-[13px] font-semibold shadow-md active:scale-95 transition-all ${isLocked ? 'bg-gradient-to-r from-rose-accent to-peach-accent text-white' : 'bg-rose-50 text-rose-accent border border-rose-100'}`}
                             >
                                 {mobilePrimaryLabel}
                             </button>
                             <button
                                 onClick={() => setShowShareGraphic(true)}
-                                className="w-full px-3 py-2 rounded-xl text-[12px] font-semibold bg-white dark:bg-dark-100 text-gray-600 dark:text-gray-200 border border-rose-100 dark:border-dark-border shadow-sm active:scale-95"
+                                className="p-2 rounded-xl text-[12px] font-semibold bg-white dark:bg-dark-100 text-gray-600 dark:text-gray-200 border border-rose-100 dark:border-dark-border shadow-sm active:scale-95"
+                                aria-label="Share plan"
                             >
-                                {mobileSecondaryLabel}
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M12 7h.01M17 7h.01M7 12h.01M12 12h.01M17 12h.01M7 17h10" />
+                                </svg>
                             </button>
                         </div>
                     </div>
@@ -303,19 +305,19 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ result, onReset, onUnl
                         </div>
 
                         <div className="mt-4 flex flex-wrap gap-2">
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-gray-700 border border-rose-100 text-xs font-semibold shadow-[0_4px_12px_rgba(244,63,94,0.08)]">
-                                <span className="w-1.5 h-1.5 rounded-full bg-rose-accent animate-pulse"></span>
-                                {efficiencyLabel}
-                            </span>
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-gray-700 border border-lavender-100 text-xs font-semibold shadow-[0_4px_12px_rgba(140,108,245,0.08)]">
-                                <span className="w-1.5 h-1.5 rounded-full bg-lavender-accent"></span>
-                                {formatCurrency(result.totalValueRecovered)} saved
-                            </span>
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-gray-700 border border-rose-100 text-xs font-semibold shadow-[0_4px_12px_rgba(244,63,94,0.08)]">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                                {viewMode === 'joint' && hasBuddy ? 'Together mode' : 'Solo mode'}
-                            </span>
+                            {[
+                                { label: efficiencyLabel, accent: 'bg-rose-100', dot: 'bg-rose-accent' },
+                                { label: `${formatCurrency(result.totalValueRecovered)} saved`, accent: 'bg-lavender-100', dot: 'bg-lavender-accent' },
+                            ].map((chip) => (
+                                <span key={chip.label} className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-gray-700 border text-xs font-semibold shadow-[0_4px_12px_rgba(0,0,0,0.05)] ${chip.accent}`}>
+                                    <span className={`w-1.5 h-1.5 rounded-full ${chip.dot}`}></span>
+                                    {chip.label}
+                                </span>
+                            ))}
                         </div>
+                        <p className="mt-3 text-xs text-gray-500">
+                            {viewMode === 'joint' && hasBuddy ? 'Built for two — together mode' : 'Solo focus — me time first'}
+                        </p>
 
                         {hasBuddy && (
                             <div className="mt-4">
