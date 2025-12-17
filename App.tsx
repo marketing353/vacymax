@@ -134,7 +134,7 @@ const App: React.FC = () => {
   // localStorage hooks
   const { saveProgress, loadProgress, clearProgress } = useWizardProgress(prefs);
   const { savedPlans, savePlan } = useSavedPlans();
-  const { isDark, toggleDarkMode } = useDarkMode();
+  useDarkMode();
   const { trigger: triggerHaptic } = useHaptics();
 
   const totalPto = prefs.ptoDays + (prefs.hasBuddy ? prefs.buddyPtoDays : 0);
@@ -234,8 +234,6 @@ const App: React.FC = () => {
     setStep((prev) => prev - 1);
   }, []);
 
-  useEffect(() => () => clearProgressMessage(), [clearProgressMessage]);
-
   const clearProgressMessage = useCallback(() => {
     if (progressIntervalRef.current) {
       clearInterval(progressIntervalRef.current);
@@ -243,6 +241,8 @@ const App: React.FC = () => {
     }
     setProgressMessage(null);
   }, []);
+
+  useEffect(() => () => clearProgressMessage(), [clearProgressMessage]);
 
   const startProgressLoop = useCallback(() => {
     const messages = [
@@ -564,23 +564,6 @@ const App: React.FC = () => {
             Vacation Styles
           </button>
 
-          {/* Dark Mode Toggle */}
-          <button
-            onClick={toggleDarkMode}
-            className="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-rose-50 dark:hover:bg-dark-surface transition-colors hidden md:flex items-center justify-center"
-            aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-          >
-            {isDark ? (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-            ) : (
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-              </svg>
-            )}
-          </button>
-
           {/* Create User/Restart logic links for Desktop */}
           {step > 0 && (
             <button
@@ -642,27 +625,6 @@ const App: React.FC = () => {
             className="text-2xl font-display font-bold text-gray-800 dark:text-gray-100 hover:text-rose-accent transition-colors py-2 border-b border-gray-100 dark:border-dark-border"
           >
             Vacation Styles
-          </button>
-          {/* Dark Mode Toggle - Mobile */}
-          <button
-            onClick={() => { toggleDarkMode(); }}
-            className="text-2xl font-display font-bold text-gray-800 dark:text-gray-100 hover:text-rose-accent transition-colors py-2 border-b border-gray-100 dark:border-dark-border flex items-center justify-center gap-3"
-          >
-            {isDark ? (
-              <>
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-                Light Mode
-              </>
-            ) : (
-              <>
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                </svg>
-                Dark Mode
-              </>
-            )}
           </button>
           {step > 0 && (
             <button
