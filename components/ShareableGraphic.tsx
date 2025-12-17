@@ -20,6 +20,8 @@ export const ShareableGraphic: React.FC<ShareableGraphicProps> = ({ result, onCl
 
         setIsGenerating(true);
 
+        let clonedCard: HTMLDivElement | null = null;
+
         try {
             // Use html2canvas if available, otherwise use a simple approach
             const { default: html2canvas } = await import('html2canvas').catch(() => ({ default: null }));
@@ -27,19 +29,36 @@ export const ShareableGraphic: React.FC<ShareableGraphicProps> = ({ result, onCl
             if (html2canvas) {
                 const cardNode = cardRef.current;
                 const rect = cardNode.getBoundingClientRect();
+                const width = Math.ceil(rect.width);
+                const height = Math.ceil(rect.height);
                 const pixelRatio = Math.min(window.devicePixelRatio || 2, 3);
+
+                // Clone the card to a fixed, on-screen position so mobile captures don't crop the edges
+                clonedCard = cardNode.cloneNode(true) as HTMLDivElement;
+                Object.assign(clonedCard.style, {
+                    position: 'fixed',
+                    top: '0',
+                    left: '0',
+                    width: `${width}px`,
+                    height: `${height}px`,
+                    pointerEvents: 'none',
+                    opacity: '0',
+                    zIndex: '-1',
+                    transform: 'translateZ(0)',
+                });
+                document.body.appendChild(clonedCard);
 
                 // Allow fonts/gradients to settle for mobile captures
                 await document.fonts.ready.catch(() => Promise.resolve());
                 await new Promise((resolve) => requestAnimationFrame(resolve));
 
-                const canvas = await html2canvas(cardNode, {
+                const canvas = await html2canvas(clonedCard, {
                     backgroundColor: '#fdf2f8',
                     scale: pixelRatio,
-                    width: rect.width,
-                    height: rect.height,
+                    width,
+                    height,
                     scrollX: 0,
-                    scrollY: -window.scrollY,
+                    scrollY: 0,
                     useCORS: true,
                 });
 
@@ -70,6 +89,9 @@ export const ShareableGraphic: React.FC<ShareableGraphicProps> = ({ result, onCl
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
         } finally {
+            if (clonedCard?.parentNode) {
+                clonedCard.parentNode.removeChild(clonedCard);
+            }
             setIsGenerating(false);
         }
     }, [result, efficiency]);
