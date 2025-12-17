@@ -4,7 +4,7 @@ import { Step1PTO, Step3Strategy } from './components/StepWizard';
 import { generateVacationPlan } from './services/vacationService';
 import { SEOHead } from './components/SEOHead';
 import { useSwipe, useHaptics } from './hooks/useMobileUX';
-import { useWizardProgress, useSavedPlans, useDarkMode } from './hooks/useLocalStorage';
+import { useWizardProgress, useSavedPlans } from './hooks/useLocalStorage';
 import { usePWAInstall, useIOSInstallPrompt, useOnlineStatus } from './hooks/usePWA';
 import { PainHero, BurnCalculator, SolutionGrid, BattleTestedMarquee } from './components/LandingVisuals';
 import { TrustSection } from './components/TrustSection';
@@ -134,7 +134,6 @@ const App: React.FC = () => {
   // localStorage hooks
   const { saveProgress, loadProgress, clearProgress } = useWizardProgress(prefs);
   const { savedPlans, savePlan } = useSavedPlans();
-  useDarkMode();
   const { trigger: triggerHaptic } = useHaptics();
 
   const totalPto = prefs.ptoDays + (prefs.hasBuddy ? prefs.buddyPtoDays : 0);

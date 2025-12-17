@@ -4,7 +4,6 @@ import { UserPreferences, OptimizationResult } from '../types';
 const STORAGE_KEYS = {
   WIZARD_PROGRESS: 'dmh-wizard-progress',
   SAVED_PLANS: 'dmh-saved-plans',
-  DARK_MODE: 'dmh-dark-mode',
   UNLOCKED_SESSIONS: 'dmh-unlocked',
 } as const;
 
@@ -144,41 +143,6 @@ export function useSavedPlans() {
     deletePlan,
     clearAllPlans,
   };
-}
-
-// --- Dark Mode ---
-export function useDarkMode() {
-  const [isDark, setIsDark] = useState(() => {
-    if (typeof window === 'undefined') {
-      return false;
-    }
-    return window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)').matches : false;
-  });
-
-  // Apply dark mode class to document
-  useEffect(() => {
-    if (typeof document === 'undefined') return;
-
-    const root = document.documentElement;
-    if (isDark) {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
-  }, [isDark]);
-
-  // Listen for system preference changes
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) return;
-
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = (e: MediaQueryListEvent) => setIsDark(e.matches);
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
-
-  return { isDark };
 }
 
 // --- Unlocked Sessions (remember payment) ---
