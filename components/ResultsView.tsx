@@ -312,30 +312,30 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 
             {/* Mobile bottom action rail for iPhone-friendly reachability */}
             {isMobile && (
-                <div className="md:hidden fixed bottom-0 left-0 right-0 z-[85] px-3 pb-[calc(env(safe-area-inset-bottom,0px)+12px)] pointer-events-none">
-                    <div className="max-w-xl mx-auto bg-white/95 border border-rose-100 shadow-[0_18px_32px_rgba(0,0,0,0.1)] rounded-[20px] px-4 py-3 flex items-center gap-3 backdrop-blur-xl pointer-events-auto">
-                        <div className="flex-1 min-w-0 space-y-0.5">
-                            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-rose-accent flex items-center gap-1">
-                                <span className="w-1.5 h-1.5 rounded-full bg-rose-accent animate-pulse"></span>
+                <div className="md:hidden fixed bottom-0 left-0 right-0 z-[85] px-2 pb-[calc(env(safe-area-inset-bottom,0px)+8px)] pointer-events-none">
+                    <div className="max-w-xl mx-auto bg-white/95 border border-rose-100 shadow-[0_-8px_32px_rgba(0,0,0,0.12)] rounded-2xl px-3 py-2.5 flex items-center gap-2 backdrop-blur-xl pointer-events-auto">
+                        <div className="flex-1 min-w-0 space-y-0">
+                            <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-rose-accent flex items-center gap-1">
+                                <span className="w-1 h-1 rounded-full bg-rose-accent animate-pulse"></span>
                                 {isLocked ? `Unlock ${hiddenCount} trips` : 'Keep handy'}
                             </p>
-                            <p className="text-sm font-semibold text-gray-800 truncate">{result.planName || 'Optimal Schedule'}</p>
-                            <p className="text-[11px] text-gray-500 truncate">{result.totalDaysOff} days off • {efficiencyLabel}</p>
+                            <p className="text-[13px] font-semibold text-gray-800 truncate leading-tight">{result.planName || 'Optimal Schedule'}</p>
+                            <p className="text-[10px] text-gray-500 truncate">{result.totalDaysOff} days off • {efficiencyLabel}</p>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
                             <button
                                 onClick={isLocked ? handleUnlockClick : handleSavePlan}
-                                className={`px-3 py-2 rounded-xl text-[13px] font-semibold shadow-md active:scale-95 transition-all ${isLocked ? 'bg-gradient-to-r from-rose-accent to-peach-accent text-white' : 'bg-rose-50 text-rose-accent border border-rose-100'}`}
+                                className={`px-3 py-2.5 rounded-xl text-[12px] font-bold shadow-md active:scale-95 transition-all min-h-[44px] ${isLocked ? 'bg-gradient-to-r from-rose-accent to-peach-accent text-white' : 'bg-rose-50 text-rose-accent border border-rose-100'}`}
                             >
                                 {mobilePrimaryLabel}
                             </button>
                             <button
                                 onClick={() => setShowShareGraphic(true)}
-                                className="p-2 rounded-xl text-[12px] font-semibold bg-white text-gray-600 border border-rose-100 shadow-sm active:scale-95"
+                                className="p-2.5 rounded-xl bg-white text-gray-600 border border-rose-100 shadow-sm active:scale-95 min-h-[44px] min-w-[44px] flex items-center justify-center"
                                 aria-label="Share plan"
                             >
-                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M12 7h.01M17 7h.01M7 12h.01M12 12h.01M17 12h.01M7 17h10" />
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                                 </svg>
                             </button>
                         </div>

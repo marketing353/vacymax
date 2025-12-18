@@ -117,21 +117,21 @@ const LocationSelector = React.memo(({
                 )}
             </div>
 
-            <div className="grid grid-cols-3 md:grid-cols-5 gap-2 md:gap-3 mb-6">
+            <div className="grid grid-cols-5 gap-1.5 sm:gap-2 md:gap-3 mb-6">
                 {COUNTRIES.map((c) => (
                     <button
                         key={c.name}
                         onClick={() => onCountryChange(c.name)}
-                        className={`relative group flex flex-col items-center justify-center p-3 md:p-3 min-h-[72px] rounded-2xl border transition-all duration-300 active:scale-95 ${countryValue === c.name
+                        className={`relative group flex flex-col items-center justify-center p-2 sm:p-3 min-h-[64px] sm:min-h-[72px] rounded-xl sm:rounded-2xl border transition-all duration-300 active:scale-95 ${countryValue === c.name
                             ? `bg-white ${borderClass} ${shadowClass} shadow-lg scale-[1.02] ring-1 ring-inset ${isRose ? 'ring-rose-50' : 'ring-lavender-50'}`
                             : 'bg-white/40 border-white/60 hover:bg-white/80 hover:border-rose-200'
                             }`}
                     >
-                        <span className="text-3xl mb-2 filter drop-shadow-sm group-hover:scale-110 transition-transform duration-300">{c.flag}</span>
-                        <span className={`text-[10px] font-bold text-center ${countryValue === c.name ? 'text-gray-800' : 'text-gray-400'}`}>{c.code}</span>
+                        <span className="text-2xl sm:text-3xl mb-1 sm:mb-2 filter drop-shadow-sm group-hover:scale-110 transition-transform duration-300">{c.flag}</span>
+                        <span className={`text-[9px] sm:text-[10px] font-bold text-center ${countryValue === c.name ? 'text-gray-800' : 'text-gray-400'}`}>{c.code}</span>
 
                         {countryValue === c.name && (
-                            <div className={`absolute top-2 right-2 w-1.5 h-1.5 rounded-full ${activeBg}`}></div>
+                            <div className={`absolute top-1.5 right-1.5 sm:top-2 sm:right-2 w-1.5 h-1.5 rounded-full ${activeBg}`}></div>
                         )}
                     </button>
                 ))}
@@ -223,7 +223,7 @@ export const Step1PTO: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, o
     const selectedTimeframe = React.useMemo(() => TIMEFRAME_OPTIONS.find((opt) => opt.value === prefs.timeframe), [prefs.timeframe]);
 
     return (
-        <div className={`flex flex-col h-full relative pb-32 animate-in fade-in ${direction === 'back' ? 'slide-in-from-left-8' : 'slide-in-from-right-8'} duration-500 will-change-transform`}>
+        <div className={`flex flex-col h-full relative pb-24 sm:pb-28 md:pb-24 animate-in fade-in ${direction === 'back' ? 'slide-in-from-left-8' : 'slide-in-from-right-8'} duration-500 will-change-transform`}>
             <div className="pt-2">
                 <StepHeader
                     stepNumber={1}
@@ -236,30 +236,30 @@ export const Step1PTO: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, o
             <div className="flex flex-col justify-start w-full mt-2 md:mt-4 pb-4 pr-1 flex-1 space-y-6">
 
                 {/* Country Selection - Moved to top */}
-                <div className="bg-white/80 rounded-3xl p-4 md:p-6 border border-rose-100 shadow-sm">
-                    <div className="flex items-center gap-2 mb-4">
+                <div className="bg-white/80 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-6 border border-rose-100 shadow-sm">
+                    <div className="flex items-center gap-2 mb-3 sm:mb-4">
                         <div className="w-1.5 h-1.5 rounded-full bg-rose-accent"></div>
-                        <label className="text-xs font-bold text-rose-accent uppercase tracking-widest">Where's Home? 🏡</label>
+                        <label className="text-[10px] sm:text-xs font-bold text-rose-accent uppercase tracking-widest">Where's Home? 🏡</label>
                         {prefs.country && (
-                            <span className="ml-auto text-[10px] bg-rose-50 text-rose-600 px-2 py-0.5 rounded-full font-bold">
+                            <span className="ml-auto text-[9px] sm:text-[10px] bg-rose-50 text-rose-600 px-2 py-0.5 rounded-full font-bold">
                                 Auto-detected
                             </span>
                         )}
                     </div>
-                    <div className="grid grid-cols-3 md:grid-cols-5 gap-2 md:gap-3">
+                    <div className="grid grid-cols-5 gap-1.5 sm:gap-2 md:gap-3">
                         {COUNTRIES.map((c) => (
                             <button
                                 key={c.name}
                                 onClick={() => handleCountryChange(c.name)}
-                                className={`relative group flex flex-col items-center justify-center p-3 min-h-[72px] rounded-2xl border transition-all duration-300 active:scale-95 ${prefs.country === c.name
+                                className={`relative group flex flex-col items-center justify-center p-2 sm:p-3 min-h-[60px] sm:min-h-[72px] rounded-xl sm:rounded-2xl border transition-all duration-300 active:scale-95 ${prefs.country === c.name
                                     ? 'bg-white border-rose-accent shadow-lg scale-[1.02] ring-1 ring-inset ring-rose-50'
                                     : 'bg-white/40 border-white/60 hover:bg-white/80 hover:border-rose-200'
                                 }`}
                             >
-                                <span className="text-3xl mb-2 filter drop-shadow-sm group-hover:scale-110 transition-transform duration-300">{c.flag}</span>
-                                <span className={`text-[10px] font-bold text-center ${prefs.country === c.name ? 'text-gray-800' : 'text-gray-400'}`}>{c.code}</span>
+                                <span className="text-xl sm:text-2xl md:text-3xl mb-1 sm:mb-2 filter drop-shadow-sm group-hover:scale-110 transition-transform duration-300">{c.flag}</span>
+                                <span className={`text-[8px] sm:text-[10px] font-bold text-center ${prefs.country === c.name ? 'text-gray-800' : 'text-gray-400'}`}>{c.code}</span>
                                 {prefs.country === c.name && (
-                                    <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-rose-accent"></div>
+                                    <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 w-1.5 h-1.5 rounded-full bg-rose-accent"></div>
                                 )}
                             </button>
                         ))}
@@ -267,18 +267,18 @@ export const Step1PTO: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, o
                 </div>
 
                 {/* PTO Days Input */}
-                <div className="bg-gradient-to-br from-white to-rose-50/30 rounded-3xl p-4 md:p-6 border border-rose-100 shadow-sm">
-                    <div className="flex justify-between items-center mb-4">
+                <div className="bg-gradient-to-br from-white to-rose-50/30 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-6 border border-rose-100 shadow-sm">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 mb-3 sm:mb-4">
                         <div className="flex items-center gap-2">
                             <div className="w-1.5 h-1.5 rounded-full bg-rose-accent"></div>
-                            <label className="text-xs font-bold text-rose-accent uppercase tracking-widest">PTO Days 💸</label>
+                            <label className="text-[10px] sm:text-xs font-bold text-rose-accent uppercase tracking-widest">PTO Days 💸</label>
                         </div>
-                        <div className="flex gap-1.5 md:gap-2">
+                        <div className="flex gap-1 sm:gap-1.5 md:gap-2">
                             {PRESETS.map(preset => (
                                 <button
                                     key={preset}
                                     onClick={() => handlePresetClick(preset.toString())}
-                                    className={`text-xs font-bold px-3 py-1.5 min-w-[44px] min-h-[32px] rounded-lg border transition-all active:scale-95 ${userDays === preset ? 'bg-rose-100 text-rose-600 border-rose-200' : 'bg-white text-gray-400 border-gray-100 hover:border-rose-100'}`}
+                                    className={`text-[10px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 min-w-[36px] sm:min-w-[44px] min-h-[32px] rounded-lg border transition-all active:scale-95 ${userDays === preset ? 'bg-rose-100 text-rose-600 border-rose-200' : 'bg-white text-gray-400 border-gray-100 hover:border-rose-100'}`}
                                 >
                                     {preset}
                                 </button>
@@ -286,7 +286,7 @@ export const Step1PTO: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, o
                         </div>
                     </div>
 
-                    <div className="relative flex items-baseline gap-2 mb-4">
+                    <div className="relative flex items-baseline gap-2 mb-3 sm:mb-4">
                         <input
                             type="number"
                             inputMode="numeric"
@@ -295,7 +295,7 @@ export const Step1PTO: React.FC<StepProps> = React.memo(({ prefs, updatePrefs, o
                             max={PTO_MAX}
                             value={localPto}
                             onChange={(e) => handlePtoChange(e.target.value)}
-                            className="bg-transparent text-5xl md:text-6xl font-display font-bold text-gray-800 focus:outline-none placeholder-gray-200 tracking-tight w-full"
+                            className="bg-transparent text-4xl sm:text-5xl md:text-6xl font-display font-bold text-gray-800 focus:outline-none placeholder-gray-200 tracking-tight w-full"
                             placeholder="15"
                         />
                         <span className="text-lg font-bold text-gray-300 absolute right-0 bottom-3 uppercase tracking-widest pointer-events-none">Days</span>
@@ -366,7 +366,7 @@ export const Step2Timeframe: React.FC<StepProps> = React.memo(({ prefs, updatePr
     };
 
     return (
-        <div className={`flex flex-col h-full justify-between pb-32 md:pb-24 relative animate-in fade-in ${direction === 'back' ? 'slide-in-from-left-8' : 'slide-in-from-right-8'} duration-500 will-change-transform`}>
+        <div className={`flex flex-col h-full justify-between pb-24 sm:pb-28 md:pb-24 relative animate-in fade-in ${direction === 'back' ? 'slide-in-from-left-8' : 'slide-in-from-right-8'} duration-500 will-change-transform`}>
             <StepHeader
                 stepNumber={2}
                 totalSteps={TOTAL_STEPS}
@@ -403,7 +403,7 @@ export const Step3Strategy: React.FC<StepProps> = React.memo(({ prefs, updatePre
     };
 
     return (
-        <div className={`flex flex-col h-full justify-between pb-32 md:pb-24 relative animate-in fade-in ${direction === 'back' ? 'slide-in-from-left-8' : 'slide-in-from-right-8'} duration-500 will-change-transform`}>
+        <div className={`flex flex-col h-full justify-between pb-24 sm:pb-28 md:pb-24 relative animate-in fade-in ${direction === 'back' ? 'slide-in-from-left-8' : 'slide-in-from-right-8'} duration-500 will-change-transform`}>
             <StepHeader
                 stepNumber={3}
                 totalSteps={TOTAL_STEPS}
@@ -463,7 +463,7 @@ export const Step4Location: React.FC<StepProps> = React.memo(({ prefs, updatePre
     };
 
     return (
-        <div className={`flex flex-col h-full justify-between pb-32 md:pb-24 relative animate-in fade-in ${direction === 'back' ? 'slide-in-from-left-8' : 'slide-in-from-right-8'} duration-500 will-change-transform`}>
+        <div className={`flex flex-col h-full justify-between pb-24 sm:pb-28 md:pb-24 relative animate-in fade-in ${direction === 'back' ? 'slide-in-from-left-8' : 'slide-in-from-right-8'} duration-500 will-change-transform`}>
             <StepHeader
                 stepNumber={4}
                 totalSteps={TOTAL_STEPS}
