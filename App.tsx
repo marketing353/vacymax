@@ -634,16 +634,17 @@ const App: React.FC = () => {
       <SEOHead view={view} prefs={prefs} result={result || undefined} country={prefs.country} />
 
       {/* Navigation */}
-      <nav className="w-full py-3 md:py-6 px-4 md:px-12 safe-px z-[60] fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-rose-100 transition-all duration-300 safe-pt shadow-sm">
-        <div className="w-full max-w-screen-xl mx-auto flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 cursor-pointer group flex-shrink-0" onClick={handleReset}>
-            <div className="w-8 h-8 bg-gradient-to-br from-rose-accent to-peach-accent rounded-xl flex items-center justify-center shadow-lg transform group-hover:rotate-12 transition-transform">
+      <nav className="w-full py-3 md:py-6 px-3 sm:px-4 md:px-12 safe-px z-[60] fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-rose-100 transition-all duration-300 safe-pt shadow-sm">
+        <div className="w-full max-w-screen-lg lg:max-w-screen-xl mx-auto flex items-center justify-between gap-1.5 sm:gap-2 md:gap-3">
+          <div className="flex items-center gap-2 cursor-pointer group min-w-0" onClick={handleReset}>
+            <div className="w-8 h-8 bg-gradient-to-br from-rose-accent to-peach-accent rounded-xl flex items-center justify-center shadow-lg transform group-hover:rotate-12 transition-transform flex-shrink-0">
               <span className="text-white text-lg">🌸</span>
             </div>
-            <span className="font-display font-bold text-lg md:text-xl bg-gradient-to-r from-rose-accent to-peach-accent bg-clip-text text-transparent">DoubleMyHolidays</span>
+            <span className="font-display font-bold text-sm text-gray-900 sm:hidden truncate">DMH</span>
+            <span className="hidden sm:inline font-display font-bold text-base sm:text-lg md:text-xl bg-gradient-to-r from-rose-accent to-peach-accent bg-clip-text text-transparent truncate">DoubleMyHolidays</span>
           </div>
 
-          <div className="flex items-center gap-2 md:gap-6 min-w-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 md:gap-6 min-w-0">
             <button
               onClick={() => setView('how-it-works')}
               className="text-xs md:text-sm font-medium text-slate-500 hover:text-rose-accent transition-colors hidden md:block"
@@ -697,7 +698,7 @@ const App: React.FC = () => {
                   scrollToWizard();
                 }
               }}
-              className="px-4 py-2 md:px-6 md:py-2.5 text-xs md:text-sm font-bold bg-gradient-to-r from-rose-accent to-peach-accent hover:shadow-lg hover:shadow-rose-accent/30 text-white rounded-full transition-all active:scale-95 transform hover:-translate-y-0.5 whitespace-nowrap"
+              className="px-3 py-2 sm:px-4 md:px-6 md:py-2.5 text-[13px] sm:text-sm font-bold bg-gradient-to-r from-rose-accent to-peach-accent hover:shadow-lg hover:shadow-rose-accent/30 text-white rounded-full transition-all active:scale-95 transform hover:-translate-y-0.5 whitespace-nowrap flex-shrink min-w-0"
             >
               {step > 0 ? 'Resume ✨' : 'Plan 💖'}
             </button>
