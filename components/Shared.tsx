@@ -1,25 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 export const StepHeader = React.memo(({ stepNumber, totalSteps, title, subtitle }: { stepNumber: number, totalSteps: number, title: React.ReactNode, subtitle: string }) => (
-    <div className="space-y-2 md:space-y-4 mb-4 md:mb-10 animate-fade-up px-1">
-        <div className="flex items-center gap-3">
-            <span className="w-8 h-[1px] bg-rose-accent"></span>
-            <span className="text-rose-accent text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase">Step {stepNumber} of {totalSteps}</span>
+    <div className="space-y-1.5 sm:space-y-2 md:space-y-4 mb-3 sm:mb-4 md:mb-10 animate-fade-up px-0.5 sm:px-1">
+        <div className="flex items-center gap-2 sm:gap-3">
+            <span className="w-6 sm:w-8 h-[1px] bg-rose-accent"></span>
+            <span className="text-rose-accent text-[9px] sm:text-[10px] md:text-xs font-bold tracking-[0.15em] sm:tracking-[0.2em] uppercase">Step {stepNumber} of {totalSteps}</span>
         </div>
-        <div className="flex items-center gap-3">
-            <div className="flex-1 h-2 rounded-full bg-rose-100 overflow-hidden">
+        <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex-1 h-1.5 sm:h-2 rounded-full bg-rose-100 overflow-hidden">
                 <div
                     className="h-full bg-gradient-to-r from-rose-accent to-peach-accent transition-all duration-500"
                     style={{ width: `${Math.min((stepNumber / totalSteps) * 100, 100)}%` }}
                 />
             </div>
-            <span className="text-xs font-bold text-rose-300 min-w-[46px] text-right">{Math.round((stepNumber / totalSteps) * 100)}%</span>
+            <span className="text-[10px] sm:text-xs font-bold text-rose-300 min-w-[40px] sm:min-w-[46px] text-right">{Math.round((stepNumber / totalSteps) * 100)}%</span>
         </div>
-        <div className="space-y-1">
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-display font-bold text-gray-800 tracking-tight leading-[1.1]">
+        <div className="space-y-0.5 sm:space-y-1">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-display font-bold text-gray-800 tracking-tight leading-[1.1]">
                 {title}
             </h2>
-            <p className="text-sm md:text-lg text-gray-500 max-w-xl leading-relaxed">{subtitle}</p>
+            <p className="text-xs sm:text-sm md:text-lg text-gray-500 max-w-xl leading-relaxed">{subtitle}</p>
         </div>
     </div>
 ));
