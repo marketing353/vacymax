@@ -24,7 +24,7 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
     };
 
     return (
-        <div className="relative pt-24 md:pt-32 pb-12 md:pb-20 px-4 sm:px-6 md:px-12 safe-px overflow-hidden bg-light-100 min-h-[auto] md:min-h-[90vh] flex flex-col justify-center">
+        <div className="relative pt-16 sm:pt-24 md:pt-32 pb-8 sm:pb-12 md:pb-20 px-4 sm:px-6 md:px-12 safe-px overflow-hidden bg-light-100 min-h-[320px] sm:min-h-[380px] md:min-h-[90vh] flex flex-col justify-center">
             {/* Dynamic Background */}
             <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-rose-50 via-light-100 to-light-100 z-0"></div>
 
@@ -132,7 +132,7 @@ export const PainHero = ({ onCta }: { onCta: () => void }) => {
                     className="relative max-w-lg sm:max-w-xl mx-auto w-full lg:ml-auto"
                 >
                     <div className="absolute inset-0 bg-gradient-to-tr from-rose-100 to-lavender-100 rounded-[2.5rem] blur-3xl -z-10 transform rotate-3"></div>
-                    <div className="glass-panel rounded-[2.5rem] p-4 sm:p-7 md:p-12 border border-white/60 relative overflow-hidden min-h-[380px] sm:min-h-[440px] md:min-h-[500px] flex flex-col shadow-xl bg-white/60 backdrop-blur-xl">
+                    <div className="glass-panel rounded-[2.5rem] p-4 sm:p-7 md:p-12 border border-white/60 relative overflow-hidden min-h-[320px] sm:min-h-[380px] md:min-h-[500px] flex flex-col shadow-xl bg-white/60 backdrop-blur-xl">
 
                         {/* Decorative UI Header */}
                         <div className="flex justify-between items-center mb-8 border-b border-rose-100 pb-6">
