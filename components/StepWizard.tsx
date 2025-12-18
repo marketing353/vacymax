@@ -117,21 +117,21 @@ const LocationSelector = React.memo(({
                 )}
             </div>
 
-            <div className="grid grid-cols-3 md:grid-cols-5 gap-2 md:gap-3 mb-6">
+            <div className="grid grid-cols-5 gap-1.5 sm:gap-2 md:gap-3 mb-6">
                 {COUNTRIES.map((c) => (
                     <button
                         key={c.name}
                         onClick={() => onCountryChange(c.name)}
-                        className={`relative group flex flex-col items-center justify-center p-3 md:p-3 min-h-[72px] rounded-2xl border transition-all duration-300 active:scale-95 ${countryValue === c.name
+                        className={`relative group flex flex-col items-center justify-center p-2 sm:p-3 min-h-[64px] sm:min-h-[72px] rounded-xl sm:rounded-2xl border transition-all duration-300 active:scale-95 ${countryValue === c.name
                             ? `bg-white ${borderClass} ${shadowClass} shadow-lg scale-[1.02] ring-1 ring-inset ${isRose ? 'ring-rose-50' : 'ring-lavender-50'}`
                             : 'bg-white/40 border-white/60 hover:bg-white/80 hover:border-rose-200'
                             }`}
                     >
-                        <span className="text-3xl mb-2 filter drop-shadow-sm group-hover:scale-110 transition-transform duration-300">{c.flag}</span>
-                        <span className={`text-[10px] font-bold text-center ${countryValue === c.name ? 'text-gray-800' : 'text-gray-400'}`}>{c.code}</span>
+                        <span className="text-2xl sm:text-3xl mb-1 sm:mb-2 filter drop-shadow-sm group-hover:scale-110 transition-transform duration-300">{c.flag}</span>
+                        <span className={`text-[9px] sm:text-[10px] font-bold text-center ${countryValue === c.name ? 'text-gray-800' : 'text-gray-400'}`}>{c.code}</span>
 
                         {countryValue === c.name && (
-                            <div className={`absolute top-2 right-2 w-1.5 h-1.5 rounded-full ${activeBg}`}></div>
+                            <div className={`absolute top-1.5 right-1.5 sm:top-2 sm:right-2 w-1.5 h-1.5 rounded-full ${activeBg}`}></div>
                         )}
                     </button>
                 ))}

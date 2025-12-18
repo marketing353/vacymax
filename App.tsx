@@ -897,18 +897,18 @@ const App: React.FC = () => {
           <PainHero onCta={scrollToWizard} />
 
           {/* THE WIZARD - Moved up to reduce friction */}
-          <div id="wizard-section" ref={wizardRef} className="w-full bg-gradient-to-br from-light-100 via-light-200 to-light-300 py-14 md:py-24 px-4 safe-px scroll-mt-24 relative z-[55]">
+          <div id="wizard-section" ref={wizardRef} className="w-full bg-gradient-to-br from-light-100 via-light-200 to-light-300 py-10 md:py-24 px-3 sm:px-4 safe-px scroll-mt-20 md:scroll-mt-24 relative z-[55]">
             <div className="max-w-4xl mx-auto">
-              <div className="text-center mb-10 md:mb-12">
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold bg-gradient-to-r from-rose-accent via-lavender-accent to-peach-accent bg-clip-text text-transparent mb-3">Let's Plan Your Perfect Year ✨</h2>
-                <p className="text-gray-600 text-base sm:text-lg">Build your optimized schedule in 60 seconds.</p>
+              <div className="text-center mb-6 md:mb-12">
+                <h2 className="text-2xl sm:text-3xl md:text-5xl font-display font-bold bg-gradient-to-r from-rose-accent via-lavender-accent to-peach-accent bg-clip-text text-transparent mb-2 md:mb-3 px-2">Let's Plan Your Perfect Year ✨</h2>
+                <p className="text-gray-600 text-sm sm:text-base md:text-lg">Build your optimized schedule in 60 seconds.</p>
               </div>
 
-              <div className="bg-white/80 rounded-3xl border border-rose-100 shadow-md p-4 md:p-6 mb-6">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs font-bold uppercase tracking-[0.18em] text-rose-accent">Step {step === 0 ? 1 : clampedStep} / {stepLabels.length}</span>
-                    <span className="text-sm text-gray-500">{step === 0 ? 'The essentials' : stepLabels[clampedStep - 1]}</span>
+              <div className="bg-white/80 rounded-2xl md:rounded-3xl border border-rose-100 shadow-md p-3 md:p-6 mb-4 md:mb-6">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 md:gap-3 flex-wrap">
+                    <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.14em] md:tracking-[0.18em] text-rose-accent">Step {step === 0 ? 1 : clampedStep} / {stepLabels.length}</span>
+                    <span className="text-xs md:text-sm text-gray-500 hidden sm:inline">{step === 0 ? 'The essentials' : stepLabels[clampedStep - 1]}</span>
                   </div>
                   <button
                     onClick={handleReset}
@@ -917,16 +917,16 @@ const App: React.FC = () => {
                     Start over
                   </button>
                 </div>
-                <div className="mt-3 h-2 bg-rose-50 rounded-full overflow-hidden">
+                <div className="mt-2 md:mt-3 h-1.5 md:h-2 bg-rose-50 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-gradient-to-r from-rose-accent to-peach-accent rounded-full transition-all duration-300"
                     style={{ width: `${Math.max(stepProgress, 8)}%` }}
                   />
                 </div>
-                <p className="mt-2 text-xs text-gray-500">{totalPto > 0 ? `${totalPto} PTO days ready` : 'Just 3 quick steps to your dream year.'}</p>
+                <p className="mt-1.5 md:mt-2 text-[10px] md:text-xs text-gray-500">{totalPto > 0 ? `${totalPto} PTO days ready` : 'Just 3 quick steps to your dream year.'}</p>
               </div>
 
-              <div {...swipeHandlers} className="relative z-[60] bg-white/95 border border-rose-100 rounded-[1.75rem] p-6 md:p-10 flex flex-col shadow-xl touch-pan-y">
+              <div {...swipeHandlers} className="relative z-[60] bg-white/95 border border-rose-100 rounded-2xl md:rounded-[1.75rem] p-4 sm:p-6 md:p-10 flex flex-col shadow-xl touch-pan-y">
 
                 <div className="min-h-[52px] mb-4" aria-live="polite" aria-atomic="true">
                   {error ? (
