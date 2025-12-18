@@ -698,9 +698,10 @@ const App: React.FC = () => {
                   scrollToWizard();
                 }
               }}
-              className="px-3 py-2 sm:px-4 md:px-6 md:py-2.5 text-[13px] sm:text-sm font-bold bg-gradient-to-r from-rose-accent to-peach-accent hover:shadow-lg hover:shadow-rose-accent/30 text-white rounded-full transition-all active:scale-95 transform hover:-translate-y-0.5 whitespace-nowrap flex-shrink min-w-0"
+              className="px-3 py-2 sm:px-4 md:px-6 md:py-2.5 text-xs sm:text-sm font-bold bg-gradient-to-r from-rose-accent to-peach-accent hover:shadow-lg hover:shadow-rose-accent/30 text-white rounded-full transition-all active:scale-95 transform hover:-translate-y-0.5 whitespace-nowrap flex-shrink-0 min-h-[36px]"
             >
-              {step > 0 ? 'Resume ✨' : 'Plan 💖'}
+              <span className="sm:hidden">{step > 0 ? 'Go' : 'Start'}</span>
+              <span className="hidden sm:inline">{step > 0 ? 'Resume' : 'Plan'}</span>
             </button>
           </div>
         </div>
@@ -1039,21 +1040,21 @@ const App: React.FC = () => {
         </>
       )}
 
-      {/* Mobile quick action bar - Simplified for cleaner UX */}
-      {view !== 'results' && (
+      {/* Mobile quick action bar - Only show on landing when wizard not started (step 0) */}
+      {view === 'landing' && step === 0 && (
         <div
           className="fixed md:hidden inset-x-3 bottom-3 z-[95] pointer-events-none safe-area-bottom"
           style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 6px)' }}
         >
           <div className="bg-white/95 backdrop-blur-sm border border-rose-100 shadow-xl rounded-2xl px-4 py-2.5 flex items-center justify-between gap-3 pointer-events-auto">
             <p className="text-sm font-medium text-gray-600 truncate">
-              {step === 0 ? 'Plan your dream year' : step < 4 ? `Step ${clampedStep} of 3` : 'Creating plan...'}
+              Plan your dream year
             </p>
             <button
               onClick={handleMobileCta}
               className="px-5 py-2.5 bg-gradient-to-r from-rose-accent to-peach-accent text-white font-bold text-sm rounded-xl shadow-md active:scale-95 transition-all min-h-[44px] flex-shrink-0"
             >
-              {step === 0 ? 'Start' : 'Continue'}
+              Start
             </button>
           </div>
         </div>
